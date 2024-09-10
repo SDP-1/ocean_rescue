@@ -37,11 +37,11 @@ class _FeedScreenState extends State<FeedScreen> {
                   Expanded(
                     child: GestureDetector(
                       onTap: () {
-                        print('Container tapped!');
-                        // Navigator.push(
-                        //     context,
-                        //     MaterialPageRoute(
-                        //         builder: (context) => CreatePostScreen()));
+                        // print('Container tapped!');
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => CreatePostScreen()));
                       },
                       child: Container(
                         decoration: BoxDecoration(
