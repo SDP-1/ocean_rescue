@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:ocean_rescue/pages/chat/chat_list_screen.dart';
 import 'package:ocean_rescue/utils/colors.dart';
-
 import '../../theme/colorTheme.dart';
 
 class TopAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -31,7 +31,10 @@ class TopAppBar extends StatelessWidget implements PreferredSizeWidget {
         _buildActionIcon(
           icon: Icons.messenger_outline,
           onPressed: () {
-            // Add your messenger logic here
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ChatListScreen()),
+            );
           },
         ),
       ],
