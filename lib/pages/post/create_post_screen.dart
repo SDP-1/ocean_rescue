@@ -2,6 +2,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ocean_rescue/theme/colorTheme.dart';
+import 'package:ocean_rescue/widget/popup/ErrorPopup.dart';
+import 'package:ocean_rescue/widget/popup/SuccessPopup.dart';
 
 class CreatePostScreen extends StatefulWidget {
   const CreatePostScreen({Key? key}) : super(key: key);
@@ -139,7 +141,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
               decoration: InputDecoration(
                 hintText: '📝 Your creative title 🌍',
                 hintStyle: TextStyle(
-                  color: Colors.grey, 
+                  color: Colors.grey,
                 ),
                 filled: true,
                 fillColor: ColorTheme.liteGreen1,
@@ -165,7 +167,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
               decoration: InputDecoration(
                 hintText: 'Post description',
                 hintStyle: TextStyle(
-                  color: Colors.grey, 
+                  color: Colors.grey,
                 ),
                 filled: true,
                 fillColor: ColorTheme.liteGreen1,
@@ -242,6 +244,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
               child: ElevatedButton(
                 onPressed: () {
                   // Post creation logic
+                  showSuccessPopup(context);
+                  showErrorPopup(context);
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.transparent,
