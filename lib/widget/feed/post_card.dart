@@ -247,7 +247,7 @@ class _PostCardState extends State<PostCard> {
                   padding: const EdgeInsets.symmetric(vertical: 4),
                   child: Text(
                     'View all $commentLen comments',
-                    style: const TextStyle(fontSize: 16, color: Colors.grey),
+                    style: const TextStyle(fontSize: 12, color: Colors.grey),
                   ),
                 ),
                 Container(
@@ -256,7 +256,10 @@ class _PostCardState extends State<PostCard> {
                     DateFormat.yMMMd().format(
                       DateTime.now(), // Directly use DateTime
                     ),
-                    style: const TextStyle(color: Colors.grey),
+                    style: const TextStyle(
+                      color: Colors.grey,
+                      fontSize: 12,
+                    ),
                   ),
                 ),
               ],

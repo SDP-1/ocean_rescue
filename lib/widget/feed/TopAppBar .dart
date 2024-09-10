@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:ocean_rescue/pages/chat/chat_list_screen.dart';
+import 'package:ocean_rescue/pages/search/search_screen.dart';
 import 'package:ocean_rescue/utils/colors.dart';
 import '../../theme/colorTheme.dart';
 
@@ -11,33 +12,39 @@ class TopAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppBar(
-      backgroundColor: ColorTheme.white,
-      centerTitle: false,
-      title: Container(
-        margin: const EdgeInsets.only(left: 16.0),
-        child: Image.asset(
-          'assets/logo/logo_without_name.png',
-          height: 32,
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: AppBar(
+        backgroundColor: Colors.white,
+        centerTitle: false,
+        title: Container(
+          margin: const EdgeInsets.only(left: 16.0),
+          child: Image.asset(
+            'assets/logo/logo_without_name.png',
+            height: 32,
+          ),
         ),
+        actions: [
+          _buildActionIcon(
+            icon: Icons.search,
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => UserSearchPage()),
+              );
+            },
+          ),
+          _buildActionIcon(
+            icon: Icons.messenger_outline,
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ChatListScreen()),
+              );
+            },
+          ),
+        ],
       ),
-      actions: [
-        _buildActionIcon(
-          icon: Icons.search,
-          onPressed: () {
-            // Add your search logic here
-          },
-        ),
-        _buildActionIcon(
-          icon: Icons.messenger_outline,
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => ChatListScreen()),
-            );
-          },
-        ),
-      ],
     );
   }
 

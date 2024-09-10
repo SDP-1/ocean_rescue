@@ -103,7 +103,7 @@ final Map<String, dynamic> mockPostData = {
   'postId': '12345',
   'profImage': 'assets/user/profile_pic.jpg',
   'username': 'john_doe',
-  'postUrl': 'assets/post/post01.png',
+  'postUrl': 'assets/post/post01.jpeg',
   'description': 'This is a sample post description.',
   'likes': ['user1', 'user2', 'user3'], // Example user IDs who liked the post
   'datePublished': DateTime.now(), // Current date for testing

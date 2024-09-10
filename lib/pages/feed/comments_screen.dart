@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../widget/feed/comment_card.dart';
 
-
 class CommentsScreen extends StatelessWidget {
   final String postId;
   final List<Map<String, dynamic>> comments;
@@ -16,7 +15,9 @@ class CommentsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: const Text('Comments'),
       ),
       body: ListView.builder(
