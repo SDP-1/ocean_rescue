@@ -1,12 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ocean_rescue/pages/event/event_screen.dart';
-import 'package:ocean_rescue/pages/feed/feed_screen.dart';
 import 'package:ocean_rescue/pages/menu/menu_screen.dart';
 import 'package:ocean_rescue/pages/notification/notification_screen.dart';
 import 'package:ocean_rescue/pages/qr/qr_scanner_screen.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 
+import '../../pages/feed/feed_screen.dart';
 import '../../theme/colorTheme.dart';
 
 class BottomNavBar extends StatelessWidget {

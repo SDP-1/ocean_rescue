@@ -35,7 +35,8 @@ class _PostCardState extends State<PostCard> {
 
   @override
   Widget build(BuildContext context) {
-    final bool isLiked = widget.snap['likes'].contains('user_id'); // Replace 'user_id' with actual user ID
+    final bool isLiked = widget.snap['likes']
+        .contains('user_id'); // Replace 'user_id' with actual user ID
 
     return Container(
       decoration: BoxDecoration(
@@ -53,7 +54,8 @@ class _PostCardState extends State<PostCard> {
               children: <Widget>[
                 CircleAvatar(
                   radius: 16,
-                  backgroundImage: NetworkImage(widget.snap['profImage'].toString()),
+                  backgroundImage:
+                      AssetImage(widget.snap['profImage'].toString()),
                 ),
                 Expanded(
                   child: Padding(
@@ -121,7 +123,7 @@ class _PostCardState extends State<PostCard> {
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 0.35,
                   width: double.infinity,
-                  child: Image.network(
+                  child: Image.asset(
                     widget.snap['postUrl'].toString(),
                     fit: BoxFit.cover,
                   ),
@@ -188,7 +190,8 @@ class _PostCardState extends State<PostCard> {
                             'profilePic': 'https://example.com/profile2.jpg',
                             'name': 'Bob',
                             'text': 'Thanks for sharing!',
-                            'datePublished': DateTime.now().subtract(const Duration(days: 1)),
+                            'datePublished': DateTime.now()
+                                .subtract(const Duration(days: 1)),
                           },
                         ],
                       ),
