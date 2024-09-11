@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ocean_rescue/theme/colorTheme.dart';
 
-void showErrorPopup(BuildContext context) {
+void showErrorPopup(BuildContext context, String title, String message) {
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -17,7 +17,7 @@ void showErrorPopup(BuildContext context) {
           children: [
             SizedBox(height: 10),
             Text(
-              'Couldn\'t post',
+              title,
               style: TextStyle(
                 color: ColorTheme.black,
                 fontSize: 20,
@@ -27,7 +27,7 @@ void showErrorPopup(BuildContext context) {
             ),
             SizedBox(height: 10),
             Text(
-              'Please check your network connection.',
+              message,
               style: TextStyle(
                 color: ColorTheme.black,
                 fontSize: 16,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ocean_rescue/theme/colorTheme.dart';
 
-void showSuccessPopup(BuildContext context) {
+void showSuccessPopup(BuildContext context, String title, String message) {
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -14,19 +14,21 @@ void showSuccessPopup(BuildContext context) {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              'Create New post',
+              title,
               style: TextStyle(
                 color: ColorTheme.white,
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
+              textAlign: TextAlign.center,
             ),
             SizedBox(height: 10),
             Text(
-              'has been complete.',
+              message,
               style: TextStyle(
                 color: ColorTheme.white,
               ),
+              textAlign: TextAlign.center,
             ),
             SizedBox(height: 20),
             Image.asset('assets/popup/Success.png', width: 80, height: 80),

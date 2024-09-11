@@ -183,6 +183,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
               const SizedBox(height: 16),
 
               // Image preview
+              Text(
+                'Image Upload',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
               if (_image != null)
                 Container(
                   height: 200,
@@ -244,8 +248,16 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 child: ElevatedButton(
                   onPressed: () {
                     // Post creation logic
-                    showSuccessPopup(context);
-                    showErrorPopup(context);
+                    showSuccessPopup(
+                      context,
+                      'Create New Post',
+                      'has been completed.',
+                    );
+                    showErrorPopup(
+                      context,
+                      'Couldn\'t post',
+                      'Please check your network connection.',
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.transparent,
