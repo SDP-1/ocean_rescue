@@ -38,15 +38,18 @@ class FeaturedEventSection extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => CreateEvent(), // Replace with your new screen widget
+                        builder: (context) =>
+                            CreateEvent(), // Replace with your new screen widget
                       ),
                     );
                   },
                   child: Container(
                     margin: const EdgeInsets.only(left: 16),
-                    width: 100, // Width for each event card
+                    width: 150, // Set width for the card
+                    height: 100, // Set height for the card
                     decoration: BoxDecoration(
-                      color: ColorTheme.liteBlue2, // Highlight color for the "Create Event" card
+                      color: ColorTheme
+                          .liteBlue2, // Highlight color for the "Create Event" card
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Column(
@@ -57,7 +60,8 @@ class FeaturedEventSection extends StatelessWidget {
                           size: 40,
                           color: Colors.black54,
                         ),
-                        const SizedBox(height: 8), // Space between icon and text
+                        const SizedBox(
+                            height: 8), // Space between icon and text
                         Text(
                           'Create Event',
                           style: TextStyle(
@@ -74,31 +78,39 @@ class FeaturedEventSection extends StatelessWidget {
 
               return Container(
                 margin: const EdgeInsets.only(left: 16),
-                width: 100, // Width for each event card
+                width: 150, // Set width for the event card
+                height: 100, // Set height for the event card
                 decoration: BoxDecoration(
                   color: Colors.grey.shade200,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Column(
+                child: Stack(
                   children: [
-                    Expanded(
-                      child: ClipRRect(
-                        borderRadius: const BorderRadius.vertical(
-                            top: Radius.circular(12)),
-                        child: Image.asset(
-                          event['imageUrl']!,
-                          fit: BoxFit.cover,
-                          width: double.infinity,
-                        ),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: Image.asset(
+                        event['imageUrl']!,
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        height:
+                            double.infinity, // Ensure image fits the card size
                       ),
                     ),
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      child: Text(
-                        event['title'] ?? 'Untitled Event',
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                            fontSize: 12, fontWeight: FontWeight.w500),
+                    Positioned(
+                      bottom: 8,
+                      left: 8,
+                      child: Container(
+                        width: 130,
+                        child: Text(
+                          event['title'] ?? 'Untitled Event',
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
                       ),
                     ),
                   ],
@@ -127,15 +139,11 @@ final List<Map<String, String>> mockEventData = [
     'imageUrl': 'assets/event/event01.png',
   },
   {
-    'title': 'Fundraising',
+    'title': 'Awareness Campaign',
     'imageUrl': 'assets/event/event01.png',
   },
   {
-    'title': 'Fundraising',
-    'imageUrl': 'assets/event/event01.png',
-  },
-  {
-    'title': 'Fundraising',
+    'title': 'Volunteer Meetup',
     'imageUrl': 'assets/event/event01.png',
   },
   // Add more events as needed

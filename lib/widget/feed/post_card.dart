@@ -43,12 +43,12 @@ class _PostCardState extends State<PostCard> {
         border: Border.all(color: Colors.grey.shade300),
         color: Colors.white,
       ),
-      padding: const EdgeInsets.symmetric(vertical: 10),
+      padding: const EdgeInsets.symmetric(vertical: 0),
       child: Column(
         children: [
           // HEADER SECTION OF THE POST
           Container(
-            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16)
+            padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 16)
                 .copyWith(right: 0),
             child: Row(
               children: <Widget>[
@@ -86,7 +86,7 @@ class _PostCardState extends State<PostCard> {
                               InkWell(
                                 child: Container(
                                   padding: const EdgeInsets.symmetric(
-                                      vertical: 12, horizontal: 16),
+                                      vertical: 0, horizontal: 16),
                                   child: const Text('Delete'),
                                 ),
                                 onTap: () {

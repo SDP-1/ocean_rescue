@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:ocean_rescue/pages/dumpReport/dump_report_screen.dart';
 import 'package:ocean_rescue/pages/event/event_screen.dart';
 import 'package:ocean_rescue/pages/menu/menu_screen.dart';
 import 'package:ocean_rescue/pages/notification/notification_screen.dart';
@@ -18,7 +19,8 @@ class BottomNavBar extends StatelessWidget {
     List<Widget> _buildScreens() {
       return [
         FeedScreen(),
-        EventScreen(),
+        // EventScreen(),
+        DumpsDashboard(),
         QrScanner(),
         NotificationScreen(),
         MenuScreen(),
