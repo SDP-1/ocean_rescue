@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 
+var darkBlue1 = const Color(0xFF416FDF);
+var darkBlue2 = const Color(0x1D225C);
+var LiteBlue1 = const Color(0x1877F2);
+var LiteBlue2 = const Color(0xDCF2F1);
+
 const lightColorScheme = ColorScheme(
   brightness: Brightness.light,
   primary: Color(0xFF416FDF),
