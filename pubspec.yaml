@@ -42,6 +42,7 @@ dependencies:
   firebase_core: ^3.4.1
   firebase_auth: ^5.2.1
   firebase_storage: ^12.3.0
+  uuid: ^4.4.2
 
 dev_dependencies:
   flutter_test:
@@ -74,6 +75,7 @@ flutter:
     - assets/popup/
     - assets/medals/
     - assets/dump/
+    - assets/welcome/
     # - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 

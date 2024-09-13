@@ -1,9 +1,16 @@
+import 'package:firebase_core/firebase_core.dart'; // Import Firebase Core
 import 'package:flutter/material.dart';
-import 'package:ocean_rescue/widget/navbar/BottomNavBar.dart';
-import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
+import 'package:ocean_rescue/pages/welcome/signup_screen.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized(); 
+  try {
+    await Firebase.initializeApp(); 
+  } catch (e) {
+    print('Error initializing Firebase: $e');
+  }
+
+  runApp(const MyApp()); 
 }
 
 class MyApp extends StatelessWidget {
@@ -12,12 +19,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Ocen rescue',
+      title: 'Ocean Rescue', // Fixed the typo in the app title
       debugShowCheckedModeBanner: false,
-      home:BottomNavBar(),
+      home: SignUpScreen(),
     );
   }
 }
-
-
-
