@@ -8,7 +8,8 @@ import '../../widget/welcome/custom_scaffold.dart';
 import '../../resources/auth_methods.dart';
 import '../../theme/theme.dart';
 import 'signup_screen.dart';
-import '../../widget/button/GradientButton.dart'; // Import your GradientButton widget
+import '../../widget/button/GradientButton.dart';
+import 'splash_screen.dart'; // Import your GradientButton widget
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -26,51 +27,42 @@ class _SignInScreenState extends State<SignInScreen> {
   final _formSignInKey = GlobalKey<FormState>();
   bool rememberPassword = true;
 
-  userLogin() async {
-    String res = await AuthMethods().loginUser(
-      email: emailController.text,
-      password: passwordController.text,
-    );
+userLogin() async {
 
-    if (res == "success") {
-      if (context.mounted) {
-        Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(
-            builder: (context) =>
-                const BottomNavBar(), // Redirect to FeedScreen
-          ),
-          (route) => false,
-        );
-      }
-    } else if (res.contains('user-not-found')) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            "No User found with that Email",
-            style: TextStyle(fontSize: 18.0, color: Colors.black),
-          ),
+  String res = await AuthMethods().loginUser(
+    email: emailController.text,
+    password: passwordController.text,
+  );
+
+  // Navigate to BottomNavBar if login is successful
+  if (res == "success") {
+    if (context.mounted) {
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(
+          builder: (context) => SplashScreen(), // Go to BottomNavBar
         ),
-      );
-    } else if (res.contains('wrong-password')) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            "Wrong Password",
-            style: TextStyle(fontSize: 18.0, color: Colors.black),
-          ),
-        ),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            res,
-            style: const TextStyle(fontSize: 18.0, color: Colors.black),
-          ),
-        ),
+        (route) => false,
       );
     }
+  } else {
+    // Pop the splash screen and show login error if failed
+    Navigator.of(context).pop(); // Remove splash screen
+
+    // Show error message
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          res.contains('user-not-found')
+              ? "No User found with that Email"
+              : res.contains('wrong-password')
+                  ? "Wrong Password"
+                  : res,
+          style: const TextStyle(fontSize: 18.0, color: Colors.black),
+        ),
+      ),
+    );
   }
+}
 
   @override
   Widget build(BuildContext context) {

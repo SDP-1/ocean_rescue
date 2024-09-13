@@ -2,6 +2,8 @@ import 'package:firebase_core/firebase_core.dart'; // Import Firebase Core
 import 'package:flutter/material.dart';
 import 'package:ocean_rescue/pages/welcome/signin_screen.dart';
 import 'package:ocean_rescue/pages/welcome/signup_screen.dart';
+import 'package:ocean_rescue/pages/welcome/splash_screen.dart';
+import 'package:ocean_rescue/widget/navbar/BottomNavBar.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,10 +21,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       title: 'Ocean Rescue', // Fixed the typo in the app title
       debugShowCheckedModeBanner: false,
       home: SignInScreen(),
+      // home: BottomNavBar(),
+      // home: SplashScreen(),
     );
   }
 }

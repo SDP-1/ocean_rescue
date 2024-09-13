@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:ocean_rescue/pages/welcome/splash_screen.dart';
 import 'package:ocean_rescue/theme/colorTheme.dart';
 import 'package:ocean_rescue/widget/navbar/BottomNavBar.dart';
 import '../../widget/button/GradientButton.dart';
@@ -47,7 +48,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           if (context.mounted) {
             Navigator.of(context).pushReplacement(
               MaterialPageRoute(
-                builder: (context) => const BottomNavBar(),
+                builder: (context) => SplashScreen(),
               ),
             );
           }
