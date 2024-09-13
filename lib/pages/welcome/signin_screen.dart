@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:ocean_rescue/pages/feed/feed_screen.dart'; // Make sure this import is correct
+import 'package:ocean_rescue/pages/welcome/forgotPassword.dart';
 import 'package:ocean_rescue/widget/navbar/BottomNavBar.dart';
 import '../../widget/welcome/custom_scaffold.dart';
 import '../../resources/auth_methods.dart';
@@ -201,17 +202,17 @@ class _SignInScreenState extends State<SignInScreen> {
                           GestureDetector(
                             onTap: () {
                               // Uncomment and implement forgot password functionality if needed
-                              // Navigator.push(
-                              //     context,
-                              //     MaterialPageRoute(
-                              //         builder: (context) => ForgotPassword()));
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => ForgotPassword()));
                             },
                             child: Text(
                               'Forgot password?',
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: lightColorScheme.primary,
-                                fontSize: 13,
+                                fontSize: 12,
                               ),
                             ),
                           ),
