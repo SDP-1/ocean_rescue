@@ -340,12 +340,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         height: 50,
                         child: OutlinedButton(
                           onPressed: () {
-                            // Navigator.push(
-                            //   context,
-                            //   MaterialPageRoute(
-                            //     builder: (context) => const SignInScreen(),
-                            //   ),
-                            // );
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const SignInScreen(),
+                              ),
+                            );
                           },
                           child: const Text(
                             'Sign In',
