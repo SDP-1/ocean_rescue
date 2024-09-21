@@ -32,6 +32,47 @@ class _PostCardState extends State<PostCard> {
     // For example, call Firestore delete method
   }
 
+  void showBottomSheetOptions(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (BuildContext context) {
+        return Wrap(
+          children: <Widget>[
+            ListTile(
+              leading: const Icon(Icons.edit),
+              title: const Text('Edit Post'),
+              onTap: () {
+                Navigator.pop(context);
+                // Navigate to edit post screen
+                // Example: Navigator.of(context).push(...);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.delete),
+              title: const Text('Delete Post'),
+              onTap: () {
+                Navigator.pop(context);
+                // Call delete post method
+                deletePost(widget.snap['postId']);
+              },
+            ),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.cancel),
+              title: const Text('Cancel'),
+              onTap: () {
+                Navigator.pop(context); // Close bottom sheet
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final bool isLiked = widget.snap['likes']
@@ -71,29 +112,7 @@ class _PostCardState extends State<PostCard> {
                 IconButton(
                   icon: const Icon(Icons.more_vert),
                   onPressed: () {
-                    // Show Popup Menu
-                    showMenu(
-                      context: context,
-                      position: RelativeRect.fromLTRB(
-                          100, 100, 0, 0), // Adjust position if needed
-                      items: [
-                        PopupMenuItem<String>(
-                          value: 'edit',
-                          child: Text('Edit Post'),
-                        ),
-                        PopupMenuItem<String>(
-                          value: 'delete',
-                          child: Text('Delete Post'),
-                        ),
-                      ],
-                    ).then((value) {
-                      if (value == 'edit') {
-                        // Navigate to edit post screen
-                        // Example: Navigator.of(context).push(...)
-                      } else if (value == 'delete') {
-                        deletePost(widget.snap['postId']);
-                      }
-                    });
+                    showBottomSheetOptions(context);
                   },
                 ),
               ],

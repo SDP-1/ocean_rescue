@@ -19,8 +19,9 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   XFile? _image;
-
   final FireStoreMethods _fireStoreMethods = FireStoreMethods();
+
+  bool isLoading = false; // Loading state to show loading indicator
 
   Future<void> _pickImage(BuildContext context) async {
     final ImagePicker _picker = ImagePicker();
@@ -32,8 +33,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
           child: Wrap(
             children: [
               ListTile(
-                leading: Icon(Icons.photo_library),
-                title: Text('Gallery'),
+                leading: const Icon(Icons.photo_library),
+                title: const Text('Gallery'),
                 onTap: () async {
                   final XFile? image =
                       await _picker.pickImage(source: ImageSource.gallery);
@@ -44,8 +45,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 },
               ),
               ListTile(
-                leading: Icon(Icons.photo_camera),
-                title: Text('Camera'),
+                leading: const Icon(Icons.photo_camera),
+                title: const Text('Camera'),
                 onTap: () async {
                   final XFile? image =
                       await _picker.pickImage(source: ImageSource.camera);
@@ -63,30 +64,44 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   }
 
   Future<void> _createPost() async {
+    setState(() {
+      isLoading = true; // Set loading to true when post creation starts
+    });
+
     String uid = FirebaseAuth.instance.currentUser!.uid;
     String title = _titleController.text;
     String description = _descriptionController.text;
 
     if (_image != null) {
       String result = await _fireStoreMethods.createPost(
-          title, description, File(_image!.path).readAsBytesSync(), uid);
+        title,
+        description,
+        File(_image!.path).readAsBytesSync(),
+        uid,
+      );
 
       if (result == "success") {
-        showSuccessPopup(context, 'Create New Post', 'has been completed.');
-
         Future.delayed(const Duration(seconds: 2), () {
           Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute(builder: (context) => FeedScreen()),
             (route) => false,
           );
+          showSuccessPopup(context, 'Create New Post', 'has been completed.');
         });
       } else {
         showErrorPopup(context, 'Couldn\'t post', result);
       }
     } else {
       showErrorPopup(
-          context, 'No Image Selected', 'Please select an image to upload.');
+        context,
+        'No Image Selected',
+        'Please select an image to upload.',
+      );
     }
+
+    setState(() {
+      isLoading = false; // Set loading to false when post creation finishes
+    });
   }
 
   @override
@@ -118,7 +133,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
               Container(
                 height: 80,
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
+                  gradient: const LinearGradient(
                     begin: Alignment.centerLeft,
                     end: Alignment.centerRight,
                     colors: [
@@ -138,7 +153,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                         width: 70,
                       ),
                     ),
-                    Expanded(
+                    const Expanded(
                       child: Text(
                         'Create New Post',
                         textAlign: TextAlign.center,
@@ -162,7 +177,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 controller: _titleController,
                 decoration: InputDecoration(
                   hintText: '📝 Your creative title 🌍',
-                  hintStyle: TextStyle(color: Colors.grey),
+                  hintStyle: const TextStyle(color: Colors.grey),
                   filled: true,
                   fillColor: ColorTheme.liteGreen1,
                   border: OutlineInputBorder(
@@ -182,7 +197,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 maxLines: 4,
                 decoration: InputDecoration(
                   hintText: 'Post description',
-                  hintStyle: TextStyle(color: Colors.grey),
+                  hintStyle: const TextStyle(color: Colors.grey),
                   filled: true,
                   fillColor: ColorTheme.liteGreen1,
                   border: OutlineInputBorder(
@@ -192,7 +207,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 ),
               ),
               const SizedBox(height: 16),
-              Text(
+              const Text(
                 'Image Upload',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
@@ -240,7 +255,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
               Container(
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
+                  gradient: const LinearGradient(
                     begin: Alignment.centerLeft,
                     end: Alignment.centerRight,
                     colors: [
@@ -251,7 +266,9 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: ElevatedButton(
-                  onPressed: _createPost,
+                  onPressed: isLoading
+                      ? null
+                      : _createPost, // Disable button when loading
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.transparent,
                     padding: const EdgeInsets.symmetric(vertical: 10),
@@ -260,10 +277,17 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                     ),
                     shadowColor: Colors.transparent,
                   ),
-                  child: const Text(
-                    'Create Post',
-                    style: TextStyle(fontSize: 18, color: ColorTheme.white),
-                  ),
+                  child: isLoading
+                      ? const CircularProgressIndicator(
+                          // Show loader when isLoading is true
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(Colors.white),
+                        )
+                      : const Text(
+                          'Create Post',
+                          style:
+                              TextStyle(fontSize: 18, color: ColorTheme.white),
+                        ),
                 ),
               ),
               const SizedBox(height: 16),

@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:ocean_rescue/models/post.dart';
 import 'package:ocean_rescue/resources/storage_methods.dart';
 import 'package:uuid/uuid.dart';
@@ -8,13 +9,40 @@ import 'package:uuid/uuid.dart';
 class FireStoreMethods {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
+  // Compress the image to ensure it's less than 2MB
+  Future<Uint8List> _compressImage(Uint8List file) async {
+    // Compress the image using flutter_image_compress
+    Uint8List? compressedImage = await FlutterImageCompress.compressWithList(
+      file,
+      minWidth: 1080, // You can adjust width and height as needed
+      minHeight: 1080,
+      quality:
+          85, // Quality can be adjusted between 0-100, reduce to lower size
+    );
+
+    if (compressedImage != null &&
+        compressedImage.lengthInBytes < 2 * 1024 * 1024) {
+      // If compressed image size is below 2MB, return it
+      return compressedImage;
+    } else {
+      // If compression failed, return the original file
+      return file;
+    }
+  }
+
   // Upload image and return the URL
   Future<String> uploadImageToStorage(String postId, Uint8List file) async {
-    return await StorageMethods().uploadImageToStorage('posts', file, true);
+    // Compress the image before uploading
+    Uint8List compressedFile = await _compressImage(file);
+
+    // Then upload the compressed image
+    return await StorageMethods()
+        .uploadImageToStorage('posts', compressedFile, true);
   }
 
   // Create a new post
-  Future<String> createPost(String title, String description, Uint8List file, String uid) async {
+  Future<String> createPost(
+      String title, String description, Uint8List file, String uid) async {
     String res = "Some error occurred";
     try {
       String postId = const Uuid().v1();
@@ -61,12 +89,18 @@ class FireStoreMethods {
   }
 
   // Post comment
-  Future<String> postComment(String postId, String text, String uid, String name, String profilePic) async {
+  Future<String> postComment(String postId, String text, String uid,
+      String name, String profilePic) async {
     String res = "Some error occurred";
     try {
       if (text.isNotEmpty) {
         String commentId = const Uuid().v1();
-        await _firestore.collection('posts').doc(postId).collection('comments').doc(commentId).set({
+        await _firestore
+            .collection('posts')
+            .doc(postId)
+            .collection('comments')
+            .doc(commentId)
+            .set({
           'profilePic': profilePic,
           'name': name,
           'uid': uid,
@@ -99,7 +133,8 @@ class FireStoreMethods {
   // Follow or unfollow a user
   Future<void> followUser(String uid, String followId) async {
     try {
-      DocumentSnapshot snap = await _firestore.collection('users').doc(uid).get();
+      DocumentSnapshot snap =
+          await _firestore.collection('users').doc(uid).get();
       List following = (snap.data()! as dynamic)['following'];
 
       if (following.contains(followId)) {
