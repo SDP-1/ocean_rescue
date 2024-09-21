@@ -6,7 +6,7 @@ import '../../widget/feed/comment_card.dart';
 import 'like_animation.dart'; // Ensure this file exists
 
 class PostCard extends StatefulWidget {
-  final Map<String, dynamic> snap; // Placeholder for post data
+  final Map<String, dynamic> snap; // Data from Firebase
   const PostCard({
     Key? key,
     required this.snap,
@@ -23,14 +23,13 @@ class _PostCardState extends State<PostCard> {
   @override
   void initState() {
     super.initState();
-    // Initialize comment length based on sample data or replace with actual logic
-    commentLen = widget.snap['comments']?.length ?? 0;
+    commentLen =
+        widget.snap['comments']?.length ?? 0; // Get actual comment length
   }
 
   void deletePost(String postId) {
-    setState(() {
-      // Custom logic for deleting a post (if needed)
-    });
+    // Custom logic for deleting a post (implement as needed)
+    // For example, call Firestore delete method
   }
 
   @override
@@ -48,24 +47,21 @@ class _PostCardState extends State<PostCard> {
         children: [
           // HEADER SECTION OF THE POST
           Container(
-            padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 16)
-                .copyWith(right: 0),
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
             child: Row(
               children: <Widget>[
                 CircleAvatar(
                   radius: 16,
-                  backgroundImage:
-                      AssetImage(widget.snap['profImage'].toString()),
+                  backgroundImage: NetworkImage(widget.snap['profImage']),
                 ),
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.only(left: 8),
                     child: Column(
-                      mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text(
-                          widget.snap['username'].toString(),
+                          widget.snap['username'],
                           style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ],
@@ -73,34 +69,32 @@ class _PostCardState extends State<PostCard> {
                   ),
                 ),
                 IconButton(
-                  onPressed: () {
-                    // Open a dialog to delete the post
-                    showDialog(
-                      context: context,
-                      builder: (context) {
-                        return Dialog(
-                          child: ListView(
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            shrinkWrap: true,
-                            children: [
-                              InkWell(
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 0, horizontal: 16),
-                                  child: const Text('Delete'),
-                                ),
-                                onTap: () {
-                                  deletePost(widget.snap['postId'].toString());
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    );
-                  },
                   icon: const Icon(Icons.more_vert),
+                  onPressed: () {
+                    // Show Popup Menu
+                    showMenu(
+                      context: context,
+                      position: RelativeRect.fromLTRB(
+                          100, 100, 0, 0), // Adjust position if needed
+                      items: [
+                        PopupMenuItem<String>(
+                          value: 'edit',
+                          child: Text('Edit Post'),
+                        ),
+                        PopupMenuItem<String>(
+                          value: 'delete',
+                          child: Text('Delete Post'),
+                        ),
+                      ],
+                    ).then((value) {
+                      if (value == 'edit') {
+                        // Navigate to edit post screen
+                        // Example: Navigator.of(context).push(...)
+                      } else if (value == 'delete') {
+                        deletePost(widget.snap['postId']);
+                      }
+                    });
+                  },
                 ),
               ],
             ),
@@ -123,8 +117,8 @@ class _PostCardState extends State<PostCard> {
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 0.35,
                   width: double.infinity,
-                  child: Image.asset(
-                    widget.snap['postUrl'].toString(),
+                  child: Image.network(
+                    widget.snap['postUrl'],
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -163,11 +157,7 @@ class _PostCardState extends State<PostCard> {
                     setState(() {
                       // Replace with your like action
                       isLikeAnimating = true;
-                      Future.delayed(const Duration(milliseconds: 400), () {
-                        setState(() {
-                          isLikeAnimating = false;
-                        });
-                      });
+                      // Update likes in Firestore
                     });
                   },
                 ),
@@ -178,22 +168,8 @@ class _PostCardState extends State<PostCard> {
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) => CommentsScreen(
-                        postId: widget.snap['postId'].toString(),
-                        comments: [
-                          {
-                            'profilePic': 'https://example.com/profile1.jpg',
-                            'name': 'Alice',
-                            'text': 'Great post!',
-                            'datePublished': DateTime.now(),
-                          },
-                          {
-                            'profilePic': 'https://example.com/profile2.jpg',
-                            'name': 'Bob',
-                            'text': 'Thanks for sharing!',
-                            'datePublished': DateTime.now()
-                                .subtract(const Duration(days: 1)),
-                          },
-                        ],
+                        postId: widget.snap['postId'],
+                        comments: widget.snap['comments'] ?? [],
                       ),
                     ),
                   );
@@ -201,14 +177,18 @@ class _PostCardState extends State<PostCard> {
               ),
               IconButton(
                 icon: const Icon(Icons.send),
-                onPressed: () {},
+                onPressed: () {
+                  // Implement share functionality
+                },
               ),
               Expanded(
                 child: Align(
                   alignment: Alignment.bottomRight,
                   child: IconButton(
                     icon: const Icon(Icons.bookmark_border),
-                    onPressed: () {},
+                    onPressed: () {
+                      // Implement bookmark functionality
+                    },
                   ),
                 ),
               )
@@ -218,7 +198,6 @@ class _PostCardState extends State<PostCard> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Column(
-              mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
@@ -233,7 +212,7 @@ class _PostCardState extends State<PostCard> {
                       style: const TextStyle(color: Colors.black),
                       children: [
                         TextSpan(
-                          text: widget.snap['username'].toString(),
+                          text: widget.snap['username'],
                           style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                         TextSpan(
@@ -253,9 +232,8 @@ class _PostCardState extends State<PostCard> {
                 Container(
                   padding: const EdgeInsets.symmetric(vertical: 4),
                   child: Text(
-                    DateFormat.yMMMd().format(
-                      DateTime.now(), // Directly use DateTime
-                    ),
+                    DateFormat.yMMMd()
+                        .format(widget.snap['datePublished'].toDate()),
                     style: const TextStyle(
                       color: Colors.grey,
                       fontSize: 12,

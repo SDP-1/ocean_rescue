@@ -1,15 +1,12 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:ocean_rescue/pages/feed/feed_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:ocean_rescue/theme/colorTheme.dart';
 import 'package:ocean_rescue/widget/popup/ErrorPopup.dart';
 import 'package:ocean_rescue/widget/popup/SuccessPopup.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:uuid/uuid.dart';
-import 'package:intl/intl.dart';
+import 'package:ocean_rescue/resources/firestore_methods.dart';
+import 'package:ocean_rescue/pages/feed/feed_screen.dart'; // Import your Feed screen
 
 class CreatePostScreen extends StatefulWidget {
   const CreatePostScreen({Key? key}) : super(key: key);
@@ -23,35 +20,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   final TextEditingController _descriptionController = TextEditingController();
   XFile? _image;
 
-  // Firebase Storage instance
-  final FirebaseStorage _storage = FirebaseStorage.instance;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FireStoreMethods _fireStoreMethods = FireStoreMethods();
 
-  String? userId;
-  String? username;
-
-  @override
-  void initState() {
-    super.initState();
-    _getCurrentUserDetails();
-  }
-
-  Future<void> _getCurrentUserDetails() async {
-    User? user = _auth.currentUser;
-    if (user != null) {
-      userId = user.uid;
-
-      // Fetch user details from Firestore (assumes user data is stored under 'users' collection)
-      DocumentSnapshot userDoc =
-          await _firestore.collection('users').doc(userId).get();
-      setState(() {
-        username = userDoc['username'];
-      });
-    }
-  }
-
-  // Function to pick an image from gallery or camera
   Future<void> _pickImage(BuildContext context) async {
     final ImagePicker _picker = ImagePicker();
 
@@ -92,59 +62,31 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     );
   }
 
-  // Function to create a new post
   Future<void> _createPost() async {
-    if (_image == null) {
-      showErrorPopup(context, 'Image missing', 'Please upload an image.');
-      return;
+    String uid = FirebaseAuth.instance.currentUser!.uid;
+    String title = _titleController.text;
+    String description = _descriptionController.text;
+
+    if (_image != null) {
+      String result = await _fireStoreMethods.createPost(
+          title, description, File(_image!.path).readAsBytesSync(), uid);
+
+      if (result == "success") {
+        showSuccessPopup(context, 'Create New Post', 'has been completed.');
+
+        Future.delayed(const Duration(seconds: 2), () {
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => FeedScreen()),
+            (route) => false,
+          );
+        });
+      } else {
+        showErrorPopup(context, 'Couldn\'t post', result);
+      }
+    } else {
+      showErrorPopup(
+          context, 'No Image Selected', 'Please select an image to upload.');
     }
-    if (_titleController.text.isEmpty || _descriptionController.text.isEmpty) {
-      showErrorPopup(context, 'Fields empty', 'Please fill in all fields.');
-      return;
-    }
-
-    try {
-      // Generate unique post ID using uuid
-      String postId = Uuid().v4();
-
-      // save the date
-      Timestamp datePublished = Timestamp.now();
-
-      // Upload image to Firebase Storage and get the download URL
-      String postUrl = await _uploadImageToStorage(postId);
-
-      // Create the post object with details
-      Map<String, dynamic> post = {
-        'postId': postId,
-        'title': _titleController.text,
-        'description': _descriptionController.text,
-        'uid': userId, // Use the logged-in user's UID
-        'username': username, // Use the logged-in user's username
-        'likes': [], // Store the list of users who liked the post
-        'postUrl': postUrl,
-        'datePublished': datePublished, // Use the Timestamp
-      };
-
-      // Save post to Firestore
-      await _firestore.collection('posts').doc(postId).set(post);
-
-      // Show success popup
-      showSuccessPopup(context, 'Post Created', 'Your post has been created.');
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => FeedScreen()),
-      );
-    } catch (e) {
-      showErrorPopup(context, 'Post Creation Failed', e.toString());
-    }
-  }
-
-  // Upload the image to Firebase Storage
-  Future<String> _uploadImageToStorage(String postId) async {
-    Reference ref = _storage.ref().child('posts').child('$postId.jpg');
-    UploadTask uploadTask = ref.putFile(File(_image!.path));
-    TaskSnapshot taskSnapshot = await uploadTask;
-    return await taskSnapshot.ref.getDownloadURL();
   }
 
   @override
@@ -167,7 +109,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         centerTitle: true,
       ),
       body: SingleChildScrollView(
-        // Added to make the content scrollable
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 25.0),
           child: Column(
