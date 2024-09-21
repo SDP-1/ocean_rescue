@@ -1,9 +1,15 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:ocean_rescue/pages/feed/feed_screen.dart';
 import 'package:ocean_rescue/theme/colorTheme.dart';
 import 'package:ocean_rescue/widget/popup/ErrorPopup.dart';
 import 'package:ocean_rescue/widget/popup/SuccessPopup.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:uuid/uuid.dart';
+import 'package:intl/intl.dart';
 
 class CreatePostScreen extends StatefulWidget {
   const CreatePostScreen({Key? key}) : super(key: key);
@@ -16,6 +22,34 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   XFile? _image;
+
+  // Firebase Storage instance
+  final FirebaseStorage _storage = FirebaseStorage.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  String? userId;
+  String? username;
+
+  @override
+  void initState() {
+    super.initState();
+    _getCurrentUserDetails();
+  }
+
+  Future<void> _getCurrentUserDetails() async {
+    User? user = _auth.currentUser;
+    if (user != null) {
+      userId = user.uid;
+
+      // Fetch user details from Firestore (assumes user data is stored under 'users' collection)
+      DocumentSnapshot userDoc =
+          await _firestore.collection('users').doc(userId).get();
+      setState(() {
+        username = userDoc['username'];
+      });
+    }
+  }
 
   // Function to pick an image from gallery or camera
   Future<void> _pickImage(BuildContext context) async {
@@ -58,6 +92,61 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     );
   }
 
+  // Function to create a new post
+  Future<void> _createPost() async {
+    if (_image == null) {
+      showErrorPopup(context, 'Image missing', 'Please upload an image.');
+      return;
+    }
+    if (_titleController.text.isEmpty || _descriptionController.text.isEmpty) {
+      showErrorPopup(context, 'Fields empty', 'Please fill in all fields.');
+      return;
+    }
+
+    try {
+      // Generate unique post ID using uuid
+      String postId = Uuid().v4();
+
+      // save the date
+      Timestamp datePublished = Timestamp.now();
+
+      // Upload image to Firebase Storage and get the download URL
+      String postUrl = await _uploadImageToStorage(postId);
+
+      // Create the post object with details
+      Map<String, dynamic> post = {
+        'postId': postId,
+        'title': _titleController.text,
+        'description': _descriptionController.text,
+        'uid': userId, // Use the logged-in user's UID
+        'username': username, // Use the logged-in user's username
+        'likes': [], // Store the list of users who liked the post
+        'postUrl': postUrl,
+        'datePublished': datePublished, // Use the Timestamp
+      };
+
+      // Save post to Firestore
+      await _firestore.collection('posts').doc(postId).set(post);
+
+      // Show success popup
+      showSuccessPopup(context, 'Post Created', 'Your post has been created.');
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => FeedScreen()),
+      );
+    } catch (e) {
+      showErrorPopup(context, 'Post Creation Failed', e.toString());
+    }
+  }
+
+  // Upload the image to Firebase Storage
+  Future<String> _uploadImageToStorage(String postId) async {
+    Reference ref = _storage.ref().child('posts').child('$postId.jpg');
+    UploadTask uploadTask = ref.putFile(File(_image!.path));
+    TaskSnapshot taskSnapshot = await uploadTask;
+    return await taskSnapshot.ref.getDownloadURL();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -85,25 +174,21 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 16),
-
-              // Create new Post
               Container(
                 height: 80,
                 decoration: BoxDecoration(
-                  // Horizontal gradient from left (08BDBD) to right (1877F2)
                   gradient: LinearGradient(
                     begin: Alignment.centerLeft,
                     end: Alignment.centerRight,
                     colors: [
-                      Color(0xFF08BDBD), // Left-side color
-                      Color(0xFF1877F2), // Right-side color
+                      Color(0xFF08BDBD),
+                      Color(0xFF1877F2),
                     ],
                   ),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Row(
                   children: [
-                    // Left-side image
                     Padding(
                       padding: const EdgeInsets.only(left: 16.0),
                       child: Image.asset(
@@ -112,8 +197,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                         width: 70,
                       ),
                     ),
-
-                    // const SizedBox(width: 8),
                     Expanded(
                       child: Text(
                         'Create New Post',
@@ -128,24 +211,17 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                   ],
                 ),
               ),
-
               const SizedBox(height: 15),
-
-              // Title label
               const Text(
                 'Title',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
-
-              // Title input field
               TextField(
                 controller: _titleController,
                 decoration: InputDecoration(
                   hintText: '📝 Your creative title 🌍',
-                  hintStyle: TextStyle(
-                    color: Colors.grey,
-                  ),
+                  hintStyle: TextStyle(color: Colors.grey),
                   filled: true,
                   fillColor: ColorTheme.liteGreen1,
                   border: OutlineInputBorder(
@@ -155,23 +231,17 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 ),
               ),
               const SizedBox(height: 16),
-
-              // Description label
               const Text(
                 'Description',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
-
-              // Description input field
               TextField(
                 controller: _descriptionController,
                 maxLines: 4,
                 decoration: InputDecoration(
                   hintText: 'Post description',
-                  hintStyle: TextStyle(
-                    color: Colors.grey,
-                  ),
+                  hintStyle: TextStyle(color: Colors.grey),
                   filled: true,
                   fillColor: ColorTheme.liteGreen1,
                   border: OutlineInputBorder(
@@ -181,8 +251,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 ),
               ),
               const SizedBox(height: 16),
-
-              // Image preview
               Text(
                 'Image Upload',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
@@ -213,8 +281,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                   ),
                 ),
               const SizedBox(height: 16),
-
-              // Centered upload image button
               Align(
                 alignment: Alignment.center,
                 child: OutlinedButton.icon(
@@ -230,8 +296,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 ),
               ),
               const SizedBox(height: 16),
-
-              // Create post button at the bottom
               Container(
                 width: double.infinity,
                 decoration: BoxDecoration(
@@ -239,33 +303,21 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                     begin: Alignment.centerLeft,
                     end: Alignment.centerRight,
                     colors: [
-                      Color(0xFF08BDBD), // Left-side color
-                      Color(0xFF1877F2), // Right-side color
+                      Color(0xFF08BDBD),
+                      Color(0xFF1877F2),
                     ],
                   ),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: ElevatedButton(
-                  onPressed: () {
-                    // Post creation logic
-                    showSuccessPopup(
-                      context,
-                      'Create New Post',
-                      'has been completed.',
-                    );
-                    showErrorPopup(
-                      context,
-                      'Couldn\'t post',
-                      'Please check your network connection.',
-                    );
-                  },
+                  onPressed: _createPost,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.transparent,
                     padding: const EdgeInsets.symmetric(vertical: 10),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    shadowColor: Colors.transparent, // Remove any shadow
+                    shadowColor: Colors.transparent,
                   ),
                   child: const Text(
                     'Create Post',
