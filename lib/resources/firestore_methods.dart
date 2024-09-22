@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:ocean_rescue/models/post.dart';
@@ -8,6 +9,12 @@ import 'package:uuid/uuid.dart';
 
 class FireStoreMethods {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  // Get the current user UID
+  String getCurrentUserId() {
+    return _auth.currentUser!.uid;
+  }
 
   // Compress the image to ensure it's less than 2MB
   Future<Uint8List> _compressImage(Uint8List file) async {
@@ -42,24 +49,23 @@ class FireStoreMethods {
 
   // Create a new post
   Future<String> createPost(
-      String title, String description, Uint8List file, String uid) async {
+      String title, String description, Uint8List file) async {
     String res = "Some error occurred";
     try {
+      String uid = getCurrentUserId(); // Get current user UID
       String postId = const Uuid().v1();
       String postUrl = await uploadImageToStorage(postId, file);
 
-      // Create the post object
       Post post = Post(
         title: title,
         description: description,
-        uid: uid,
+        uid: uid, // Use current user UID here
         likes: [],
         postId: postId,
         datePublished: DateTime.now(),
         postUrl: postUrl,
       );
 
-      // Save post to Firestore
       await _firestore.collection('posts').doc(postId).set(post.toJson());
       res = "success";
     } catch (err) {
@@ -88,34 +94,29 @@ class FireStoreMethods {
     return res;
   }
 
-  // Post comment
-  Future<String> postComment(String postId, String text, String uid,
-      String name, String profilePic) async {
-    String res = "Some error occurred";
+  // Post a new comment
+  Future<String> postComment(String postId, String text, String uid) async {
     try {
       if (text.isNotEmpty) {
-        String commentId = const Uuid().v1();
+        String commentId = const Uuid().v1(); // Generate a unique comment ID
         await _firestore
             .collection('posts')
             .doc(postId)
             .collection('comments')
             .doc(commentId)
             .set({
-          'profilePic': profilePic,
-          'name': name,
           'uid': uid,
           'text': text,
           'commentId': commentId,
           'datePublished': DateTime.now(),
         });
-        res = 'success';
+        return 'success';
       } else {
-        res = "Please enter text";
+        return 'Comment cannot be empty';
       }
-    } catch (err) {
-      res = err.toString();
+    } catch (e) {
+      return e.toString();
     }
-    return res;
   }
 
   // Delete Post
@@ -155,5 +156,33 @@ class FireStoreMethods {
     } catch (e) {
       if (kDebugMode) print(e.toString());
     }
+  }
+
+  // Fetch comments with user data
+  Future<List<Map<String, dynamic>>> fetchCommentsWithUserData(
+      String postId) async {
+    List<Map<String, dynamic>> commentsList = [];
+    QuerySnapshot commentsSnapshot = await _firestore
+        .collection('posts')
+        .doc(postId)
+        .collection('comments')
+        .get();
+
+    for (var doc in commentsSnapshot.docs) {
+      DocumentSnapshot userSnapshot =
+          await _firestore.collection('users').doc(doc['uid']).get();
+
+      commentsList.add({
+        'commentId': doc.id,
+        'text': doc['text'],
+        'datePublished': doc['datePublished'],
+        'uid': doc['uid'],
+        'profilePic':
+            userSnapshot['photoUrl'] ?? 'https://via.placeholder.com/150',
+        'name': userSnapshot['username'] ?? 'Unknown',
+      });
+    }
+
+    return commentsList;
   }
 }

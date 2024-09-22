@@ -77,7 +77,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         title,
         description,
         File(_image!.path).readAsBytesSync(),
-        uid,
       );
 
       if (result == "success") {

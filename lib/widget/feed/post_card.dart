@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:ocean_rescue/pages/feed/comments_screen.dart';
 import 'package:ocean_rescue/utils/colors.dart';
-import '../../pages/feed/comments_screen.dart';
 import '../../widget/feed/comment_card.dart';
 import 'like_animation.dart'; // Ensure this file exists
 
@@ -181,19 +181,32 @@ class _PostCardState extends State<PostCard> {
                   },
                 ),
               ),
+              // IconButton(
+              //   icon: const Icon(Icons.comment_outlined),
+              //   onPressed: () {
+              //     Navigator.of(context).push(
+              //       MaterialPageRoute(
+              //         builder: (context) => CommentsScreen(
+              //           postId: widget.snap['postId'],
+              //           comments: widget.snap['comments'] ?? [],
+              //         ),
+              //       ),
+              //     );
+              //   },
+              // ),
               IconButton(
                 icon: const Icon(Icons.comment_outlined),
                 onPressed: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) => CommentsScreen(
-                        postId: widget.snap['postId'],
-                        comments: widget.snap['comments'] ?? [],
+                        postId: widget.snap['postId'], // Pass only postId
                       ),
                     ),
                   );
                 },
               ),
+
               IconButton(
                 icon: const Icon(Icons.send),
                 onPressed: () {
