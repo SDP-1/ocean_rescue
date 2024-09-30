@@ -1,9 +1,12 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:ocean_rescue/theme/colorTheme.dart';
 import 'package:ocean_rescue/widget/popup/ErrorPopup.dart';
 import 'package:ocean_rescue/widget/popup/SuccessPopup.dart';
+import 'package:ocean_rescue/resources/firestore_methods.dart';
+import 'package:ocean_rescue/pages/feed/feed_screen.dart'; // Import your Feed screen
 
 class CreatePostScreen extends StatefulWidget {
   const CreatePostScreen({Key? key}) : super(key: key);
@@ -16,8 +19,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   XFile? _image;
+  final FireStoreMethods _fireStoreMethods = FireStoreMethods();
 
-  // Function to pick an image from gallery or camera
+  bool isLoading = false; // Loading state to show loading indicator
+
   Future<void> _pickImage(BuildContext context) async {
     final ImagePicker _picker = ImagePicker();
 
@@ -28,8 +33,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
           child: Wrap(
             children: [
               ListTile(
-                leading: Icon(Icons.photo_library),
-                title: Text('Gallery'),
+                leading: const Icon(Icons.photo_library),
+                title: const Text('Gallery'),
                 onTap: () async {
                   final XFile? image =
                       await _picker.pickImage(source: ImageSource.gallery);
@@ -40,8 +45,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 },
               ),
               ListTile(
-                leading: Icon(Icons.photo_camera),
-                title: Text('Camera'),
+                leading: const Icon(Icons.photo_camera),
+                title: const Text('Camera'),
                 onTap: () async {
                   final XFile? image =
                       await _picker.pickImage(source: ImageSource.camera);
@@ -56,6 +61,46 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         );
       },
     );
+  }
+
+  Future<void> _createPost() async {
+    setState(() {
+      isLoading = true; // Set loading to true when post creation starts
+    });
+
+    String uid = FirebaseAuth.instance.currentUser!.uid;
+    String title = _titleController.text;
+    String description = _descriptionController.text;
+
+    if (_image != null) {
+      String result = await _fireStoreMethods.createPost(
+        title,
+        description,
+        File(_image!.path).readAsBytesSync(),
+      );
+
+      if (result == "success") {
+        Future.delayed(const Duration(seconds: 2), () {
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => FeedScreen()),
+            (route) => false,
+          );
+          showSuccessPopup(context, 'Create New Post', 'has been completed.');
+        });
+      } else {
+        showErrorPopup(context, 'Couldn\'t post', result);
+      }
+    } else {
+      showErrorPopup(
+        context,
+        'No Image Selected',
+        'Please select an image to upload.',
+      );
+    }
+
+    setState(() {
+      isLoading = false; // Set loading to false when post creation finishes
+    });
   }
 
   @override
@@ -78,32 +123,27 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         centerTitle: true,
       ),
       body: SingleChildScrollView(
-        // Added to make the content scrollable
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 25.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 16),
-
-              // Create new Post
               Container(
                 height: 80,
                 decoration: BoxDecoration(
-                  // Horizontal gradient from left (08BDBD) to right (1877F2)
-                  gradient: LinearGradient(
+                  gradient: const LinearGradient(
                     begin: Alignment.centerLeft,
                     end: Alignment.centerRight,
                     colors: [
-                      Color(0xFF08BDBD), // Left-side color
-                      Color(0xFF1877F2), // Right-side color
+                      Color(0xFF08BDBD),
+                      Color(0xFF1877F2),
                     ],
                   ),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Row(
                   children: [
-                    // Left-side image
                     Padding(
                       padding: const EdgeInsets.only(left: 16.0),
                       child: Image.asset(
@@ -112,9 +152,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                         width: 70,
                       ),
                     ),
-
-                    // const SizedBox(width: 8),
-                    Expanded(
+                    const Expanded(
                       child: Text(
                         'Create New Post',
                         textAlign: TextAlign.center,
@@ -128,24 +166,17 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                   ],
                 ),
               ),
-
               const SizedBox(height: 15),
-
-              // Title label
               const Text(
                 'Title',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
-
-              // Title input field
               TextField(
                 controller: _titleController,
                 decoration: InputDecoration(
                   hintText: '📝 Your creative title 🌍',
-                  hintStyle: TextStyle(
-                    color: Colors.grey,
-                  ),
+                  hintStyle: const TextStyle(color: Colors.grey),
                   filled: true,
                   fillColor: ColorTheme.liteGreen1,
                   border: OutlineInputBorder(
@@ -155,23 +186,17 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 ),
               ),
               const SizedBox(height: 16),
-
-              // Description label
               const Text(
                 'Description',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
-
-              // Description input field
               TextField(
                 controller: _descriptionController,
                 maxLines: 4,
                 decoration: InputDecoration(
                   hintText: 'Post description',
-                  hintStyle: TextStyle(
-                    color: Colors.grey,
-                  ),
+                  hintStyle: const TextStyle(color: Colors.grey),
                   filled: true,
                   fillColor: ColorTheme.liteGreen1,
                   border: OutlineInputBorder(
@@ -181,9 +206,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 ),
               ),
               const SizedBox(height: 16),
-
-              // Image preview
-              Text(
+              const Text(
                 'Image Upload',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
@@ -213,8 +236,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                   ),
                 ),
               const SizedBox(height: 16),
-
-              // Centered upload image button
               Align(
                 alignment: Alignment.center,
                 child: OutlinedButton.icon(
@@ -230,47 +251,42 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 ),
               ),
               const SizedBox(height: 16),
-
-              // Create post button at the bottom
               Container(
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
+                  gradient: const LinearGradient(
                     begin: Alignment.centerLeft,
                     end: Alignment.centerRight,
                     colors: [
-                      Color(0xFF08BDBD), // Left-side color
-                      Color(0xFF1877F2), // Right-side color
+                      Color(0xFF08BDBD),
+                      Color(0xFF1877F2),
                     ],
                   ),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: ElevatedButton(
-                  onPressed: () {
-                    // Post creation logic
-                    showSuccessPopup(
-                      context,
-                      'Create New Post',
-                      'has been completed.',
-                    );
-                    showErrorPopup(
-                      context,
-                      'Couldn\'t post',
-                      'Please check your network connection.',
-                    );
-                  },
+                  onPressed: isLoading
+                      ? null
+                      : _createPost, // Disable button when loading
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.transparent,
                     padding: const EdgeInsets.symmetric(vertical: 10),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    shadowColor: Colors.transparent, // Remove any shadow
+                    shadowColor: Colors.transparent,
                   ),
-                  child: const Text(
-                    'Create Post',
-                    style: TextStyle(fontSize: 18, color: ColorTheme.white),
-                  ),
+                  child: isLoading
+                      ? const CircularProgressIndicator(
+                          // Show loader when isLoading is true
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(Colors.white),
+                        )
+                      : const Text(
+                          'Create Post',
+                          style:
+                              TextStyle(fontSize: 18, color: ColorTheme.white),
+                        ),
                 ),
               ),
               const SizedBox(height: 16),
