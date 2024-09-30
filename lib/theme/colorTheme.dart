@@ -13,4 +13,5 @@ class ColorTheme {
   static const Color lightRed = Color.fromARGB(255, 243, 126, 151);
   static const Color lightRed2 = Color.fromARGB(22, 217, 4, 43);
   static const Color red = Color.fromARGB(255, 217, 4, 43);
+  static const Color litegray = Color.fromARGB(75, 29, 34, 92);
 }

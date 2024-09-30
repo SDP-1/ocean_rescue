@@ -1,21 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:ocean_rescue/utils/colors.dart';
+import 'package:cloud_firestore/cloud_firestore.dart'; // Import this for Timestamp
 
 class CommentCard extends StatelessWidget {
-  final Map<String, dynamic> snap; // Ensure snap is a Map<String, dynamic>
+  final Map<String, dynamic> snap;
+
   const CommentCard({Key? key, required this.snap}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final String profilePic = snap['profilePic'];
+    final String name = snap['name'];
+    final String text = snap['text'];
+    final String uid = snap['uid'];
+    final String commentId = snap['commentId'];
+
+    // Handle both Timestamp and DateTime
+    final datePublished = snap['datePublished'];
+    DateTime? parsedDate;
+    if (datePublished is Timestamp) {
+      parsedDate = datePublished.toDate();
+    } else if (datePublished is DateTime) {
+      parsedDate = datePublished;
+    }
+
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
       child: Row(
         children: [
           CircleAvatar(
-            backgroundImage: NetworkImage(
-              snap['profilePic'], // Access profilePic directly
-            ),
+            backgroundImage: NetworkImage(profilePic),
             radius: 18,
           ),
           Expanded(
@@ -29,13 +44,14 @@ class CommentCard extends StatelessWidget {
                     text: TextSpan(
                       children: [
                         TextSpan(
-                            text: snap['name'], // Access name directly
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: primaryColor,
-                            )),
+                          text: name,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: primaryColor,
+                          ),
+                        ),
                         TextSpan(
-                          text: ' ${snap['text']}', // Access text directly
+                          text: ' $text',
                           style: const TextStyle(
                             color: primaryColor,
                           ),
@@ -43,19 +59,18 @@ class CommentCard extends StatelessWidget {
                       ],
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 4),
-                    child: Text(
-                      DateFormat.yMMMd().format(
-                        snap['datePublished'] as DateTime, // Directly use DateTime
-                      ),
-                      style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w400,
-                        color: primaryColor,
+                  if (parsedDate != null)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 4),
+                      child: Text(
+                        DateFormat.yMMMd().format(parsedDate),
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                          color: primaryColor,
+                        ),
                       ),
                     ),
-                  )
                 ],
               ),
             ),
@@ -66,7 +81,7 @@ class CommentCard extends StatelessWidget {
               Icons.favorite,
               size: 16,
             ),
-          )
+          ),
         ],
       ),
     );

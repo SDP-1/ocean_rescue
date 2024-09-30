@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "55640456962",
+    "project_id": "ocean-rescue-db",
+    "storage_bucket": "ocean-rescue-db.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:55640456962:android:5faec36a8e59b0b94f8c1b",
+        "android_client_info": {
+          "package_name": "com.example.ocean_rescue"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDlCangD-69lPoyndkwyhkcDcTaCFM88QE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
