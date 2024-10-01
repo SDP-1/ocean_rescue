@@ -64,6 +64,7 @@ class _FeedScreenState extends State<FeedScreen> {
           'likes': doc['likes'],
           'datePublished': doc['datePublished'],
           'title': doc['title'],
+          'uid' : doc['uid'],
           'username': userDoc['username'],
           'profImage': userDoc['photoUrl'],
         });
@@ -106,11 +107,13 @@ class _FeedScreenState extends State<FeedScreen> {
         DocumentSnapshot userDoc =
             await _firestore.collection('users').doc(doc['uid']).get();
         fetchedPosts.add({
-          'postId': doc['postId'],
+           'postId': doc['postId'],
           'postUrl': doc['postUrl'],
           'description': doc['description'],
           'likes': doc['likes'],
           'datePublished': doc['datePublished'],
+          'title': doc['title'],
+          'uid' : doc['uid'],
           'username': userDoc['username'],
           'profImage': userDoc['photoUrl'],
         });

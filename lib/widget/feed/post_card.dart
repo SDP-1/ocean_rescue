@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:ocean_rescue/pages/feed/comments_screen.dart';
 import 'package:ocean_rescue/utils/colors.dart';
+import 'package:ocean_rescue/resources/firestore_methods.dart';
 import '../../widget/feed/comment_card.dart';
 import 'like_animation.dart'; // Ensure this file exists
+import 'package:firebase_auth/firebase_auth.dart';
 
 class PostCard extends StatefulWidget {
   final Map<String, dynamic> snap; // Data from Firebase
@@ -30,8 +32,8 @@ class _PostCardState extends State<PostCard> {
   }
 
   void deletePost(String postId) {
-    // Custom logic for deleting a post (implement as needed)
-    // For example, call Firestore delete method
+    // Implement Firestore delete method here
+    FireStoreMethods().deletePost(postId); // Assuming you have this method
   }
 
   void showBottomSheetOptions(BuildContext context) {
@@ -75,8 +77,10 @@ class _PostCardState extends State<PostCard> {
 
   @override
   Widget build(BuildContext context) {
-    final bool isLiked = widget.snap['likes']
-        .contains('user_id'); // Replace 'user_id' with actual user ID
+    // Capture the current logged-in user's UID
+    String uid = FirebaseAuth.instance.currentUser!.uid;
+
+    final bool isLiked = widget.snap['likes'].contains(uid);
     final description = widget.snap['description'] ?? '';
 
     return Container(
@@ -121,10 +125,15 @@ class _PostCardState extends State<PostCard> {
           ),
           // IMAGE SECTION OF THE POST
           GestureDetector(
-            onDoubleTap: () {
+            onDoubleTap: () async {
               setState(() {
                 isLikeAnimating = true;
               });
+              await FireStoreMethods().likePost(
+                widget.snap['postId'],
+                uid,
+                widget.snap['likes'],
+              );
               Future.delayed(const Duration(milliseconds: 400), () {
                 setState(() {
                   isLikeAnimating = false;
@@ -173,11 +182,14 @@ class _PostCardState extends State<PostCard> {
                   icon: isLiked
                       ? const Icon(Icons.favorite, color: Colors.red)
                       : const Icon(Icons.favorite_border),
-                  onPressed: () {
+                  onPressed: () async {
+                    await FireStoreMethods().likePost(
+                      widget.snap['postId'],
+                      uid,
+                      widget.snap['likes'],
+                    );
                     setState(() {
-                      // Replace with your like action
                       isLikeAnimating = true;
-                      // Update likes in Firestore
                     });
                   },
                 ),
@@ -235,8 +247,7 @@ class _PostCardState extends State<PostCard> {
                           style: const TextStyle(color: Colors.black),
                           children: [
                             TextSpan(
-                              text: widget
-                                  .snap['username'], // Display the username
+                              text: widget.snap['username'], // Display the username
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 14,
@@ -247,8 +258,7 @@ class _PostCardState extends State<PostCard> {
                                   '\t\t\t', // Add some space between username and title
                             ),
                             TextSpan(
-                              text: widget
-                                  .snap['title'], // Display the post title
+                              text: widget.snap['title'], // Display the post title
                               style: const TextStyle(
                                 color: Colors.black,
                                 fontSize: 14,
@@ -258,7 +268,7 @@ class _PostCardState extends State<PostCard> {
                         ),
                       ),
                       const SizedBox(height: 10),
-                      // Display the description with a tab space and "See more/Show less" functionality
+                      // Display the description with "See more/See less" functionality
                       Padding(
                         padding: const EdgeInsets.only(top: 4),
                         child: Text.rich(
