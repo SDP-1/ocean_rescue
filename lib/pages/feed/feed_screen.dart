@@ -8,7 +8,7 @@ import '../../widget/feed/TopAppBar .dart';
 import '../../widget/feed/post_card.dart';
 
 class FeedScreen extends StatefulWidget {
-  const FeedScreen({Key? key}) : super(key: key);
+  const FeedScreen({super.key});
 
   @override
   State<FeedScreen> createState() => _FeedScreenState();
@@ -146,7 +146,7 @@ class _FeedScreenState extends State<FeedScreen> {
               color: ColorTheme.white,
               child: Row(
                 children: [
-                  CircleAvatar(
+                  const CircleAvatar(
                     radius: 18,
                     backgroundImage: AssetImage(
                         'assets/user/profile_pic.jpg'), // Placeholder
@@ -201,7 +201,7 @@ class _FeedScreenState extends State<FeedScreen> {
                 if (index == posts.length) {
                   // Show loading indicator at the bottom if more posts are loading
                   return isLoadingMore
-                      ? Center(child: CircularProgressIndicator())
+                      ? const Center(child: CircularProgressIndicator())
                       : Container();
                 }
                 return Container(

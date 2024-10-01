@@ -8,9 +8,9 @@ import 'like_animation.dart'; // Ensure this file exists
 class PostCard extends StatefulWidget {
   final Map<String, dynamic> snap; // Data from Firebase
   const PostCard({
-    Key? key,
+    super.key,
     required this.snap,
-  }) : super(key: key);
+  });
 
   @override
   State<PostCard> createState() => _PostCardState();

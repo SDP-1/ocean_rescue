@@ -3,6 +3,8 @@ import 'package:ocean_rescue/theme/colorTheme.dart';
 import 'end_userprofile_screen.dart'; // Add this line
 
 class UserSearchPage extends StatefulWidget {
+  const UserSearchPage({super.key});
+
   @override
   _UserSearchPageState createState() => _UserSearchPageState();
 }
@@ -46,7 +48,7 @@ class _UserSearchPageState extends State<UserSearchPage> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.black),
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -57,7 +59,7 @@ class _UserSearchPageState extends State<UserSearchPage> {
             controller: _searchController,
             decoration: InputDecoration(
               hintText: 'Search',
-              prefixIcon: Icon(Icons.search, color: Colors.black54),
+              prefixIcon: const Icon(Icons.search, color: Colors.black54),
               filled: true,
               fillColor:
                   ColorTheme.liteBlue2, // Set to a light greenish background
@@ -91,9 +93,9 @@ class _UserSearchPageState extends State<UserSearchPage> {
                     title: Text(
                       filteredUsers[index].name,
                       style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                          const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                     ),
-                    contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
                     onTap: () {
                       Navigator.push(
                         context,

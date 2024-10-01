@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class UserProfilePage extends StatelessWidget {
   final User user;
 
-  const UserProfilePage({Key? key, required this.user}) : super(key: key);
+  const UserProfilePage({super.key, required this.user});
 
   @override
   Widget build(BuildContext context) {
@@ -42,10 +42,10 @@ class UserProfilePage extends StatelessWidget {
                           ),
                         ),
                       ),
-                      SizedBox(height: 8), // Space between image and name
+                      const SizedBox(height: 8), // Space between image and name
                     ],
                   ),
-                  SizedBox(width: 20), // Spacing between image and details
+                  const SizedBox(width: 20), // Spacing between image and details
 
                   // Stats and follow button on the right
                   Expanded(
@@ -54,7 +54,7 @@ class UserProfilePage extends StatelessWidget {
                           .start, // Align stats and button to the left
                       children: [
                         // Stats (Post, Followers, Following)
-                        Row(
+                        const Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             Column(
@@ -107,7 +107,7 @@ class UserProfilePage extends StatelessWidget {
                             ),
                           ],
                         ),
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
                         // Follow button with expanded width
                         SizedBox(
                           width: double.infinity,
@@ -120,7 +120,7 @@ class UserProfilePage extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(10),
                               ),
                             ),
-                            child: Text(
+                            child: const Text(
                               'Follow',
                               style:
                                   TextStyle(fontSize: 12), // Reduced font size
@@ -142,7 +142,7 @@ class UserProfilePage extends StatelessWidget {
                 alignment: Alignment.centerLeft,
                 child: Text(
                   user.name,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
                   ),
@@ -152,7 +152,7 @@ class UserProfilePage extends StatelessWidget {
               ),
             ),
 
-            Divider(),
+            const Divider(),
             // Medal section with horizontal centering
             Center(
               child: Row(
@@ -163,10 +163,10 @@ class UserProfilePage extends StatelessWidget {
                     width: 60,
                     height: 60,
                   ),
-                  SizedBox(
+                  const SizedBox(
                       width:
                           8), // Add some space between the image and the text
-                  Text(
+                  const Text(
                     'Member',
                     style: TextStyle(fontSize: 14),
                   ),

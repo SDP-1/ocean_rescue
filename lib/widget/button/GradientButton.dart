@@ -13,8 +13,8 @@ class GradientButton extends StatelessWidget {
     this.width = double.infinity,
     this.height = 50.0,
     this.textStyle, // Initialize the textStyle parameter
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +24,7 @@ class GradientButton extends StatelessWidget {
         width: width,
         height: height,
         decoration: BoxDecoration(
-          gradient: LinearGradient(
+          gradient: const LinearGradient(
             colors: [Color(0xFF08BDBD), Color(0xFF1877F2)],
             begin: Alignment.centerLeft,
             end: Alignment.centerRight,

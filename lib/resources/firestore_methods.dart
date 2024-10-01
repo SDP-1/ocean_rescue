@@ -27,8 +27,7 @@ class FireStoreMethods {
           85, // Quality can be adjusted between 0-100, reduce to lower size
     );
 
-    if (compressedImage != null &&
-        compressedImage.lengthInBytes < 2 * 1024 * 1024) {
+    if (compressedImage.lengthInBytes < 2 * 1024 * 1024) {
       // If compressed image size is below 2MB, return it
       return compressedImage;
     } else {

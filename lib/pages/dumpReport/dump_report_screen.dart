@@ -1,220 +1,320 @@
 import 'package:flutter/material.dart';
-import 'package:ocean_rescue/theme/colorTheme.dart';
-import 'package:ocean_rescue/widget/feed/TopAppBar%20.dart';
+import 'package:image_picker/image_picker.dart'; // Add this package to handle image picking
+import 'dart:io';
 
-import '../../widget/dumpReport/eventCard.dart';
-import 'dump_dashboard_screen.dart';
+import '../../theme/colorTheme.dart';
+import '../../widget/popup/ErrorPopup.dart';
+import '../../widget/popup/SuccessPopup.dart';
+import '../../models/reportdump.dart' as model;
 
-class DumpsDashboard extends StatelessWidget {
+void main() => runApp(MaterialApp(home: ReportDumpPage()));
+
+class ReportDumpPage extends StatefulWidget {
+  const ReportDumpPage({super.key});
+
+  @override
+  _ReportDumpPageState createState() => _ReportDumpPageState();
+}
+
+class _ReportDumpPageState extends State<ReportDumpPage> {
+  File? _image; // Variable to store the selected image
+  final ImagePicker _picker = ImagePicker(); // Image picker instance
+
+  // Method to pick an image
+  Future<void> _pickImage(BuildContext context) async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      setState(() {
+        _image = File(pickedFile.path);
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(56.0),
-        child: TopAppBar(),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        centerTitle: true,
+        title: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Image.asset(
+            'assets/logo/logo_without_name.png', // replace with your logo asset
+            height: 40,
+          ),
+        ),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: ListView(
           children: [
-            // Title and Actions that will scroll with the content
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment:
-                        CrossAxisAlignment.start, // Aligns children to the left
-                    children: [
-                      Text(
-                        "Dumps",
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Text(
-                        "Lorem Ipsum Event ipsum lorem",
-                        style: TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey, // Set color to gray
-                        ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      _buildActionIcon(
-                        Icons.history,
-                        "Report History",
-                        ColorTheme.liteBlue1,
-                        () {
-                          // Add report history action
-                        },
-                      ),
-                      SizedBox(width: 5), // Space between icons
-                      _buildActionIcon(
-                        Icons.report,
-                        "Report Dump",
-                        Colors.red,
-                        () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    ReportDumpPage()), // Replace `ReportDumpPage` with your target page widget
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            // Rest of the content
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Text(
-                "Nearby Dump",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-            ),
+            const SizedBox(height: 16),
+            // Create new Post
             Container(
-              margin: EdgeInsets.symmetric(horizontal: 16),
-              height: 150,
+              height: 80,
               decoration: BoxDecoration(
-                color: ColorTheme.liteBlue2, // Background color
-                borderRadius: BorderRadius.circular(12), // Rounded corners
+                // Horizontal gradient from left (08BDBD) to right (1877F2)
+                gradient: const LinearGradient(
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                  colors: [
+                    Color(0xFF08BDBD), // Left-side color
+                    Color(0xFF1877F2), // Right-side color
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(10),
               ),
-              child: Center(child: Text('Map Placeholder')),
-            ),
-
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Text(
-                "Critical Dumps",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-            ),
-            Container(
-              height: 100,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: [
-                  CriticalDumpImage('assets/dump/dump1.jpeg'),
-                  CriticalDumpImage('assets/dump/dump2.jpeg'),
-                  CriticalDumpImage('assets/dump/dump3.jpg'),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
               child: Row(
                 children: [
-                  Text(
-                    "All Events",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  Spacer(),
-                  Icon(Icons.filter_list),
-                ],
-              ),
-            ),
-            // For the critical event card:
-            EventCard(
-              isCritical: true,
-              imageUrl: 'assets/dump/dump1.jpeg',
-            ),
-
-            EventCard(
-              isCritical: false,
-              imageUrl: 'assets/dump/dump1.jpeg',
-            ),
-
-            EventCard(
-              isCritical: false,
-              imageUrl: 'assets/dump/dump1.jpeg',
-            ),
-
-            EventCard(
-              isCritical: false,
-              imageUrl: 'assets/dump/dump1.jpeg',
-            ),
-
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Center(
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        Colors.white, // Background color of the button
-                    foregroundColor:
-                        ColorTheme.liteBlue1, // Text color of the button
-                    side: BorderSide(
-                        color: ColorTheme.liteBlue1,
-                        width: 2), // Border color and width
-                    shape: RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.circular(12), // Rounded corners
+                  // Left-side image
+                  Padding(
+                    padding: const EdgeInsets.only(left: 16.0),
+                    child: Image.asset(
+                      'assets/post/createNewPost.png',
+                      height: 70,
+                      width: 70,
                     ),
                   ),
-                  onPressed: () {
-                    // Load more action
-                  },
-                  child: Text("Load More"),
+
+                  const Expanded(
+                    child: Text(
+                      'Report Dump',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // Name TextField
+            _buildLabeledTextField(
+              label: 'Name',
+              hintText: 'Enter your name',
+            ),
+            const SizedBox(height: 16),
+
+            // Description TextField
+            _buildLabeledTextField(
+              label: 'Description',
+              hintText: 'Enter description',
+              maxLines: 3,
+            ),
+            const SizedBox(height: 16),
+
+            // Urgency Level
+            const Text('Urgency Level'),
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                urgencyButton('Low', Colors.green),
+                urgencyButton('Normal', Colors.blue),
+                urgencyButton('High', Colors.orange),
+                urgencyButton('Urgent', Colors.red),
+              ],
+            ),
+            const SizedBox(height: 16),
+
+            // Event Location TextField
+            _buildLabeledTextField(
+              label: 'Event Location',
+              hintText: 'Enter event location',
+              suffixIcon: const Icon(Icons.search),
+            ),
+            const SizedBox(height: 16),
+
+            // Map Placeholder
+            Container(
+              height: 200,
+              decoration: BoxDecoration(
+                color: ColorTheme.liteGreen1,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Center(
+                child: Text('Map Placeholder'),
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // Image Preview
+            const Text(
+              'Image Upload',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            if (_image != null)
+              Container(
+                height: 200,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  image: DecorationImage(
+                    image: FileImage(_image!),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              )
+            else
+              Container(
+                height: 200,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade200,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Center(
+                  child: Text(
+                    'No Image Selected',
+                    style: TextStyle(color: Colors.grey.shade500),
+                  ),
                 ),
               ),
-            )
+            const SizedBox(height: 16),
+
+            // Centered upload image button
+            Align(
+              alignment: Alignment.center,
+              child: OutlinedButton.icon(
+                onPressed: () => _pickImage(context),
+                icon: const Icon(Icons.upload_file),
+                label: const Text('Upload Image'),
+                style: OutlinedButton.styleFrom(
+                  side: const BorderSide(color: Colors.grey),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // Report Dump Button
+            GestureDetector(
+              onTap: () {
+                // Handle report dump logic here
+              },
+              child: Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                    colors: [
+                      Color(0xFF08BDBD), // Left-side color
+                      Color(0xFF1877F2), // Right-side color
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: ElevatedButton(
+                  onPressed: () {
+                    // Post creation logic
+                    showSuccessPopup(
+                      context,
+                      'Dump',
+                      'Reported successfully.',
+                    );
+                    showErrorPopup(
+                      context,
+                      'You couldn\'t join',
+                      'Please try again.',
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.transparent,
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    shadowColor: Colors.transparent, // Remove any shadow
+                  ),
+                  child: const Text(
+                    'Report Dump',
+                    style: TextStyle(fontSize: 18, color: ColorTheme.white),
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildActionIcon(
-      IconData icon, String label, Color color, VoidCallback onPressed) {
+  // Method to build a labeled TextField
+  Widget _buildLabeledTextField({
+    required String label,
+    required String hintText,
+    int? maxLines,
+    Widget? suffixIcon,
+  }) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
-          margin: EdgeInsets.only(bottom: 4),
-          decoration: BoxDecoration(
-            color: color,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: IconButton(
-            icon: Icon(icon, color: Colors.white, size: 24), // Small icon size
-            onPressed: onPressed,
-          ),
-        ),
         Text(
           label,
-          style: TextStyle(fontSize: 9, color: Colors.black54),
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 8),
+        TextFormField(
+          decoration: InputDecoration(
+            hintText: hintText,
+            border: const OutlineInputBorder(),
+            suffixIcon: suffixIcon,
+            contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+          ),
+          maxLines: maxLines,
         ),
       ],
     );
   }
-}
 
-class CriticalDumpImage extends StatelessWidget {
-  final String imagePath;
-
-  CriticalDumpImage(this.imagePath);
-
-  @override
-  Widget build(BuildContext context) {
+  Widget urgencyButton(String label, Color color) {
     return Container(
-      margin: EdgeInsets.only(left: 16),
-      width: 150,
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: color),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        child: Text(
+          label,
+          style: TextStyle(color: color),
+        ),
+      ),
+    );
+  }
+
+  Widget imageThumbnail(String imagePath) {
+    return Container(
+      height: 60,
+      width: 60,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
         image: DecorationImage(
-          image: AssetImage(imagePath),
+          image: AssetImage(imagePath), // Replace with actual image
           fit: BoxFit.cover,
         ),
       ),
+    );
+  }
+
+  Widget uploadImageButton() {
+    return Container(
+      height: 60,
+      width: 60,
+      decoration: BoxDecoration(
+        color: Colors.grey[200],
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: const Icon(Icons.upload),
     );
   }
 }

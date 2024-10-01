@@ -15,37 +15,37 @@ void showSuccessPopup(BuildContext context, String title, String message) {
           children: [
             Text(
               title,
-              style: TextStyle(
+              style: const TextStyle(
                 color: ColorTheme.white,
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Text(
               message,
-              style: TextStyle(
+              style: const TextStyle(
                 color: ColorTheme.white,
               ),
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Image.asset('assets/popup/Success.png', width: 80, height: 80),
-            SizedBox(height: 20),
-            Container(
+            const SizedBox(height: 20),
+            SizedBox(
               width: 200,
               child: ElevatedButton(
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFF00C3A9), // Button color
+                  backgroundColor: const Color(0xFF00C3A9), // Button color
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-                child: Text(
+                child: const Text(
                   'Let\'s Go',
                   style: TextStyle(
                     color: ColorTheme.black, // Replace with your desired color

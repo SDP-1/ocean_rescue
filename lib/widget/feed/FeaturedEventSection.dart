@@ -39,7 +39,7 @@ class FeaturedEventSection extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                         builder: (context) =>
-                            CreateEvent(), // Replace with your new screen widget
+                            const CreateEvent(), // Replace with your new screen widget
                       ),
                     );
                   },
@@ -52,7 +52,7 @@ class FeaturedEventSection extends StatelessWidget {
                           .liteBlue2, // Highlight color for the "Create Event" card
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Column(
+                    child: const Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(
@@ -60,7 +60,7 @@ class FeaturedEventSection extends StatelessWidget {
                           size: 40,
                           color: Colors.black54,
                         ),
-                        const SizedBox(
+                        SizedBox(
                             height: 8), // Space between icon and text
                         Text(
                           'Create Event',
@@ -99,7 +99,7 @@ class FeaturedEventSection extends StatelessWidget {
                     Positioned(
                       bottom: 8,
                       left: 8,
-                      child: Container(
+                      child: SizedBox(
                         width: 130,
                         child: Text(
                           event['title'] ?? 'Untitled Event',

@@ -9,7 +9,7 @@ import 'package:ocean_rescue/resources/firestore_methods.dart';
 import 'package:ocean_rescue/pages/feed/feed_screen.dart'; // Import your Feed screen
 
 class CreatePostScreen extends StatefulWidget {
-  const CreatePostScreen({Key? key}) : super(key: key);
+  const CreatePostScreen({super.key});
 
   @override
   State<CreatePostScreen> createState() => _CreatePostScreenState();
@@ -24,7 +24,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   bool isLoading = false; // Loading state to show loading indicator
 
   Future<void> _pickImage(BuildContext context) async {
-    final ImagePicker _picker = ImagePicker();
+    final ImagePicker picker = ImagePicker();
 
     showModalBottomSheet(
       context: context,
@@ -37,7 +37,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 title: const Text('Gallery'),
                 onTap: () async {
                   final XFile? image =
-                      await _picker.pickImage(source: ImageSource.gallery);
+                      await picker.pickImage(source: ImageSource.gallery);
                   setState(() {
                     _image = image;
                   });
@@ -49,7 +49,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 title: const Text('Camera'),
                 onTap: () async {
                   final XFile? image =
-                      await _picker.pickImage(source: ImageSource.camera);
+                      await picker.pickImage(source: ImageSource.camera);
                   setState(() {
                     _image = image;
                   });
@@ -82,7 +82,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       if (result == "success") {
         Future.delayed(const Duration(seconds: 2), () {
           Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (context) => FeedScreen()),
+            MaterialPageRoute(builder: (context) => const FeedScreen()),
             (route) => false,
           );
           showSuccessPopup(context, 'Create New Post', 'has been completed.');
