@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ocean_rescue/pages/post/create_post_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
 import '../../theme/colorTheme.dart';
 import '../../widget/feed/FeaturedEventSection.dart';
 import '../../widget/feed/TopAppBar .dart';
@@ -64,7 +63,7 @@ class _FeedScreenState extends State<FeedScreen> {
           'likes': doc['likes'],
           'datePublished': doc['datePublished'],
           'title': doc['title'],
-          'uid' : doc['uid'],
+          'uid': doc['uid'],
           'username': userDoc['username'],
           'profImage': userDoc['photoUrl'],
         });
@@ -107,13 +106,13 @@ class _FeedScreenState extends State<FeedScreen> {
         DocumentSnapshot userDoc =
             await _firestore.collection('users').doc(doc['uid']).get();
         fetchedPosts.add({
-           'postId': doc['postId'],
+          'postId': doc['postId'],
           'postUrl': doc['postUrl'],
           'description': doc['description'],
           'likes': doc['likes'],
           'datePublished': doc['datePublished'],
           'title': doc['title'],
-          'uid' : doc['uid'],
+          'uid': doc['uid'],
           'username': userDoc['username'],
           'profImage': userDoc['photoUrl'],
         });
@@ -132,6 +131,13 @@ class _FeedScreenState extends State<FeedScreen> {
         isLoadingMore = false; // Set loading state to false
       });
     }
+  }
+
+  // Callback function to remove post
+  void _removePost(String postId) {
+    setState(() {
+      posts.removeWhere((post) => post['postId'] == postId); // Remove the post
+    });
   }
 
   @override
@@ -175,7 +181,7 @@ class _FeedScreenState extends State<FeedScreen> {
                         child: Row(
                           children: [
                             Text(
-                              'Post what’s on your mind ?',
+                              'Post what’s on your mind?',
                               style: TextStyle(
                                 color: Colors.grey.shade600,
                                 fontSize: 16,
@@ -213,6 +219,7 @@ class _FeedScreenState extends State<FeedScreen> {
                       const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
                   child: PostCard(
                     snap: posts[index], // Pass the actual post data
+                    onPostDeleted: _removePost, // Pass the delete callback
                   ),
                 );
               },

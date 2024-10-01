@@ -9,13 +9,17 @@ import '../../widget/feed/comment_card.dart';
 import 'like_animation.dart'; // Ensure this file exists
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../popup/DeleteConfirmationPopup.dart';
 
 class PostCard extends StatefulWidget {
   final Map<String, dynamic> snap; // Data from Firebase
+  final Function(String postId)
+      onPostDeleted; // Callback when a post is deleted
 
   const PostCard({
     Key? key,
     required this.snap,
+    required this.onPostDeleted, // Add required parameter for onPostDeleted
   }) : super(key: key);
 
   @override
@@ -62,10 +66,17 @@ class _PostCardState extends State<PostCard> {
   }
 
   void deletePost(String postId) {
-    FireStoreMethods().deletePost(postId); // Delete the post
+    FireStoreMethods().deletePost(postId).then((_) {
+      widget.onPostDeleted(postId); // Call the onPostDeleted callback
+    });
   }
 
   void showBottomSheetOptions(BuildContext context) {
+    final String postOwnerId =
+        widget.snap['uid']; // Get the UID of the post owner
+    final String currentUserId =
+        FirebaseAuth.instance.currentUser!.uid; // Get the current user's UID
+
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -74,23 +85,53 @@ class _PostCardState extends State<PostCard> {
       builder: (BuildContext context) {
         return Wrap(
           children: <Widget>[
+            // Share option available to all users
             ListTile(
-              leading: const Icon(Icons.edit),
-              title: const Text('Edit Post'),
+              leading: const Icon(Icons.share),
+              title: const Text('Share Post'),
               onTap: () {
                 Navigator.pop(context);
-                // Navigate to edit post screen
+                // Implement share functionality here
               },
             ),
+
+            // Bookmark option available to all users
             ListTile(
-              leading: const Icon(Icons.delete),
-              title: const Text('Delete Post'),
+              leading: const Icon(Icons.bookmark),
+              title: const Text('Bookmark Post'),
               onTap: () {
                 Navigator.pop(context);
-                deletePost(widget.snap['postId']);
+                // Implement bookmark functionality here
               },
             ),
-            const Divider(),
+
+            // Check if the current user is the owner of the post
+            if (currentUserId == postOwnerId) ...[
+              ListTile(
+                leading: const Icon(Icons.edit),
+                title: const Text('Edit Post'),
+                onTap: () {
+                  Navigator.pop(context);
+                  // Navigate to edit post screen
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.delete),
+                title: const Text('Delete Post'),
+                onTap: () {
+                  Navigator.pop(context);
+                  // Show confirmation dialog with deletion logic
+                  DeleteConfirmationPopup(
+                    context,
+                    'This post.', // Message to display
+                    () => deletePost(
+                        widget.snap['postId']), // Deletion action on confirm
+                  );
+                },
+              ),
+            ],
+
+            // Cancel option to close the bottom sheet
             ListTile(
               leading: const Icon(Icons.cancel),
               title: const Text('Cancel'),

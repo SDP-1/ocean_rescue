@@ -9,46 +9,54 @@ void showSuccessPopup(BuildContext context, String title, String message) {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
         ),
-        backgroundColor: ColorTheme.darkBlue2,
+        backgroundColor: ColorTheme
+            .white, // Background color similar to DeleteConfirmationPopup
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            // Title
             Text(
               title,
               style: TextStyle(
-                color: ColorTheme.white,
+                color: ColorTheme.black, // black text color
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 10),
+            // Message
             Text(
               message,
               style: TextStyle(
-                color: ColorTheme.white,
+                color: ColorTheme.black, // black text color
               ),
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 20),
+            // Success Icon/Image
             Image.asset('assets/popup/Success.png', width: 80, height: 80),
             SizedBox(height: 20),
-            Container(
-              width: 200,
+            // Button
+            SizedBox(
+              width: 200, // Fixed width for button
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.of(context).pop();
+                  Navigator.of(context).pop(); // Close popup
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFF00C3A9), // Button color
+                  backgroundColor: Color(
+                      0xFF00C3A9), // Button color similar to "Cancel" in DeleteConfirmationPopup
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(10), // Rounded corners
                   ),
                 ),
                 child: Text(
                   'Let\'s Go',
                   style: TextStyle(
-                    color: ColorTheme.black, // Replace with your desired color
+                    color: ColorTheme
+                        .black, // Text color matching the style of DeleteConfirmationPopup
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
