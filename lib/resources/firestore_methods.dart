@@ -74,17 +74,27 @@ class FireStoreMethods {
     return res;
   }
 
-  // Like or unlike a post
-  Future<String> likePost(String postId, String uid, List likes) async {
+// Like or unlike a post
+  Future<String> likePost(String postId, String uid) async {
     String res = "Some error occurred";
     try {
-      if (likes.contains(uid)) {
+      // Get the current likes array from Firestore
+      DocumentSnapshot postDoc =
+          await _firestore.collection('posts').doc(postId).get();
+      List<dynamic> currentLikes =
+          postDoc['likes'] ?? []; // Retrieve current likes or an empty list
+
+      if (currentLikes.contains(uid)) {
+        // Remove the like
         await _firestore.collection('posts').doc(postId).update({
-          'likes': FieldValue.arrayRemove([uid]),
+          'likes': FieldValue.arrayRemove(
+              [uid]), // Correctly remove the user's ID from likes
         });
       } else {
+        // Add the like
         await _firestore.collection('posts').doc(postId).update({
-          'likes': FieldValue.arrayUnion([uid]),
+          'likes': FieldValue.arrayUnion(
+              [uid]), // Correctly add the user's ID to likes
         });
       }
       res = 'success';

@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -7,9 +8,11 @@ import 'package:ocean_rescue/resources/firestore_methods.dart';
 import '../../widget/feed/comment_card.dart';
 import 'like_animation.dart'; // Ensure this file exists
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class PostCard extends StatefulWidget {
   final Map<String, dynamic> snap; // Data from Firebase
+
   const PostCard({
     Key? key,
     required this.snap,
@@ -23,17 +26,43 @@ class _PostCardState extends State<PostCard> {
   bool isLikeAnimating = false;
   int commentLen = 0;
   bool isDescriptionExpanded = false; // State to control description expansion
+  bool isLiked = false; // State to track if the post is liked
+  late final String uid; // Current user's UID
+  late int likeCount; // To track the number of likes
 
   @override
   void initState() {
     super.initState();
+    uid = FirebaseAuth.instance.currentUser!.uid; // Get current user's UID
     commentLen =
         widget.snap['comments']?.length ?? 0; // Get actual comment length
+
+    // Initialize the liked state and listen for changes in the likes count
+    isLiked = widget.snap['likes'].contains(uid);
+    likeCount = widget.snap['likes'].length;
+
+    // Listen to real-time updates for likes
+    _listenToLikeUpdates();
+  }
+
+  void _listenToLikeUpdates() {
+    // Listen to the specific post document in Firestore for real-time updates
+    FirebaseFirestore.instance
+        .collection('posts')
+        .doc(widget.snap['postId'])
+        .snapshots()
+        .listen((snapshot) {
+      setState(() {
+        // Update like count and whether the post is liked by the current user
+        likeCount =
+            List.from(snapshot['likes']).length; // Ensure it's a fresh list
+        isLiked = List.from(snapshot['likes']).contains(uid);
+      });
+    });
   }
 
   void deletePost(String postId) {
-    // Implement Firestore delete method here
-    FireStoreMethods().deletePost(postId); // Assuming you have this method
+    FireStoreMethods().deletePost(postId); // Delete the post
   }
 
   void showBottomSheetOptions(BuildContext context) {
@@ -77,10 +106,6 @@ class _PostCardState extends State<PostCard> {
 
   @override
   Widget build(BuildContext context) {
-    // Capture the current logged-in user's UID
-    String uid = FirebaseAuth.instance.currentUser!.uid;
-
-    final bool isLiked = widget.snap['likes'].contains(uid);
     final description = widget.snap['description'] ?? '';
 
     return Container(
@@ -126,19 +151,7 @@ class _PostCardState extends State<PostCard> {
           // IMAGE SECTION OF THE POST
           GestureDetector(
             onDoubleTap: () async {
-              setState(() {
-                isLikeAnimating = true;
-              });
-              await FireStoreMethods().likePost(
-                widget.snap['postId'],
-                uid,
-                widget.snap['likes'],
-              );
-              Future.delayed(const Duration(milliseconds: 400), () {
-                setState(() {
-                  isLikeAnimating = false;
-                });
-              });
+              _toggleLike();
             },
             child: Stack(
               alignment: Alignment.center,
@@ -154,18 +167,24 @@ class _PostCardState extends State<PostCard> {
                 AnimatedOpacity(
                   duration: const Duration(milliseconds: 200),
                   opacity: isLikeAnimating ? 1 : 0,
-                  child: LikeAnimation(
-                    isAnimating: isLikeAnimating,
-                    duration: const Duration(milliseconds: 400),
-                    onEnd: () {
-                      setState(() {
-                        isLikeAnimating = false;
-                      });
-                    },
-                    child: const Icon(
-                      Icons.favorite,
-                      color: Colors.white,
-                      size: 100,
+                  child: AnimatedOpacity(
+                    duration: const Duration(milliseconds: 200),
+                    opacity: isLikeAnimating ? 1 : 0,
+                    child: LikeAnimation(
+                      isAnimating: isLikeAnimating,
+                      duration: const Duration(milliseconds: 400),
+                      onEnd: () {
+                        setState(() {
+                          isLikeAnimating = false; // Reset animation state
+                        });
+                      },
+                      child: Icon(
+                        Icons.favorite,
+                        color: isLiked
+                            ? Colors.red
+                            : Colors.white, // Change color based on isLiked
+                        size: 100,
+                      ),
                     ),
                   ),
                 ),
@@ -183,14 +202,7 @@ class _PostCardState extends State<PostCard> {
                       ? const Icon(Icons.favorite, color: Colors.red)
                       : const Icon(Icons.favorite_border),
                   onPressed: () async {
-                    await FireStoreMethods().likePost(
-                      widget.snap['postId'],
-                      uid,
-                      widget.snap['likes'],
-                    );
-                    setState(() {
-                      isLikeAnimating = true;
-                    });
+                    _toggleLike();
                   },
                 ),
               ),
@@ -232,7 +244,7 @@ class _PostCardState extends State<PostCard> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  '${widget.snap['likes']?.length ?? 0} likes',
+                  '$likeCount likes', // Updated to show real-time like count
                   style: const TextStyle(fontWeight: FontWeight.w800),
                 ),
                 Container(
@@ -247,7 +259,8 @@ class _PostCardState extends State<PostCard> {
                           style: const TextStyle(color: Colors.black),
                           children: [
                             TextSpan(
-                              text: widget.snap['username'], // Display the username
+                              text: widget
+                                  .snap['username'], // Display the username
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 14,
@@ -258,7 +271,8 @@ class _PostCardState extends State<PostCard> {
                                   '\t\t\t', // Add some space between username and title
                             ),
                             TextSpan(
-                              text: widget.snap['title'], // Display the post title
+                              text: widget
+                                  .snap['title'], // Display the post title
                               style: const TextStyle(
                                 color: Colors.black,
                                 fontSize: 14,
@@ -316,22 +330,37 @@ class _PostCardState extends State<PostCard> {
                     style: const TextStyle(fontSize: 12, color: Colors.grey),
                   ),
                 ),
-                Container(
-                  padding: const EdgeInsets.symmetric(vertical: 4),
-                  child: Text(
-                    DateFormat.yMMMd()
-                        .format(widget.snap['datePublished'].toDate()),
-                    style: const TextStyle(
-                      color: Colors.grey,
-                      fontSize: 12,
-                    ),
-                  ),
-                ),
               ],
             ),
           ),
         ],
       ),
     );
+  }
+
+  Future<void> _toggleLike() async {
+    setState(() {
+      isLikeAnimating = true; // Animate the like button
+      if (isLiked) {
+        likeCount--; // Decrease the count
+      } else {
+        likeCount++; // Increase the count
+      }
+      isLiked = !isLiked; // Toggle liked state
+    });
+
+    // Update likes in Firestore without passing the likes array
+    final response = await FireStoreMethods().likePost(
+      widget.snap['postId'], // Post ID
+      uid, // User ID
+      // No likes array is passed here
+    );
+
+    if (response != 'success') {
+      // Handle error case (you can show a snackbar or alert dialog)
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $response')),
+      );
+    }
   }
 }
