@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:ocean_rescue/pages/feed/comments_screen.dart';
@@ -19,6 +20,7 @@ class PostCard extends StatefulWidget {
 class _PostCardState extends State<PostCard> {
   bool isLikeAnimating = false;
   int commentLen = 0;
+  bool isDescriptionExpanded = false; // State to control description expansion
 
   @override
   void initState() {
@@ -47,7 +49,6 @@ class _PostCardState extends State<PostCard> {
               onTap: () {
                 Navigator.pop(context);
                 // Navigate to edit post screen
-                // Example: Navigator.of(context).push(...);
               },
             ),
             ListTile(
@@ -55,7 +56,6 @@ class _PostCardState extends State<PostCard> {
               title: const Text('Delete Post'),
               onTap: () {
                 Navigator.pop(context);
-                // Call delete post method
                 deletePost(widget.snap['postId']);
               },
             ),
@@ -77,6 +77,7 @@ class _PostCardState extends State<PostCard> {
   Widget build(BuildContext context) {
     final bool isLiked = widget.snap['likes']
         .contains('user_id'); // Replace 'user_id' with actual user ID
+    final description = widget.snap['description'] ?? '';
 
     return Container(
       decoration: BoxDecoration(
@@ -181,32 +182,18 @@ class _PostCardState extends State<PostCard> {
                   },
                 ),
               ),
-              // IconButton(
-              //   icon: const Icon(Icons.comment_outlined),
-              //   onPressed: () {
-              //     Navigator.of(context).push(
-              //       MaterialPageRoute(
-              //         builder: (context) => CommentsScreen(
-              //           postId: widget.snap['postId'],
-              //           comments: widget.snap['comments'] ?? [],
-              //         ),
-              //       ),
-              //     );
-              //   },
-              // ),
               IconButton(
                 icon: const Icon(Icons.comment_outlined),
                 onPressed: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) => CommentsScreen(
-                        postId: widget.snap['postId'], // Pass only postId
+                        postId: widget.snap['postId'],
                       ),
                     ),
                   );
                 },
               ),
-
               IconButton(
                 icon: const Icon(Icons.send),
                 onPressed: () {
@@ -223,7 +210,7 @@ class _PostCardState extends State<PostCard> {
                     },
                   ),
                 ),
-              )
+              ),
             ],
           ),
           // DESCRIPTION AND NUMBER OF COMMENTS
@@ -239,19 +226,77 @@ class _PostCardState extends State<PostCard> {
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.only(top: 8),
-                  child: RichText(
-                    text: TextSpan(
-                      style: const TextStyle(color: Colors.black),
-                      children: [
-                        TextSpan(
-                          text: widget.snap['username'],
-                          style: const TextStyle(fontWeight: FontWeight.bold),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Post title and username with space between them
+                      RichText(
+                        text: TextSpan(
+                          style: const TextStyle(color: Colors.black),
+                          children: [
+                            TextSpan(
+                              text: widget
+                                  .snap['username'], // Display the username
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                              ),
+                            ),
+                            const TextSpan(
+                              text:
+                                  '\t\t\t', // Add some space between username and title
+                            ),
+                            TextSpan(
+                              text: widget
+                                  .snap['title'], // Display the post title
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
                         ),
-                        TextSpan(
-                          text: ' ${widget.snap['description']}',
+                      ),
+                      const SizedBox(height: 10),
+                      // Display the description with a tab space and "See more/Show less" functionality
+                      Padding(
+                        padding: const EdgeInsets.only(top: 4),
+                        child: Text.rich(
+                          TextSpan(
+                            children: [
+                              TextSpan(
+                                text: isDescriptionExpanded
+                                    ? description
+                                    : description.length > 100
+                                        ? '${description.substring(0, 100)}... '
+                                        : description,
+                                style: const TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 14,
+                                ),
+                              ),
+                              if (description.length > 100)
+                                TextSpan(
+                                  text: isDescriptionExpanded
+                                      ? 'See less'
+                                      : 'See more',
+                                  style: const TextStyle(
+                                    color: Colors.blue,
+                                    fontSize: 14,
+                                  ),
+                                  recognizer: TapGestureRecognizer()
+                                    ..onTap = () {
+                                      setState(() {
+                                        isDescriptionExpanded =
+                                            !isDescriptionExpanded; // Toggle expansion
+                                      });
+                                    },
+                                ),
+                            ],
+                          ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
                 Container(
@@ -274,7 +319,7 @@ class _PostCardState extends State<PostCard> {
                 ),
               ],
             ),
-          )
+          ),
         ],
       ),
     );

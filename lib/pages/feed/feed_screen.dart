@@ -63,6 +63,7 @@ class _FeedScreenState extends State<FeedScreen> {
           'description': doc['description'],
           'likes': doc['likes'],
           'datePublished': doc['datePublished'],
+          'title': doc['title'],
           'username': userDoc['username'],
           'profImage': userDoc['photoUrl'],
         });
