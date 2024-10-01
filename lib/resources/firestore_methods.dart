@@ -74,17 +74,27 @@ class FireStoreMethods {
     return res;
   }
 
-  // Like or unlike a post
-  Future<String> likePost(String postId, String uid, List likes) async {
+// Like or unlike a post
+  Future<String> likePost(String postId, String uid) async {
     String res = "Some error occurred";
     try {
-      if (likes.contains(uid)) {
+      // Get the current likes array from Firestore
+      DocumentSnapshot postDoc =
+          await _firestore.collection('posts').doc(postId).get();
+      List<dynamic> currentLikes =
+          postDoc['likes'] ?? []; // Retrieve current likes or an empty list
+
+      if (currentLikes.contains(uid)) {
+        // Remove the like
         await _firestore.collection('posts').doc(postId).update({
-          'likes': FieldValue.arrayRemove([uid]),
+          'likes': FieldValue.arrayRemove(
+              [uid]), // Correctly remove the user's ID from likes
         });
       } else {
+        // Add the like
         await _firestore.collection('posts').doc(postId).update({
-          'likes': FieldValue.arrayUnion([uid]),
+          'likes': FieldValue.arrayUnion(
+              [uid]), // Correctly add the user's ID to likes
         });
       }
       res = 'success';
@@ -92,6 +102,43 @@ class FireStoreMethods {
       res = err.toString();
     }
     return res;
+  }
+
+  // Bookmark a post
+  Future<String> bookmarkPost(String postId) async {
+    String res = "Some error occurred";
+    try {
+      String uid = getCurrentUserId(); // Get current user UID
+      await _firestore.collection('users').doc(uid).update({
+        'bookmarks': FieldValue.arrayUnion([postId]),
+      });
+      res = 'success';
+    } catch (err) {
+      res = err.toString();
+    }
+    return res;
+  }
+
+  // Remove bookmark from a post
+  Future<String> removeBookmark(String postId) async {
+    String res = "Some error occurred";
+    try {
+      String uid = getCurrentUserId(); // Get current user UID
+      await _firestore.collection('users').doc(uid).update({
+        'bookmarks': FieldValue.arrayRemove([postId]),
+      });
+      res = 'success';
+    } catch (err) {
+      res = err.toString();
+    }
+    return res;
+  }
+
+  // Fetch user bookmarks
+  Future<List<String>> fetchUserBookmarks() async {
+    String uid = getCurrentUserId();
+    DocumentSnapshot snap = await _firestore.collection('users').doc(uid).get();
+    return List<String>.from(snap['bookmarks'] ?? []);
   }
 
   // Post a new comment
@@ -184,5 +231,37 @@ class FireStoreMethods {
     }
 
     return commentsList;
+  }
+
+  // Fetch posts with pagination
+  Future<List<Post>> fetchPosts(
+      {int limit = 10, DocumentSnapshot? lastDocument}) async {
+    Query query = _firestore
+        .collection('posts')
+        .orderBy('datePublished', descending: true)
+        .limit(limit);
+
+    if (lastDocument != null) {
+      query = query.startAfterDocument(lastDocument);
+    }
+
+    QuerySnapshot querySnapshot = await query.get();
+    List<Post> posts = querySnapshot.docs.map((doc) {
+      return Post.fromJson(doc.data() as Map<String, dynamic>);
+    }).toList();
+
+    return posts;
+  }
+
+  // Fetch user data
+  Future<Map<String, dynamic>?> fetchUserData(String userId) async {
+    try {
+      DocumentSnapshot userDoc =
+          await _firestore.collection('users').doc(userId).get();
+      return userDoc.data() as Map<String, dynamic>?;
+    } catch (e) {
+      if (kDebugMode) print(e.toString());
+      return null;
+    }
   }
 }
