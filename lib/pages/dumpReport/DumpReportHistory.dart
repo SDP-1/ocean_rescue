@@ -31,14 +31,14 @@ class DumpReportHistory extends StatelessWidget {
             padding: const EdgeInsets.all(8.0),
             child: Row(
               children: [
-                IconButton(
-                  icon: Icon(Icons.arrow_back, color: ColorTheme.black),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                ),
+                // IconButton(
+                //   icon: Icon(Icons.arrow_back, color: ColorTheme.black),
+                //   onPressed: () {
+                //     Navigator.pop(context);
+                //   },
+                // ),
                 Text(
-                  'Dump Report History',
+                  '\t\t\tDump Report History',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,

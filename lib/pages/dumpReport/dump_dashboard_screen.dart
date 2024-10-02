@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ocean_rescue/pages/dumpReport/DumpReportHistory.dart';
 import 'package:ocean_rescue/theme/colorTheme.dart';
 import 'package:ocean_rescue/widget/feed/TopAppBar%20.dart';
 
@@ -55,6 +56,12 @@ class DumpsDashboard extends StatelessWidget {
                         ColorTheme.liteBlue1,
                         () {
                           // Add report history action
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    DumpReportHistory()), // Replace `ReportDumpPage` with your target page widget
+                          );
                         },
                       ),
                       const SizedBox(width: 5), // Space between icons
