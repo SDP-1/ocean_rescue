@@ -15,34 +15,34 @@ void showErrorPopup(BuildContext context, String title, String message) {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Text(
               title,
-              style: TextStyle(
+              style: const TextStyle(
                 color: ColorTheme.black,
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Text(
               message,
-              style: TextStyle(
+              style: const TextStyle(
                 color: ColorTheme.black,
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Image.asset(
               'assets/popup/Error.png',
               width: 80,
               height: 80,
             ),
-            SizedBox(height: 20),
-            Container(
+            const SizedBox(height: 20),
+            SizedBox(
               width: 200,
               child: ElevatedButton(
                 onPressed: () {
@@ -54,7 +54,7 @@ void showErrorPopup(BuildContext context, String title, String message) {
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-                child: Text(
+                child: const Text(
                   'Try Again',
                   style: TextStyle(
                     color: ColorTheme.black, // Button text color

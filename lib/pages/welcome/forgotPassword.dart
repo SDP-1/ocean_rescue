@@ -5,7 +5,7 @@ import 'signin_screen.dart';
 import 'signup_screen.dart';
 
 class ForgotPassword extends StatefulWidget {
-  const ForgotPassword({Key? key}) : super(key: key);
+  const ForgotPassword({super.key});
 
   @override
   State<ForgotPassword> createState() => _ForgotPasswordState();
@@ -83,7 +83,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                       end: Alignment.bottomCenter,
                     ),
                   ),
-                  child: Center(
+                  child: const Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -93,9 +93,9 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                           size: 100,
                           color: Colors.white,
                         ),
-                        const SizedBox(height: 20),
+                        SizedBox(height: 20),
                         // Screen title
-                        const Text(
+                        Text(
                           'Reset Password',
                           style: TextStyle(
                             fontSize: 28,

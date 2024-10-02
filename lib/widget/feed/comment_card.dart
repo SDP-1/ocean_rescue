@@ -6,7 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart'; // Import this for Timest
 class CommentCard extends StatelessWidget {
   final Map<String, dynamic> snap;
 
-  const CommentCard({Key? key, required this.snap}) : super(key: key);
+  const CommentCard({super.key, required this.snap});
 
   @override
   Widget build(BuildContext context) {

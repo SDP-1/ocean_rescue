@@ -4,7 +4,7 @@ class ChatDetailScreen extends StatelessWidget {
   final String name;
   final String avatar;
 
-  ChatDetailScreen({required this.name, required this.avatar});
+  const ChatDetailScreen({super.key, required this.name, required this.avatar});
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +14,7 @@ class ChatDetailScreen extends StatelessWidget {
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.black),
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Row(
@@ -22,11 +22,11 @@ class ChatDetailScreen extends StatelessWidget {
             CircleAvatar(
               backgroundImage: AssetImage(avatar),
             ),
-            SizedBox(width: 10),
+            const SizedBox(width: 10),
             Text(
               name,
               style:
-                  TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                  const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
             ),
           ],
         ),
@@ -35,31 +35,31 @@ class ChatDetailScreen extends StatelessWidget {
         children: [
           Expanded(
             child: ListView(
-              padding: EdgeInsets.all(16),
+              padding: const EdgeInsets.all(16),
               children: [
                 // Example message bubbles
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Container(
-                    padding: EdgeInsets.all(10),
-                    margin: EdgeInsets.symmetric(vertical: 5),
+                    padding: const EdgeInsets.all(10),
+                    margin: const EdgeInsets.symmetric(vertical: 5),
                     decoration: BoxDecoration(
                       color: Colors.grey[200],
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: Text("Hey, how's it going?"),
+                    child: const Text("Hey, how's it going?"),
                   ),
                 ),
                 Align(
                   alignment: Alignment.centerRight,
                   child: Container(
-                    padding: EdgeInsets.all(10),
-                    margin: EdgeInsets.symmetric(vertical: 5),
+                    padding: const EdgeInsets.all(10),
+                    margin: const EdgeInsets.symmetric(vertical: 5),
                     decoration: BoxDecoration(
                       color: Colors.blue[100],
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: Text("All good, what about you?"),
+                    child: const Text("All good, what about you?"),
                   ),
                 ),
               ],
@@ -82,9 +82,9 @@ class ChatDetailScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(width: 10),
+                const SizedBox(width: 10),
                 IconButton(
-                  icon: Icon(Icons.send, color: Colors.blue),
+                  icon: const Icon(Icons.send, color: Colors.blue),
                   onPressed: () {
                     // Send message action
                   },
