@@ -145,86 +145,91 @@ class _FeedScreenState extends State<FeedScreen> {
     return Scaffold(
       backgroundColor: ColorTheme.white,
       appBar: TopAppBar(),
-      body: SingleChildScrollView(
-        controller: _scrollController, // Attach the scroll controller here
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Post what's on your mind section
-            Container(
-              padding: const EdgeInsets.all(10),
-              color: ColorTheme.white,
-              child: Row(
-                children: [
-                  CircleAvatar(
-                    radius: 18,
-                    backgroundImage: AssetImage(
-                        'assets/user/profile_pic.jpg'), // Placeholder
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const CreatePostScreen()),
-                        );
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: ColorTheme.liteBlue2,
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 10, horizontal: 15),
-                        child: Row(
-                          children: [
-                            Text(
-                              'Post what’s on your mind?',
-                              style: TextStyle(
-                                color: Colors.grey.shade600,
-                                fontSize: 16,
+      body: RefreshIndicator(
+        onRefresh: () async {
+          await _fetchPosts(); // Refresh the posts
+        },
+        child: SingleChildScrollView(
+          controller: _scrollController, // Attach the scroll controller here
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Post what's on your mind section
+              Container(
+                padding: const EdgeInsets.all(10),
+                color: ColorTheme.white,
+                child: Row(
+                  children: [
+                    CircleAvatar(
+                      radius: 18,
+                      backgroundImage: AssetImage(
+                          'assets/user/profile_pic.jpg'), // Placeholder
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const CreatePostScreen()),
+                          );
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: ColorTheme.liteBlue2,
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 10, horizontal: 15),
+                          child: Row(
+                            children: [
+                              Text(
+                                'Post what’s on your mind?',
+                                style: TextStyle(
+                                  color: Colors.grey.shade600,
+                                  fontSize: 16,
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
 
-            // Featured Events Section
-            const FeaturedEventSection(),
+              // Featured Events Section
+              const FeaturedEventSection(),
 
-            const SizedBox(height: 16),
+              const SizedBox(height: 16),
 
-            // Posts list (Lazy loading)
-            ListView.builder(
-              physics: const NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              itemCount:
-                  posts.length + 1, // Extra item for the loading indicator
-              itemBuilder: (ctx, index) {
-                if (index == posts.length) {
-                  // Show loading indicator at the bottom if more posts are loading
-                  return isLoadingMore
-                      ? Center(child: CircularProgressIndicator())
-                      : Container();
-                }
-                return Container(
-                  margin:
-                      const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
-                  child: PostCard(
-                    snap: posts[index], // Pass the actual post data
-                    onPostDeleted: _removePost, // Pass the delete callback
-                  ),
-                );
-              },
-            ),
-          ],
+              // Posts list (Lazy loading)
+              ListView.builder(
+                physics: const NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                itemCount:
+                    posts.length + 1, // Extra item for the loading indicator
+                itemBuilder: (ctx, index) {
+                  if (index == posts.length) {
+                    // Show loading indicator at the bottom if more posts are loading
+                    return isLoadingMore
+                        ? Center(child: CircularProgressIndicator())
+                        : Container();
+                  }
+                  return Container(
+                    margin:
+                        const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+                    child: PostCard(
+                      snap: posts[index], // Pass the actual post data
+                      onPostDeleted: _removePost, // Pass the delete callback
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );

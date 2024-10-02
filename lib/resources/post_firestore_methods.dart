@@ -7,7 +7,7 @@ import 'package:ocean_rescue/models/post.dart';
 import 'package:ocean_rescue/resources/storage_methods.dart';
 import 'package:uuid/uuid.dart';
 
-class FireStoreMethods {
+class PostFireStoreMethods {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
@@ -18,23 +18,26 @@ class FireStoreMethods {
 
   // Compress the image to ensure it's less than 2MB
   Future<Uint8List> _compressImage(Uint8List file) async {
-    // Compress the image using flutter_image_compress
+    // Check if the image is larger than 1MB
+    if (file.lengthInBytes <= .5 * 1024 * 1024) {
+      // If the image is already below .5MB, return the original image
+      return file;
+    }
+
+    // Compress the image using flutter_image_compress if it's larger than .5MB
     Uint8List? compressedImage = await FlutterImageCompress.compressWithList(
       file,
-      minWidth: 1080, // You can adjust width and height as needed
+      minWidth: 1080, // Adjust width and height as needed
       minHeight: 1080,
-      quality:
-          85, // Quality can be adjusted between 0-100, reduce to lower size
+      quality: 80, // Adjust quality, lower quality for smaller size
     );
 
     if (compressedImage != null &&
-        compressedImage.lengthInBytes < 2 * 1024 * 1024) {
-      // If compressed image size is below 2MB, return it
+        compressedImage.lengthInBytes <= 1 * 1024 * 1024) {
       return compressedImage;
-    } else {
-      // If compression failed, return the original file
-      return file;
     }
+    // If compression doesn't reduce the size enough, return the original image
+    return file;
   }
 
   // Upload image and return the URL
@@ -78,25 +81,29 @@ class FireStoreMethods {
   Future<String> likePost(String postId, String uid) async {
     String res = "Some error occurred";
     try {
-      // Get the current likes array from Firestore
-      DocumentSnapshot postDoc =
-          await _firestore.collection('posts').doc(postId).get();
-      List<dynamic> currentLikes =
-          postDoc['likes'] ?? []; // Retrieve current likes or an empty list
+      DocumentReference postRef = _firestore.collection('posts').doc(postId);
 
-      if (currentLikes.contains(uid)) {
-        // Remove the like
-        await _firestore.collection('posts').doc(postId).update({
-          'likes': FieldValue.arrayRemove(
-              [uid]), // Correctly remove the user's ID from likes
-        });
-      } else {
-        // Add the like
-        await _firestore.collection('posts').doc(postId).update({
-          'likes': FieldValue.arrayUnion(
-              [uid]), // Correctly add the user's ID to likes
-        });
-      }
+      await _firestore.runTransaction((transaction) async {
+        DocumentSnapshot postDoc = await transaction.get(postRef);
+        if (!postDoc.exists) {
+          throw Exception("Post does not exist!");
+        }
+
+        List<dynamic> likes = postDoc['likes'] ?? [];
+
+        if (likes.contains(uid)) {
+          // Unlike the post
+          transaction.update(postRef, {
+            'likes': FieldValue.arrayRemove([uid]),
+          });
+        } else {
+          // Like the post
+          transaction.update(postRef, {
+            'likes': FieldValue.arrayUnion([uid]),
+          });
+        }
+      });
+
       res = 'success';
     } catch (err) {
       res = err.toString();
