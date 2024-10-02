@@ -24,9 +24,11 @@ class _ReportDumpPageState extends State<ReportDumpPage> {
   final ImagePicker _picker = ImagePicker(); // Image picker instance
   final _formKey = GlobalKey<FormState>(); // Form key for validation
   String? _selectedUrgency;
-  String _name = '';
+  String _title = '';
   String _description = '';
   String _eventLocation = '';
+  bool _isSubmitting = false; // Variable to track if submission is in progress
+  
   final ReportDumpsFirestoreMethods _firestoreMethods =
       ReportDumpsFirestoreMethods();
 
@@ -40,60 +42,54 @@ class _ReportDumpPageState extends State<ReportDumpPage> {
     }
   }
 
+
+
   // Method to handle report dump submission
-  Future<void> _submitReportDump(BuildContext context) async {
-    if (_formKey.currentState?.validate() ?? false) {
-      _formKey.currentState?.save();
-      if (_selectedUrgency == null) {
-        showErrorPopup(
-            context, 'Urgency Level', 'Please select an urgency level.');
-        return;
-      }
-      if (_image == null) {
-        showErrorPopup(context, 'Image Missing', 'Please upload an image.');
-        return;
-      }
+Future<void> _submitReportDump(BuildContext context) async {
+  if (_formKey.currentState?.validate() ?? false) {
+    _formKey.currentState?.save();
 
-      try {
-        // Generate a unique ID for the dump report
-        String id = const Uuid().v1();
-
-        // Upload the image to Firebase Storage and get the download URL
-        String imageUrl =
-            await _firestoreMethods.uploadImageToStorage(id, _image!);
-
-        // Create a ReportDump model instance, including the timestamp
-        model.ReportDump newDump = model.ReportDump(
-          id: id,
-          name: _name,
-          description: _description,
-          eventLocation: _eventLocation,
-          urgencyLevel: _selectedUrgency!,
-          imageUrl: imageUrl,
-          timestamp:
-              DateTime.now(), // Set the timestamp to the current date and time
-        );
-
-        // Save the report to Firestore
-        await _firestoreMethods.saveReportDump(newDump);
-
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => DumpsDashboard()),
-        );
-
-        // Show success popup
-        showSuccessPopup(context, 'Report Submitted',
-            'Dump report has been successfully submitted.');
-      } catch (e) {
-        showErrorPopup(context, 'Submission Failed',
-            'Error occurred while submitting: $e');
-      }
-    } else {
+    if (_selectedUrgency == null) {
       showErrorPopup(
-          context, 'Invalid Form', 'Please fill all fields correctly.');
+          context, 'Urgency Level', 'Please select an urgency level.');
+      return;
     }
+
+    if (_image == null) {
+      showErrorPopup(context, 'Image Missing', 'Please upload an image.');
+      return;
+    }
+
+    try {
+      setState(() => _isSubmitting = true); // Set loading state to true
+
+      await _firestoreMethods.saveReportDump(
+        title: _title,
+        description: _description,
+        eventLocation: _eventLocation,
+        urgencyLevel: _selectedUrgency!,
+        imageFile: _image!, // Pass the image file directly
+      );
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => DumpsDashboard()),
+      );
+
+      showSuccessPopup(context, 'Report Submitted',
+          'Dump report has been successfully submitted.');
+    } catch (e) {
+      showErrorPopup(context, 'Submission Failed',
+          'Error occurred while submitting: $e');
+    } finally {
+      setState(() => _isSubmitting = false); // Reset loading state to false
+    }
+  } else {
+    showErrorPopup(
+        context, 'Invalid Form', 'Please fill all fields correctly.');
   }
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -121,11 +117,11 @@ class _ReportDumpPageState extends State<ReportDumpPage> {
               _buildHeader(),
               const SizedBox(height: 16),
               _buildLabeledTextField(
-                label: 'Name',
-                hintText: 'Enter your name',
-                onSaved: (value) => _name = value ?? '',
+                label: 'Title',
+                hintText: 'Enter title',
+                onSaved: (value) => _title = value ?? '',
                 validator: (value) => value == null || value.isEmpty
-                    ? 'Please enter your name'
+                    ? 'Please enter your title'
                     : null,
               ),
               const SizedBox(height: 16),
@@ -315,34 +311,40 @@ class _ReportDumpPageState extends State<ReportDumpPage> {
           );
   }
 
-  Widget _buildReportButton() {
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.centerLeft,
-          end: Alignment.centerRight,
-          colors: [
-            Color(0xFF08BDBD), // Left-side color
-            Color(0xFF1877F2), // Right-side color
-          ],
-        ),
-        borderRadius: BorderRadius.circular(10),
+Widget _buildReportButton() {
+  return Container(
+    width: double.infinity,
+    decoration: BoxDecoration(
+      gradient: const LinearGradient(
+        begin: Alignment.centerLeft,
+        end: Alignment.centerRight,
+        colors: [
+          Color(0xFF08BDBD), // Left-side color
+          Color(0xFF1877F2), // Right-side color
+        ],
       ),
-      child: ElevatedButton(
-        onPressed: () => _submitReportDump(context),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.transparent,
-          padding: const EdgeInsets.symmetric(vertical: 10),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          shadowColor: Colors.transparent,
+      borderRadius: BorderRadius.circular(10),
+    ),
+    child: ElevatedButton(
+      onPressed: _isSubmitting ? null : () => _submitReportDump(context),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.transparent,
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
         ),
-        child: const Text('Report Dump', 
-        style: TextStyle(fontSize: 18, color: ColorTheme.white),
-        ),
+        shadowColor: Colors.transparent,
       ),
-    );
-  }
+      child: _isSubmitting
+          ? const CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(ColorTheme.white),
+            )
+          : const Text(
+              'Report Dump',
+              style: TextStyle(fontSize: 18, color: ColorTheme.white),
+            ),
+    ),
+  );
+}
+
 }
