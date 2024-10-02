@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:ocean_rescue/resources/firestore_methods.dart';
+import 'package:ocean_rescue/resources/post_firestore_methods.dart';
 import '../../widget/feed/comment_card.dart';
 
 class CommentsScreen extends StatefulWidget {
@@ -14,7 +14,7 @@ class CommentsScreen extends StatefulWidget {
 
 class _CommentsScreenState extends State<CommentsScreen> {
   final TextEditingController _commentController = TextEditingController();
-  final FireStoreMethods _fireStoreMethods = FireStoreMethods();
+  final PostFireStoreMethods _fireStoreMethods = PostFireStoreMethods();
   List<Map<String, dynamic>> _comments = [];
   bool _isLoading = true; // Track loading state
 

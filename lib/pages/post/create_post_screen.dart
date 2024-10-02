@@ -5,7 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:ocean_rescue/theme/colorTheme.dart';
 import 'package:ocean_rescue/widget/popup/ErrorPopup.dart';
 import 'package:ocean_rescue/widget/popup/SuccessPopup.dart';
-import 'package:ocean_rescue/resources/firestore_methods.dart';
+import 'package:ocean_rescue/resources/post_firestore_methods.dart';
 import 'package:ocean_rescue/pages/feed/feed_screen.dart'; // Import your Feed screen
 
 class CreatePostScreen extends StatefulWidget {
@@ -19,7 +19,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   XFile? _image;
-  final FireStoreMethods _fireStoreMethods = FireStoreMethods();
+  final PostFireStoreMethods _fireStoreMethods = PostFireStoreMethods();
 
   bool isLoading = false; // Loading state to show loading indicator
 
