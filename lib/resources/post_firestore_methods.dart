@@ -7,7 +7,7 @@ import 'package:ocean_rescue/models/post.dart';
 import 'package:ocean_rescue/resources/storage_methods.dart';
 import 'package:uuid/uuid.dart';
 
-class FireStoreMethods {
+class PostFireStoreMethods {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
@@ -81,25 +81,29 @@ class FireStoreMethods {
   Future<String> likePost(String postId, String uid) async {
     String res = "Some error occurred";
     try {
-      // Get the current likes array from Firestore
-      DocumentSnapshot postDoc =
-          await _firestore.collection('posts').doc(postId).get();
-      List<dynamic> currentLikes =
-          postDoc['likes'] ?? []; // Retrieve current likes or an empty list
+      DocumentReference postRef = _firestore.collection('posts').doc(postId);
 
-      if (currentLikes.contains(uid)) {
-        // Remove the like
-        await _firestore.collection('posts').doc(postId).update({
-          'likes': FieldValue.arrayRemove(
-              [uid]), // Correctly remove the user's ID from likes
-        });
-      } else {
-        // Add the like
-        await _firestore.collection('posts').doc(postId).update({
-          'likes': FieldValue.arrayUnion(
-              [uid]), // Correctly add the user's ID to likes
-        });
-      }
+      await _firestore.runTransaction((transaction) async {
+        DocumentSnapshot postDoc = await transaction.get(postRef);
+        if (!postDoc.exists) {
+          throw Exception("Post does not exist!");
+        }
+
+        List<dynamic> likes = postDoc['likes'] ?? [];
+
+        if (likes.contains(uid)) {
+          // Unlike the post
+          transaction.update(postRef, {
+            'likes': FieldValue.arrayRemove([uid]),
+          });
+        } else {
+          // Like the post
+          transaction.update(postRef, {
+            'likes': FieldValue.arrayUnion([uid]),
+          });
+        }
+      });
+
       res = 'success';
     } catch (err) {
       res = err.toString();

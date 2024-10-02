@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:ocean_rescue/pages/feed/comments_screen.dart';
 import 'package:ocean_rescue/utils/colors.dart';
-import 'package:ocean_rescue/resources/firestore_methods.dart';
+import 'package:ocean_rescue/resources/post_firestore_methods.dart';
 import '../../widget/feed/comment_card.dart';
 import 'like_animation.dart'; // Ensure this file exists
 import 'package:firebase_auth/firebase_auth.dart';
@@ -50,23 +50,24 @@ class _PostCardState extends State<PostCard> {
   }
 
   void _listenToLikeUpdates() {
-    // Listen to the specific post document in Firestore for real-time updates
     FirebaseFirestore.instance
         .collection('posts')
         .doc(widget.snap['postId'])
         .snapshots()
         .listen((snapshot) {
-      setState(() {
-        // Update like count and whether the post is liked by the current user
-        likeCount =
-            List.from(snapshot['likes']).length; // Ensure it's a fresh list
-        isLiked = List.from(snapshot['likes']).contains(uid);
-      });
+      if (snapshot.exists) {
+        List<dynamic> updatedLikes = snapshot.data()?['likes'] ?? [];
+        setState(() {
+          likeCount = updatedLikes.length; // Update like count
+          isLiked = updatedLikes
+              .contains(uid); // Check if the current user has liked the post
+        });
+      }
     });
   }
 
   void deletePost(String postId) {
-    FireStoreMethods().deletePost(postId).then((_) {
+    PostFireStoreMethods().deletePost(postId).then((_) {
       widget.onPostDeleted(postId); // Call the onPostDeleted callback
     });
   }
@@ -380,8 +381,9 @@ class _PostCardState extends State<PostCard> {
   }
 
   Future<void> _toggleLike() async {
+    // Optimistic UI update
     setState(() {
-      isLikeAnimating = true; // Animate the like button
+      isLikeAnimating = true;
       if (isLiked) {
         likeCount--; // Decrease the count
       } else {
@@ -390,17 +392,40 @@ class _PostCardState extends State<PostCard> {
       isLiked = !isLiked; // Toggle liked state
     });
 
-    // Update likes in Firestore without passing the likes array
-    final response = await FireStoreMethods().likePost(
-      widget.snap['postId'], // Post ID
-      uid, // User ID
-      // No likes array is passed here
-    );
+    // Perform Firestore update
+    try {
+      final response = await PostFireStoreMethods().likePost(
+        widget.snap['postId'], // Post ID
+        uid, // User ID
+      );
 
-    if (response != 'success') {
-      // Handle error case (you can show a snackbar or alert dialog)
+      // Handle failure
+      if (response != 'success') {
+        // Revert the optimistic UI change if the Firestore update failed
+        setState(() {
+          if (isLiked) {
+            likeCount--; // Rollback increase
+          } else {
+            likeCount++; // Rollback decrease
+          }
+          isLiked = !isLiked; // Revert liked state
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $response')),
+        );
+      }
+    } catch (e) {
+      // Revert UI in case of any exception
+      setState(() {
+        if (isLiked) {
+          likeCount--; // Rollback increase
+        } else {
+          likeCount++; // Rollback decrease
+        }
+        isLiked = !isLiked; // Revert liked state
+      });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $response')),
+        SnackBar(content: Text('Error: $e')),
       );
     }
   }
