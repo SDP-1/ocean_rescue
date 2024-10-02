@@ -7,7 +7,7 @@ import 'package:ocean_rescue/models/post.dart';
 import 'package:ocean_rescue/resources/storage_methods.dart';
 import 'package:uuid/uuid.dart';
 
-class FireStoreMethods {
+class PostFireStoreMethods {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
@@ -18,22 +18,26 @@ class FireStoreMethods {
 
   // Compress the image to ensure it's less than 2MB
   Future<Uint8List> _compressImage(Uint8List file) async {
-    // Compress the image using flutter_image_compress
-    Uint8List? compressedImage = await FlutterImageCompress.compressWithList(
-      file,
-      minWidth: 1080, // You can adjust width and height as needed
-      minHeight: 1080,
-      quality:
-          85, // Quality can be adjusted between 0-100, reduce to lower size
-    );
-
-    if (compressedImage.lengthInBytes < 2 * 1024 * 1024) {
-      // If compressed image size is below 2MB, return it
-      return compressedImage;
-    } else {
-      // If compression failed, return the original file
+    // Check if the image is larger than 1MB
+    if (file.lengthInBytes <= .5 * 1024 * 1024) {
+      // If the image is already below .5MB, return the original image
       return file;
     }
+
+    // Compress the image using flutter_image_compress if it's larger than .5MB
+    Uint8List? compressedImage = await FlutterImageCompress.compressWithList(
+      file,
+      minWidth: 1080, // Adjust width and height as needed
+      minHeight: 1080,
+      quality: 80, // Adjust quality, lower quality for smaller size
+    );
+
+    if (compressedImage != null &&
+        compressedImage.lengthInBytes <= 1 * 1024 * 1024) {
+      return compressedImage;
+    }
+    // If compression doesn't reduce the size enough, return the original image
+    return file;
   }
 
   // Upload image and return the URL
@@ -73,24 +77,75 @@ class FireStoreMethods {
     return res;
   }
 
-  // Like or unlike a post
-  Future<String> likePost(String postId, String uid, List likes) async {
+// Like or unlike a post
+  Future<String> likePost(String postId, String uid) async {
     String res = "Some error occurred";
     try {
-      if (likes.contains(uid)) {
-        await _firestore.collection('posts').doc(postId).update({
-          'likes': FieldValue.arrayRemove([uid]),
-        });
-      } else {
-        await _firestore.collection('posts').doc(postId).update({
-          'likes': FieldValue.arrayUnion([uid]),
-        });
-      }
+      DocumentReference postRef = _firestore.collection('posts').doc(postId);
+
+      await _firestore.runTransaction((transaction) async {
+        DocumentSnapshot postDoc = await transaction.get(postRef);
+        if (!postDoc.exists) {
+          throw Exception("Post does not exist!");
+        }
+
+        List<dynamic> likes = postDoc['likes'] ?? [];
+
+        if (likes.contains(uid)) {
+          // Unlike the post
+          transaction.update(postRef, {
+            'likes': FieldValue.arrayRemove([uid]),
+          });
+        } else {
+          // Like the post
+          transaction.update(postRef, {
+            'likes': FieldValue.arrayUnion([uid]),
+          });
+        }
+      });
+
       res = 'success';
     } catch (err) {
       res = err.toString();
     }
     return res;
+  }
+
+  // Bookmark a post
+  Future<String> bookmarkPost(String postId) async {
+    String res = "Some error occurred";
+    try {
+      String uid = getCurrentUserId(); // Get current user UID
+      await _firestore.collection('users').doc(uid).update({
+        'bookmarks': FieldValue.arrayUnion([postId]),
+      });
+      res = 'success';
+    } catch (err) {
+      res = err.toString();
+    }
+    return res;
+  }
+
+  // Remove bookmark from a post
+  Future<String> removeBookmark(String postId) async {
+    String res = "Some error occurred";
+    try {
+      String uid = getCurrentUserId(); // Get current user UID
+      await _firestore.collection('users').doc(uid).update({
+        'bookmarks': FieldValue.arrayRemove([postId]),
+      });
+      res = 'success';
+    } catch (err) {
+      res = err.toString();
+    }
+    return res;
+  }
+
+  // Fetch user bookmarks
+  Future<List<String>> fetchUserBookmarks() async {
+    String uid = getCurrentUserId();
+    DocumentSnapshot snap = await _firestore.collection('users').doc(uid).get();
+    return List<String>.from(snap['bookmarks'] ?? []);
   }
 
   // Post a new comment
@@ -183,5 +238,37 @@ class FireStoreMethods {
     }
 
     return commentsList;
+  }
+
+  // Fetch posts with pagination
+  Future<List<Post>> fetchPosts(
+      {int limit = 10, DocumentSnapshot? lastDocument}) async {
+    Query query = _firestore
+        .collection('posts')
+        .orderBy('datePublished', descending: true)
+        .limit(limit);
+
+    if (lastDocument != null) {
+      query = query.startAfterDocument(lastDocument);
+    }
+
+    QuerySnapshot querySnapshot = await query.get();
+    List<Post> posts = querySnapshot.docs.map((doc) {
+      return Post.fromJson(doc.data() as Map<String, dynamic>);
+    }).toList();
+
+    return posts;
+  }
+
+  // Fetch user data
+  Future<Map<String, dynamic>?> fetchUserData(String userId) async {
+    try {
+      DocumentSnapshot userDoc =
+          await _firestore.collection('users').doc(userId).get();
+      return userDoc.data() as Map<String, dynamic>?;
+    } catch (e) {
+      if (kDebugMode) print(e.toString());
+      return null;
+    }
   }
 }
