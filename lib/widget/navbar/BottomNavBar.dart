@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:ocean_rescue/pages/dumpReport/dump_report_screen.dart';
+import 'package:ocean_rescue/pages/dumpReport/dump_dashboard_screen.dart';
 import 'package:ocean_rescue/pages/event/event_screen.dart';
 import 'package:ocean_rescue/pages/menu/menu_screen.dart';
 import 'package:ocean_rescue/pages/notification/notification_screen.dart';
@@ -16,64 +16,64 @@ class BottomNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Define the screens for each tab
-    List<Widget> _buildScreens() {
+    List<Widget> buildScreens() {
       return [
-        FeedScreen(),
+        const FeedScreen(),
         // EventScreen(),
         DumpsDashboard(),
-        QrScanner(),
-        NotificationScreen(),
-        MenuScreen(),
+        const QrScanner(),
+        const NotificationScreen(),
+        const MenuScreen(),
       ];
     }
 
     // Define the bottom nav bar items
-    List<PersistentBottomNavBarItem> _navBarsItems() {
+    List<PersistentBottomNavBarItem> navBarsItems() {
       return [
         PersistentBottomNavBarItem(
-          icon: Icon(Icons.home_rounded),
+          icon: const Icon(Icons.home_rounded),
           title: ("Home"),
         ),
         PersistentBottomNavBarItem(
-          icon: Icon(Icons.calendar_month),
+          icon: const Icon(Icons.calendar_month),
           title: ("Event"),
         ),
         PersistentBottomNavBarItem(
           icon: Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               shape: BoxShape.circle,
               color: ColorTheme.darkBlue2,
             ),
-            padding: EdgeInsets.all(10),
-            child: Icon(Icons.qr_code_scanner_outlined),
+            padding: const EdgeInsets.all(10),
+            child: const Icon(Icons.qr_code_scanner_outlined),
           ),
           title: ("QR Scanner"),
           activeColorPrimary: Colors.white,
         ),
         PersistentBottomNavBarItem(
-          icon: Icon(Icons.notifications),
+          icon: const Icon(Icons.notifications),
           title: ("Qracanner"),
         ),
         PersistentBottomNavBarItem(
-          icon: Icon(Icons.menu),
+          icon: const Icon(Icons.menu),
           title: ("Qracanner"),
         ),
       ];
     }
 
     // Define the tab controller
-    PersistentTabController _controller =
+    PersistentTabController controller =
         PersistentTabController(initialIndex: 0);
 
     // Define the nav bar style
-    final _navBarStyle = NavBarStyle.style1; // Choose from style1, style2, etc.
+    const navBarStyle = NavBarStyle.style1; // Choose from style1, style2, etc.
 
     // Return the PersistentTabView widget
     return PersistentTabView(
       context,
-      controller: _controller,
-      screens: _buildScreens(),
-      items: _navBarsItems(),
+      controller: controller,
+      screens: buildScreens(),
+      items: navBarsItems(),
       handleAndroidBackButtonPress: true, // Default is true.
       resizeToAvoidBottomInset: true, // Default is true.
       stateManagement: true, // Default is true.

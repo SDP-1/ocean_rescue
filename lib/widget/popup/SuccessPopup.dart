@@ -51,7 +51,7 @@ void showSuccessPopup(BuildContext context, String title, String message) {
                     borderRadius: BorderRadius.circular(10), // Rounded corners
                   ),
                 ),
-                child: Text(
+                child: const Text(
                   'Let\'s Go',
                   style: TextStyle(
                     color: ColorTheme

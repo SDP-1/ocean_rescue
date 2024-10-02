@@ -14,4 +14,7 @@ class ColorTheme {
   static const Color lightRed2 = Color.fromARGB(22, 217, 4, 43);
   static const Color red = Color.fromARGB(255, 217, 4, 43);
   static const Color litegray = Color.fromARGB(75, 29, 34, 92);
+  //new colors
+  static const Color cyan = Color(0xFF00C3A9); // Cyan color for buttons, etc.
+  static const Color liteGray = Color(0xFFD3D3D3); // Light gray background for the info icon circle
 }

@@ -8,7 +8,7 @@ import '../../theme/colorTheme.dart';
 class TopAppBar extends StatelessWidget implements PreferredSizeWidget {
   final double height;
 
-  TopAppBar({Key? key, this.height = kToolbarHeight}) : super(key: key);
+  const TopAppBar({super.key, this.height = kToolbarHeight});
 
   @override
   Widget build(BuildContext context) {

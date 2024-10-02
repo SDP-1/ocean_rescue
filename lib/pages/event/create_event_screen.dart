@@ -7,9 +7,9 @@ class CreateEvent extends StatelessWidget {
   Widget build(BuildContext context) {
    return Scaffold(
       appBar: AppBar(
-        title: Text('Create Event'),
+        title: const Text('Create Event'),
       ),
-      body: Center(
+      body: const Center(
         child: Text('Create Event Screen'),
       ),
     );
