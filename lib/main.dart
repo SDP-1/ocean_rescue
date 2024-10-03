@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Ocean Rescue', // Fixed the typo in the app title
       debugShowCheckedModeBanner: false,
-     // home: SignInScreen(),
+      //home: SignInScreen(),
       // home: BottomNavBar(),
       // home: SplashScreen(),
       home : DumpReportHistory(),

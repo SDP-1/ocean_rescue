@@ -4,21 +4,63 @@ import 'package:flutter/material.dart';
 import 'package:ocean_rescue/theme/colorTheme.dart';
 import '../../widget/feed/TopAppBar .dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import '../../models/reportdump.dart';
+import '../../resources/ReportDumpsFirestoreMethods.dart';
 
-void main() {
-  runApp(MyApp());
+
+class DumpReportHistory extends StatefulWidget {
+  @override
+  _DumpReportHistoryState createState() => _DumpReportHistoryState();
 }
 
-class MyApp extends StatelessWidget {
+class _DumpReportHistoryState extends State<DumpReportHistory> {
+  List<ReportDump> _reportedDumps = [];
+  List<ReportDump> _clearedDumps = [];
+  bool _isLoading = true;
+
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: DumpReportHistory(),
-    );
+  void initState() {
+    super.initState();
+    _fetchDumpReports();
+  }
+
+ Future<void> _fetchDumpReports() async {
+  // Fetch reported and cleared dumps from Firestore
+  try {
+    setState(() {
+      _isLoading = true; // Start loading
+    });
+
+    // Fetch reported and cleared dumps
+    List<ReportDump> reportedDumps = await ReportDumpsFirestoreMethods().fetchReportedDumpReports();
+    List<ReportDump> clearedDumps = await ReportDumpsFirestoreMethods().fetchClearedDumpReports();
+
+  // Debugging: print the fetched dumps
+   print('Fetched reported dumps: ${_reportedDumps.length}');
+    print('Fetched cleared dumps: ${_clearedDumps.length}');
+
+
+    setState(() {
+      _reportedDumps = reportedDumps; // Assign fetched reported dumps
+      _clearedDumps = clearedDumps;   // Assign fetched cleared dumps
+      _isLoading = false;              // Stop loading
+    });
+
+     // Optionally, print the updated state after setState
+    print('Dumps (Reported): $_reportedDumps');
+    print('Dumps (Cleared): $_clearedDumps');
+
+    
+  } catch (e) {
+    // Handle the error (e.g., show an error message)
+    print('Error fetching reports: $e');
+    setState(() {
+      _isLoading = false; // Stop loading
+    });
   }
 }
 
-class DumpReportHistory extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,14 +73,14 @@ class DumpReportHistory extends StatelessWidget {
             padding: const EdgeInsets.all(8.0),
             child: Row(
               children: [
-                // IconButton(
-                //   icon: Icon(Icons.arrow_back, color: ColorTheme.black),
-                //   onPressed: () {
-                //     Navigator.pop(context);
-                //   },
-                // ),
+                IconButton(
+                  icon: Icon(Icons.arrow_back, color: ColorTheme.black),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
                 Text(
-                  '\t\t\tDump Report History',
+                  'Dump Report History',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -49,38 +91,42 @@ class DumpReportHistory extends StatelessWidget {
             ),
           ),
           Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  Image.asset(
-                    'assets/dump/dump1.jpeg', // Replace with your image path
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
+            child: _isLoading
+                ? Center(child: CircularProgressIndicator())
+                : SingleChildScrollView(
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _buildSectionTitle('Reported Dumps'),
-                        _buildDescriptionText(
-                            'These are the dump sites reported by the community for clean-up.'),
-                        _buildDumpList(isReported: true),
-                        _buildPagination(),
-                        _buildSectionTitle('Cleared Dumps'),
-                        _buildDumpList(isReported: false),
-                        _buildPagination(),
+                        Image.asset(
+                          'assets/dump/dump1.jpeg', // Replace with your image path
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _buildSectionTitle('Reported Dumps'),
+                              _buildDescriptionText('These are the dump sites reported by the community for clean-up.'),
+                              _buildDumpList(isReported: true), // Update this method to use _reportedDumps
+                              _buildPagination(), // Optionally, you can modify this to support pagination
+                              _buildSectionTitle('Cleared Dumps'),
+                              _buildDumpList(isReported: false), // Update this method to use _clearedDumps
+                              _buildPagination(), // Optionally, you can modify this to support pagination
+                            ],
+                          ),
+                        ),
                       ],
                     ),
                   ),
-                ],
-              ),
-            ),
           ),
         ],
       ),
     );
   }
+
+  // Helper methods like _buildDumpList, _buildSectionTitle, and _buildDescriptionText should be defined below
+
 
   Widget _buildSectionTitle(String title) {
     return Padding(
@@ -109,45 +155,35 @@ class DumpReportHistory extends StatelessWidget {
     );
   }
 
- Widget _buildDumpList({required bool isReported}) {
-  // Sample list data
-  final List<String> dumpNames = [
-    'Galle Face Dump',
-    'Collupity Dump',
-    'Ahungalla Dump',
-  ];
+Widget _buildDumpList({required bool isReported}) {
+  List<ReportDump> dumps = isReported ? _reportedDumps : _clearedDumps;
 
-  return Column(
-    children: dumpNames.map((dumpName) {
+ print('Dumps (${isReported ? "Reported" : "Cleared"}): ${dumps.map((dump) => dump.title).toList()}');
+
+  if (dumps.isEmpty) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16.0),
+      child: Text('No ${isReported ? "reported" : "cleared"} dumps available.'),
+    );
+  }
+
+  return ListView.builder(
+    physics: NeverScrollableScrollPhysics(), // Prevent scrolling inside the ListView
+    shrinkWrap: true, // Allow ListView to take the height of its children
+    itemCount: dumps.length,
+    itemBuilder: (context, index) {
+      final report = dumps[index];
       return Card(
-        color: ColorTheme.liteGreen1,
-        margin: EdgeInsets.symmetric(vertical: 8),
+        margin: EdgeInsets.symmetric(vertical: 8.0),
         child: ListTile(
-          leading: Image.asset(
-            'assets/dump/dump1.jpeg', // Replace with your image path
-            width: 50,
-            height: 50,
-            fit: BoxFit.cover,
-          ),
-          title: Text(
-            dumpName,
-            style: TextStyle(
-              fontWeight: FontWeight.bold, color: ColorTheme.black,
-            ),
-          ),
-          // Always show the delete icon regardless of isReported
-          trailing: IconButton(
-            icon: Icon(Icons.delete, color: ColorTheme.red),
-            onPressed: () {
-              // Add delete logic here
-            },
-          ),
+          title: Text(report.title),
+          subtitle: Text(report.description),
+          trailing: Image.network(report.imageUrl, width: 50, height: 50),
         ),
       );
-    }).toList(),
+    },
   );
 }
-
 
 Widget _buildPagination() {
   return Padding(
@@ -180,14 +216,14 @@ Widget _buildPagination() {
                 padding: const EdgeInsets.symmetric(horizontal: 4.0),
                 child: CircleAvatar(
                   radius: 12, // Reduced radius for a smaller circle
-                  backgroundColor: index == 1
+                  backgroundColor: index == 0 // Change to check for the first index
                       ? ColorTheme.liteBlue1
                       : ColorTheme.litegray,
                   child: Text(
-                    '${index + 1}',
+                    '${index + 1}', // This will correctly show page numbers starting from 1
                     style: TextStyle(
                       fontSize: 12, // Adjust font size for smaller text
-                      color: index == 1 ? ColorTheme.white : ColorTheme.black,
+                      color: index == 0 ? ColorTheme.white : ColorTheme.black,
                     ),
                   ),
                 ),
@@ -215,6 +251,7 @@ Widget _buildPagination() {
     ),
   );
 }
+
 
 
 }

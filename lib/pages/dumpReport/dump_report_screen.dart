@@ -64,12 +64,13 @@ Future<void> _submitReportDump(BuildContext context) async {
       setState(() => _isSubmitting = true); // Set loading state to true
 
       await _firestoreMethods.saveReportDump(
-        title: _title,
-        description: _description,
-        eventLocation: _eventLocation,
-        urgencyLevel: _selectedUrgency!,
-        imageFile: _image!, // Pass the image file directly
-      );
+    title: _title,
+    description: _description,
+    eventLocation: _eventLocation,
+    urgencyLevel: _selectedUrgency!,
+    imageFile: _image!, // Pass the image file directly
+    isReported: true, // Set this according to your logic (true or false)
+  );
 
       Navigator.push(
         context,
