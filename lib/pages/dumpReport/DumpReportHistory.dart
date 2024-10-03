@@ -158,8 +158,6 @@ class _DumpReportHistoryState extends State<DumpReportHistory> {
 Widget _buildDumpList({required bool isReported}) {
   List<ReportDump> dumps = isReported ? _reportedDumps : _clearedDumps;
 
- print('Dumps (${isReported ? "Reported" : "Cleared"}): ${dumps.map((dump) => dump.title).toList()}');
-
   if (dumps.isEmpty) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 16.0),
@@ -175,15 +173,63 @@ Widget _buildDumpList({required bool isReported}) {
       final report = dumps[index];
       return Card(
         margin: EdgeInsets.symmetric(vertical: 8.0),
-        child: ListTile(
-          title: Text(report.title),
-          subtitle: Text(report.description),
-          trailing: Image.network(report.imageUrl, width: 50, height: 50),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0), // Add padding for better spacing
+          child: Row(
+            children: [
+              // Left Image Container
+              Container(
+                width: 80, // Set image width
+                height: 60, // Set image height
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8.0),
+                  image: DecorationImage(
+                    image: NetworkImage(report.imageUrl),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+              SizedBox(width: 12), // Spacing between image and text
+              
+              // Description Text
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      report.title,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(height: 4), // Spacing between title and description
+                    Text(
+                      report.description,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey[600], // Optional: Set a lighter color for the description
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              
+              // Delete Icon Button
+              IconButton(
+                icon: Icon(Icons.delete, color: Colors.red),
+                onPressed: () {
+                  // Add your delete logic here
+                },
+              ),
+            ],
+          ),
         ),
       );
     },
   );
 }
+
 
 Widget _buildPagination() {
   return Padding(
