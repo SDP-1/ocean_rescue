@@ -7,7 +7,7 @@ class EventCard extends StatelessWidget {
   final Color backgroundColor;
   final Color buttonColor;
 
-  EventCard({
+  const EventCard({super.key, 
     this.isCritical = false,
     this.backgroundColor = const Color(0xFFE3F2FD),
     this.buttonColor = const Color(0xFF4CAF50),
@@ -18,8 +18,8 @@ class EventCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin:
-          EdgeInsets.symmetric(horizontal: 8, vertical: 4), // Reduced margin
-      padding: EdgeInsets.all(8), // Reduced padding
+          const EdgeInsets.symmetric(horizontal: 8, vertical: 4), // Reduced margin
+      padding: const EdgeInsets.all(8), // Reduced padding
       decoration: BoxDecoration(
         color: isCritical ? ColorTheme.lightRed2 : backgroundColor,
         borderRadius:
@@ -41,8 +41,8 @@ class EventCard extends StatelessWidget {
                   fit: BoxFit.cover,
                 ),
               ),
-              SizedBox(width: 8), // Reduced space between image and text
-              Expanded(
+              const SizedBox(width: 8), // Reduced space between image and text
+              const Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -67,7 +67,7 @@ class EventCard extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: 6), // Reduced gap before buttons
+          const SizedBox(height: 6), // Reduced gap before buttons
 
           // Icons and button row
           Row(
@@ -77,7 +77,7 @@ class EventCard extends StatelessWidget {
               Row(
                 children: [
                   IconButton(
-                    icon: Icon(
+                    icon: const Icon(
                       Icons.share,
                       size: 20, // Smaller icon size
                     ),
@@ -86,7 +86,7 @@ class EventCard extends StatelessWidget {
                     },
                   ),
                   if (isCritical)
-                    Icon(
+                    const Icon(
                       Icons.warning,
                       color: Colors.red,
                       size: 20, // Smaller warning icon
@@ -102,13 +102,13 @@ class EventCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(
                         16), // Reduced button corner radius
                   ),
-                  padding: EdgeInsets.symmetric(
+                  padding: const EdgeInsets.symmetric(
                       horizontal: 12, vertical: 6), // Reduced padding
                 ),
                 onPressed: () {
                   // Clean Up action
                 },
-                child: Text(
+                child: const Text(
                   "Let's Clean Up",
                   style: TextStyle(
                       fontSize: 11,

@@ -197,7 +197,7 @@ userLogin() async {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => ForgotPassword()));
+                                      builder: (context) => const ForgotPassword()));
                             },
                             child: Text(
                               'Forgot password?',
@@ -334,18 +334,18 @@ userLogin() async {
                                   ),
                                 );
                               },
-                              child: const Text(
-                                'Sign Up', // Button text
-                                style: TextStyle(
-                                  color: Color(0xFF1D225C), // Text color
-                                ),
-                              ),
                               style: OutlinedButton.styleFrom(
                                 padding: const EdgeInsets.symmetric(
                                     vertical: 15), // Button padding
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(
                                       10), // Rounded corners
+                                ),
+                              ),
+                              child: const Text(
+                                'Sign Up', // Button text
+                                style: TextStyle(
+                                  color: Color(0xFF1D225C), // Text color
                                 ),
                               ),
                             ),

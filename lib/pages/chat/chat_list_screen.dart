@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-
 import 'chat_detail_screen.dart';
 
 void main() => runApp(ChatApp());
 
 class ChatApp extends StatelessWidget {
+  const ChatApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -14,6 +15,8 @@ class ChatApp extends StatelessWidget {
 }
 
 class ChatListScreen extends StatelessWidget {
+  const ChatListScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,19 +24,15 @@ class ChatListScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        title: Row(
+        title: const Row(
           children: [
             CircleAvatar(
-              backgroundImage: AssetImage(
-                  'assets/user/profile_pic.jpg'), // Replace with the user avatar path
+              backgroundImage: AssetImage('assets/user/profile_pic.jpg'), // Replace with the user avatar path
             ),
             SizedBox(width: 10),
             Text(
               'Chats',
-              style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold),
+              style: TextStyle(color: Colors.black, fontSize: 24, fontWeight: FontWeight.bold),
             ),
           ],
         ),
@@ -45,7 +44,7 @@ class ChatListScreen extends StatelessWidget {
             child: TextField(
               decoration: InputDecoration(
                 hintText: 'Search',
-                prefixIcon: Icon(Icons.search),
+                prefixIcon: const Icon(Icons.search),
                 filled: true,
                 fillColor: Colors.grey[200],
                 border: OutlineInputBorder(
@@ -61,28 +60,28 @@ class ChatListScreen extends StatelessWidget {
               itemBuilder: (context, index) {
                 return ListTile(
                   leading: CircleAvatar(
-                    backgroundImage:
-                        AssetImage(chats[index]['avatar']!), // User avatar
+                    backgroundImage: AssetImage(chats[index]['avatar']!), // User avatar
                   ),
                   title: Text(
                     chats[index]['name']!,
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                   subtitle: Text(
                     '${chats[index]['message']} • ${chats[index]['time']}',
-                    style: TextStyle(color: Colors.grey),
+                    style: const TextStyle(color: Colors.grey),
                   ),
-                  trailing: Icon(Icons.check_circle, color: Colors.grey),
+                  trailing: const Icon(Icons.check_circle, color: Colors.grey),
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ChatDetailScreen(
-                          name: chats[index]['name']!,
-                          avatar: chats[index]['avatar']!,
-                        ),
-                      ),
-                    );
+                    // Uncomment below to navigate to ChatDetailScreen
+                    // Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(
+                    //     builder: (context) => ChatDetailScreen(
+                    //       name: chats[index]['name']!,
+                    //       avatar: chats[index]['avatar']!,
+                    //     ),
+                    //   ),
+                    // );
                   },
                 );
               },

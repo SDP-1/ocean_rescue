@@ -37,7 +37,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         );
 
         if (res == "success") {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             backgroundColor: Colors.green,
             content: Text(
               "Registered Successfully",
@@ -57,13 +57,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
             backgroundColor: Colors.red,
             content: Text(
               res,
-              style: TextStyle(fontSize: 20),
+              style: const TextStyle(fontSize: 20),
             ),
           ));
         }
       } on FirebaseAuthException catch (e) {
         if (e.code == 'weak-password') {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             backgroundColor: Colors.red,
             content: Text(
               "The password provided is too weak.",
@@ -71,7 +71,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             ),
           ));
         } else if (e.code == 'email-already-in-use') {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             backgroundColor: Colors.red,
             content: Text(
               "The account already exists for that email.",
@@ -79,7 +79,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             ),
           ));
         } else if (e.code == 'invalid-email') {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             backgroundColor: Colors.red,
             content: Text(
               "The email address is badly formatted.",
@@ -92,7 +92,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           backgroundColor: Colors.red,
           content: Text(
             "An unexpected error occurred: ${e.toString()}",
-            style: TextStyle(fontSize: 20),
+            style: const TextStyle(fontSize: 20),
           ),
         ));
       }
@@ -163,11 +163,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             ),
                             // Adding style to the text field
                             hintStyle:
-                                TextStyle(fontSize: 14), // Hint text size
+                                const TextStyle(fontSize: 14), // Hint text size
                             labelStyle:
-                                TextStyle(fontSize: 14), // Label text size
+                                const TextStyle(fontSize: 14), // Label text size
                           ),
-                          style: TextStyle(fontSize: 14), // Input text size
+                          style: const TextStyle(fontSize: 14), // Input text size
                         ),
                       ),
                       const SizedBox(height: 15.0),
@@ -191,11 +191,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             ),
                             // Adding style to the text field
                             hintStyle:
-                                TextStyle(fontSize: 14), // Hint text size
+                                const TextStyle(fontSize: 14), // Hint text size
                             labelStyle:
-                                TextStyle(fontSize: 14), // Label text size
+                                const TextStyle(fontSize: 14), // Label text size
                           ),
-                          style: TextStyle(fontSize: 14), // Input text size
+                          style: const TextStyle(fontSize: 14), // Input text size
                         ),
                       ),
                       const SizedBox(height: 15.0),
@@ -221,11 +221,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             ),
                             // Adding style to the text field
                             hintStyle:
-                                TextStyle(fontSize: 14), // Hint text size
+                                const TextStyle(fontSize: 14), // Hint text size
                             labelStyle:
-                                TextStyle(fontSize: 14), // Label text size
+                                const TextStyle(fontSize: 14), // Label text size
                           ),
-                          style: TextStyle(fontSize: 14), // Input text size
+                          style: const TextStyle(fontSize: 14), // Input text size
                         ),
                       ),
 
@@ -252,7 +252,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         },
                         height: 50.0,
                         width: double.infinity,
-                        textStyle: TextStyle(
+                        textStyle: const TextStyle(
                           fontSize: 15,
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
@@ -305,7 +305,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
-                            side: BorderSide(
+                            side: const BorderSide(
                               color: ColorTheme
                                   .liteGreen1, // Set your desired border color here
                               width: 2, // Set the width of the border
@@ -316,10 +316,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                       const SizedBox(height: 15.0),
                       // Sign-in redirection
-                      Row(
+                      const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Padding(
+                          Padding(
                             padding: EdgeInsets.symmetric(
                               vertical: 0,
                               horizontal: 10,
@@ -348,16 +348,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               ),
                             );
                           },
-                          child: const Text(
-                            'Sign In',
-                            style: TextStyle(
-                                color: Color(0xFF1D225C)), // Text color
-                          ),
                           style: OutlinedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 15),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
+                          ),
+                          child: const Text(
+                            'Sign In',
+                            style: TextStyle(
+                                color: Color(0xFF1D225C)), // Text color
                           ),
                         ),
                       ),
