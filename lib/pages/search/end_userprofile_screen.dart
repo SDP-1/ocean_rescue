@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart'
     as auth; // Import Firebase Auth for current user with alias
 import '../../models/user.dart';
+import '../../widget/navbar/BottomNavBar.dart';
 import '../chat/chat_detail_screen.dart'; // Import the ChatDetailScreen
 
 class UserProfilePage extends StatelessWidget {
@@ -176,6 +177,7 @@ class UserProfilePage extends StatelessWidget {
                                   IconButton(
                                     onPressed: () {
                                       // Navigate to ChatDetailScreen with user's name, avatar, and IDs
+                                      BottomNavBar.visibility(false);
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
@@ -193,7 +195,9 @@ class UserProfilePage extends StatelessWidget {
                                                 .photoUrl, // Pass the avatar URL
                                           ),
                                         ),
-                                      );
+                                      ).then((_) {
+                                        BottomNavBar.visibility(true);
+                                      });
                                     },
                                     icon: const Icon(Icons.message),
                                     color: Colors.blue, // Icon color

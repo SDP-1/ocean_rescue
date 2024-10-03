@@ -131,6 +131,8 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+      resizeToAvoidBottomInset:
+          true, // Allow the layout to adjust when the keyboard pops up
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -154,10 +156,11 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
       ),
       body: Column(
         children: [
+          // Wrap the ListView with Expanded to give it proper scrolling behavior
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
               stream: _messagesCollection
-                  .orderBy('timestamp', descending: true) // Order by timestamp
+                  .orderBy('timestamp', descending: true)
                   .snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -185,14 +188,29 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                       alignment:
                           isMe ? Alignment.centerRight : Alignment.centerLeft,
                       child: Container(
-                        padding: const EdgeInsets.all(10),
+                        padding: const EdgeInsets.all(12),
                         margin: const EdgeInsets.symmetric(
-                            vertical: 5, horizontal: 8),
+                            vertical: 5, horizontal: 16),
                         decoration: BoxDecoration(
-                          color: isMe ? Colors.blue[100] : Colors.grey[200],
-                          borderRadius: BorderRadius.circular(10),
+                          color: isMe ? Colors.blue[50] : Colors.grey[200],
+                          borderRadius: BorderRadius.only(
+                            topLeft: const Radius.circular(15),
+                            topRight: const Radius.circular(15),
+                            bottomLeft: isMe
+                                ? const Radius.circular(15)
+                                : const Radius.circular(0),
+                            bottomRight: isMe
+                                ? const Radius.circular(0)
+                                : const Radius.circular(15),
+                          ),
                         ),
-                        child: Text(message.text),
+                        child: Text(
+                          message.text,
+                          style: TextStyle(
+                            color: isMe ? Colors.black : Colors.black87,
+                            fontSize: 16,
+                          ),
+                        ),
                       ),
                     );
                   },
@@ -200,27 +218,36 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
               },
             ),
           ),
+          // This handles the message input and the keyboard interaction
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Row(
               children: [
                 Expanded(
-                  child: TextField(
-                    controller: _messageController,
-                    decoration: InputDecoration(
-                      hintText: 'Type your message...',
-                      filled: true,
-                      fillColor: Colors.grey[200],
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20),
-                        borderSide: BorderSide.none,
-                      ),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[200],
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: _messageController,
+                            decoration: const InputDecoration(
+                              hintText: 'Write your message',
+                              border: InputBorder.none,
+                            ),
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.send, color: Colors.blue),
+                          onPressed: _sendMessage,
+                        ),
+                      ],
                     ),
                   ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.send),
-                  onPressed: _sendMessage,
                 ),
               ],
             ),
