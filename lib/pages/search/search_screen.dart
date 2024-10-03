@@ -1,44 +1,61 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart'; // Import Firebase Auth
 import '../../theme/colorTheme.dart';
-import '../../models/user.dart';
+import '../../models/user.dart' as AppUsers;
 import 'end_userprofile_screen.dart' as end_user;
 
 class UserSearchPage extends StatefulWidget {
-  // final String currentUserId; // Add current user's ID
-
-  // const UserSearchPage({Key? key, required this.currentUserId})
-  //     : super(key: key); // Updated constructor
-
   @override
   _UserSearchPageState createState() => _UserSearchPageState();
 }
 
 class _UserSearchPageState extends State<UserSearchPage> {
   final TextEditingController _searchController = TextEditingController();
-  List<User> users = []; // List to hold all users from Firestore
-  List<User> filteredUsers = []; // List to hold filtered users
+  final FirebaseAuth _auth = FirebaseAuth.instance; // Instance of Firebase Auth
 
+  List<AppUsers.User> users = []; // List to hold all users from Firestore
+  List<AppUsers.User> filteredUsers = []; // List to hold filtered users
   bool isLoading = true;
+  String currentUserId = ''; // Store current user's UID
 
   @override
   void initState() {
     super.initState();
+    getCurrentUserId(); // Fetch current user's ID
     _searchController.addListener(filterUsers);
-    fetchUsersFromFirestore(); // Fetch users from Firestore
   }
 
-  // Fetch users from Firestore
+  // Get the current user UID
+  String fetchCurrentUserId() {
+    return _auth.currentUser!.uid; // Get current user's UID from Firebase Auth
+  }
+
+  // Fetch the current user and all other users from Firestore
+  Future<void> getCurrentUserId() async {
+    setState(() {
+      currentUserId = _auth.currentUser!.uid; // Fetch the logged-in user's UID
+    });
+
+    await fetchUsersFromFirestore(); // Fetch users from Firestore after getting the UID
+  }
+
+  // Fetch users from Firestore, excluding the current logged-in user
   Future<void> fetchUsersFromFirestore() async {
     try {
       // Retrieve users from the 'users' collection in Firestore
       QuerySnapshot querySnapshot =
           await FirebaseFirestore.instance.collection('users').get();
 
-      // Map the documents to User objects and set the state
+      // Map the documents to User objects and filter out the current user
       setState(() {
-        users = querySnapshot.docs.map((doc) => User.fromSnap(doc)).toList();
-        filteredUsers = users; // Initially, display all users
+        users = querySnapshot.docs
+            .map((doc) => AppUsers.User.fromSnap(doc))
+            .where((user) => user.uid != currentUserId) // Exclude current user
+            .toList();
+
+        filteredUsers =
+            users; // Initially, display all users except current user
         isLoading = false;
       });
     } catch (e) {
@@ -49,12 +66,14 @@ class _UserSearchPageState extends State<UserSearchPage> {
     }
   }
 
-  // Filter users based on the search query
+  // Filter users based on the search query and exclude the current user
   void filterUsers() {
     final query = _searchController.text.toLowerCase();
     setState(() {
       filteredUsers = users
-          .where((user) => user.username.toLowerCase().contains(query))
+          .where((AppUsers.User user) =>
+              user.username.toLowerCase().contains(query) &&
+              user.uid != currentUserId) // Exclude current user
           .toList();
     });
   }
@@ -125,13 +144,12 @@ class _UserSearchPageState extends State<UserSearchPage> {
                           contentPadding:
                               const EdgeInsets.symmetric(horizontal: 16.0),
                           onTap: () {
-                            // Navigate to UserProfilePage and pass the user.uid and currentUserId
+                            // Navigate to UserProfilePage and pass the userId
                             Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (context) => end_user.UserProfilePage(
-                                  userId:
-                                      filteredUsers[index].uid, 
+                                  userId: filteredUsers[index].uid,
                                 ),
                               ),
                             );
