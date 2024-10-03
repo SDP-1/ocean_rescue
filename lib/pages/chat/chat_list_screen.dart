@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'chat_detail_screen.dart';
 
 void main() => runApp(ChatApp());
@@ -28,16 +27,12 @@ class ChatListScreen extends StatelessWidget {
         title: const Row(
           children: [
             CircleAvatar(
-              backgroundImage: AssetImage(
-                  'assets/user/profile_pic.jpg'), // Replace with the user avatar path
+              backgroundImage: AssetImage('assets/user/profile_pic.jpg'), // Replace with the user avatar path
             ),
             SizedBox(width: 10),
             Text(
               'Chats',
-              style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold),
+              style: TextStyle(color: Colors.black, fontSize: 24, fontWeight: FontWeight.bold),
             ),
           ],
         ),
@@ -65,8 +60,7 @@ class ChatListScreen extends StatelessWidget {
               itemBuilder: (context, index) {
                 return ListTile(
                   leading: CircleAvatar(
-                    backgroundImage:
-                        AssetImage(chats[index]['avatar']!), // User avatar
+                    backgroundImage: AssetImage(chats[index]['avatar']!), // User avatar
                   ),
                   title: Text(
                     chats[index]['name']!,
@@ -78,15 +72,16 @@ class ChatListScreen extends StatelessWidget {
                   ),
                   trailing: const Icon(Icons.check_circle, color: Colors.grey),
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ChatDetailScreen(
-                          name: chats[index]['name']!,
-                          avatar: chats[index]['avatar']!,
-                        ),
-                      ),
-                    );
+                    // Uncomment below to navigate to ChatDetailScreen
+                    // Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(
+                    //     builder: (context) => ChatDetailScreen(
+                    //       name: chats[index]['name']!,
+                    //       avatar: chats[index]['avatar']!,
+                    //     ),
+                    //   ),
+                    // );
                   },
                 );
               },

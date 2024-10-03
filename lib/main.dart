@@ -4,6 +4,7 @@ import 'package:ocean_rescue/pages/dumpReport/DumpReportHistory.dart';
 import 'package:ocean_rescue/pages/notification/NotificationScreen.dart';
 import 'package:ocean_rescue/pages/welcome/signin_screen.dart';
 import 'package:ocean_rescue/widget/popup/delete_confirmation_popup.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   try {
@@ -26,9 +27,8 @@ class MyApp extends StatelessWidget {
       home: SignInScreen(),
       // home: BottomNavBar(),
       // home: SplashScreen(),
-    //  home : DumpReportHistory(),
-     //home : delete_confirmation_popup(),
-    
+      //  home : DumpReportHistory(),
+      //home : delete_confirmation_popup(),
     );
   }
 }
