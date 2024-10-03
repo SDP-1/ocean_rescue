@@ -4,6 +4,7 @@ import 'package:ocean_rescue/pages/dumpReport/DumpReportHistory.dart';
 import 'package:ocean_rescue/pages/notification/NotificationScreen.dart';
 import 'package:ocean_rescue/pages/welcome/signin_screen.dart';
 import 'package:ocean_rescue/widget/popup/delete_confirmation_popup.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   try {
@@ -23,10 +24,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Ocean Rescue', // Fixed the typo in the app title
       debugShowCheckedModeBanner: false,
-      //home: SignInScreen(),
+      home: SignInScreen(),
       // home: BottomNavBar(),
       // home: SplashScreen(),
-      home : DumpReportHistory(),
+      // home : DumpReportHistory(),
      //home : delete_confirmation_popup(),
     
     );
