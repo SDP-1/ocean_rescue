@@ -5,6 +5,7 @@ import '../../theme/colorTheme.dart';
 import '../../widget/feed/FeaturedEventSection.dart';
 import '../../widget/feed/TopAppBar .dart';
 import '../../widget/feed/post_card.dart';
+import '../../widget/navbar/BottomNavBar.dart';
 
 class FeedScreen extends StatefulWidget {
   const FeedScreen({super.key});

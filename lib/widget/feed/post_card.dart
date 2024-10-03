@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:ocean_rescue/pages/feed/comments_screen.dart';
 import 'package:ocean_rescue/utils/colors.dart';
 import 'package:ocean_rescue/resources/post_firestore_methods.dart';
+import 'package:ocean_rescue/widget/navbar/BottomNavBar.dart';
 import '../../widget/feed/comment_card.dart';
 import 'like_animation.dart'; // Ensure this file exists
 import 'package:firebase_auth/firebase_auth.dart';
@@ -251,13 +252,18 @@ class _PostCardState extends State<PostCard> {
               IconButton(
                 icon: const Icon(Icons.comment_outlined),
                 onPressed: () {
-                  Navigator.of(context).push(
+                  BottomNavBar.visibility(false);
+                  Navigator.of(context)
+                      .push(
                     MaterialPageRoute(
                       builder: (context) => CommentsScreen(
                         postId: widget.snap['postId'],
                       ),
                     ),
-                  );
+                  )
+                      .then((_) {
+                    BottomNavBar.visibility(true);
+                  });
                 },
               ),
               IconButton(
