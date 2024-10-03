@@ -56,6 +56,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -65,7 +66,6 @@ class _CommentsScreenState extends State<CommentsScreen> {
         children: [
           Expanded(
             child: Center(
-              // Centering the content
               child: _isLoading
                   ? const CircularProgressIndicator()
                   : _comments.isEmpty
@@ -81,31 +81,39 @@ class _CommentsScreenState extends State<CommentsScreen> {
             ),
           ),
           SafeArea(
-            child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      controller: _commentController,
-                      decoration: InputDecoration(
-                        hintText: 'Add a comment...',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(25.0),
-                          borderSide: BorderSide.none,
-                        ),
-                        filled: true,
-                        fillColor: Colors.grey[200],
+              child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _commentController,
+                    decoration: InputDecoration(
+                      hintText: 'Add a comment...', // Placeholder text
+                      border: OutlineInputBorder(
+                        borderRadius:
+                            BorderRadius.circular(25.0), // Border radius
+                        borderSide: BorderSide.none, // No visible border
                       ),
+                      filled: true, // To apply background color
+                      fillColor: Colors
+                          .grey[200], // Background color for the input field
                     ),
                   ),
-                  IconButton(
-                    icon: const Icon(Icons.send),
-                    onPressed: _postComment,
-                  ),
-                ],
-              ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.send,
+                      color: Colors.blue), // Send button with blue color
+                  onPressed:
+                      _postComment, // On press, call the post comment function
+                ),
+              ],
+            ),
+          )),
+          Padding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom +
+                  16.0, // Adding 16 pixels of extra padding
             ),
           ),
         ],
