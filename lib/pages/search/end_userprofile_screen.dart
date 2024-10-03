@@ -1,11 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart'
+    as auth; // Import Firebase Auth for current user with alias
 import '../../models/user.dart';
+import '../chat/chat_detail_screen.dart'; // Import the ChatDetailScreen
 
 class UserProfilePage extends StatelessWidget {
   final String userId; // Accept user ID from previous screen
 
-  const UserProfilePage({super.key, required this.userId});
+  const UserProfilePage({
+    super.key,
+    required this.userId,
+  });
+
+  // Get the current user UID
+  String getCurrentUserId() {
+    final _auth = auth.FirebaseAuth.instance; // Initialize Firebase Auth
+    return _auth.currentUser!.uid; // Return current user's ID
+  }
 
   // Fetch user details from Firestore using the userId
   Future<User> fetchUserDetails(String userId) async {
@@ -16,6 +28,8 @@ class UserProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String currentUserId = getCurrentUserId(); // Get current user ID here
+
     return FutureBuilder<User>(
       future: fetchUserDetails(userId), // Fetch user data from Firestore
       builder: (context, snapshot) {
@@ -30,7 +44,7 @@ class UserProfilePage extends StatelessWidget {
                 Center(child: Text('Error loading user data')), // Error message
           );
         } else if (snapshot.hasData) {
-          User user = snapshot.data!;
+          User user = snapshot.data!; // Retrieved user data
           return Scaffold(
             backgroundColor: Colors.white,
             appBar: AppBar(
@@ -51,8 +65,7 @@ class UserProfilePage extends StatelessWidget {
                       children: [
                         // Profile image and username on the left
                         Column(
-                          crossAxisAlignment: CrossAxisAlignment
-                              .start, // Align name with profile image
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Container(
                               width: 100, // Set the width you want
@@ -136,24 +149,57 @@ class UserProfilePage extends StatelessWidget {
                                 ],
                               ),
                               const SizedBox(height: 10),
-                              // Follow button with expanded width
-                              SizedBox(
-                                width: double.infinity,
-                                child: ElevatedButton(
-                                  onPressed: () {},
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.blue,
-                                    foregroundColor: Colors.white,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10),
+                              // Follow button and message icon in a Row
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: ElevatedButton(
+                                      onPressed: () {},
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.blue,
+                                        foregroundColor: Colors.white,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
+                                      ),
+                                      child: const Text(
+                                        'Follow',
+                                        style: TextStyle(
+                                            fontSize: 12), // Reduced font size
+                                      ),
                                     ),
                                   ),
-                                  child: const Text(
-                                    'Follow',
-                                    style: TextStyle(
-                                        fontSize: 12), // Reduced font size
+                                  const SizedBox(
+                                      width:
+                                          10), // Space between Follow button and message icon
+                                  IconButton(
+                                    onPressed: () {
+                                      // Navigate to ChatDetailScreen with user's name, avatar, and IDs
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              ChatDetailScreen(
+                                            chatId:
+                                                '${currentUserId}_$userId', // Unique chat ID
+                                            senderId:
+                                                currentUserId, // Pass current user's ID
+                                            receiverId:
+                                                userId, // Pass the other user's ID
+                                            name: user
+                                                .username, // Pass the username
+                                            avatar: user
+                                                .photoUrl, // Pass the avatar URL
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    icon: const Icon(Icons.message),
+                                    color: Colors.blue, // Icon color
+                                    iconSize: 30, // Icon size
                                   ),
-                                ),
+                                ],
                               ),
                             ],
                           ),

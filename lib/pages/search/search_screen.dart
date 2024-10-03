@@ -5,7 +5,10 @@ import '../../models/user.dart';
 import 'end_userprofile_screen.dart' as end_user;
 
 class UserSearchPage extends StatefulWidget {
-  const UserSearchPage({super.key});
+  // final String currentUserId; // Add current user's ID
+
+  // const UserSearchPage({Key? key, required this.currentUserId})
+  //     : super(key: key); // Updated constructor
 
   @override
   _UserSearchPageState createState() => _UserSearchPageState();
@@ -97,7 +100,8 @@ class _UserSearchPageState extends State<UserSearchPage> {
       body: isLoading
           ? const Center(
               child:
-                  CircularProgressIndicator()) // Show a loading indicator while fetching users
+                  CircularProgressIndicator(), // Show a loading indicator while fetching users
+            )
           : Padding(
               padding: const EdgeInsets.only(top: 8.0),
               child: Column(
@@ -121,12 +125,13 @@ class _UserSearchPageState extends State<UserSearchPage> {
                           contentPadding:
                               const EdgeInsets.symmetric(horizontal: 16.0),
                           onTap: () {
-                            // Navigate to UserProfilePage and pass the user.uid
+                            // Navigate to UserProfilePage and pass the user.uid and currentUserId
                             Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (context) => end_user.UserProfilePage(
-                                  userId: filteredUsers[index].uid, // Pass user ID
+                                  userId:
+                                      filteredUsers[index].uid, 
                                 ),
                               ),
                             );
