@@ -11,7 +11,19 @@ import '../../pages/feed/feed_screen.dart';
 import '../../theme/colorTheme.dart';
 
 class BottomNavBar extends StatelessWidget {
+  static final ValueNotifier<bool> isNavBarVisible = ValueNotifier(true);
+
   const BottomNavBar({super.key});
+
+  // Static method to show the navigation bar
+  static void visibility(bool visiblity) {
+    isNavBarVisible.value = visiblity;
+  }
+
+  // Static method to hide the navigation bar
+  static void hideNavBar() {
+    isNavBarVisible.value = false;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +31,6 @@ class BottomNavBar extends StatelessWidget {
     List<Widget> buildScreens() {
       return [
         const FeedScreen(),
-        // EventScreen(),
         DumpsDashboard(),
         const QrScanner(),
         const NotificationScreen(),
@@ -52,11 +63,11 @@ class BottomNavBar extends StatelessWidget {
         ),
         PersistentBottomNavBarItem(
           icon: const Icon(Icons.notifications),
-          title: ("Qracanner"),
+          title: ("Notifications"),
         ),
         PersistentBottomNavBarItem(
           icon: const Icon(Icons.menu),
-          title: ("Qracanner"),
+          title: ("Menu"),
         ),
       ];
     }
@@ -65,40 +76,44 @@ class BottomNavBar extends StatelessWidget {
     PersistentTabController controller =
         PersistentTabController(initialIndex: 0);
 
-    // Define the nav bar style
-    const navBarStyle = NavBarStyle.style1; // Choose from style1, style2, etc.
-
     // Return the PersistentTabView widget
-    return PersistentTabView(
-      context,
-      controller: controller,
-      screens: buildScreens(),
-      items: navBarsItems(),
-      handleAndroidBackButtonPress: true, // Default is true.
-      resizeToAvoidBottomInset: true, // Default is true.
-      stateManagement: true, // Default is true.
-      hideNavigationBarWhenKeyboardAppears: true,
-      // popBehaviorOnSelectedNavBarItemPress:
-      //     PopActionScreensType.all, // Fix for PopActionScreensType
-      padding: const EdgeInsets.only(top: 8),
-      backgroundColor: Colors.white,
-      isVisible: true,
-      animationSettings: const NavBarAnimationSettings(
-        navBarItemAnimation: ItemAnimationSettings(
-          // Navigation Bar's items animation properties.
-          duration: Duration(milliseconds: 400),
-          curve: Curves.ease,
-        ),
-        screenTransitionAnimation: ScreenTransitionAnimationSettings(
-          // Screen transition animation.
-          animateTabTransition: true,
-          duration: Duration(milliseconds: 200),
-          screenTransitionAnimationType: ScreenTransitionAnimationType.fadeIn,
-        ),
-      ),
-      confineToSafeArea: true,
-      navBarHeight: kBottomNavigationBarHeight,
-      navBarStyle: NavBarStyle.style13, // Use the defined nav bar style
+    return ValueListenableBuilder<bool>(
+      valueListenable: isNavBarVisible,
+      builder: (context, isVisible, child) {
+        return PersistentTabView(
+          context,
+          controller: controller,
+          screens: buildScreens(),
+          items: navBarsItems(),
+          handleAndroidBackButtonPress: true, // Default is true.
+          resizeToAvoidBottomInset:
+              false, // Set to false to prevent nav bar from moving.
+          stateManagement: true, // Default is true.
+          hideNavigationBarWhenKeyboardAppears:
+              false, // Optional: Keep the nav bar visible.
+          padding: const EdgeInsets.only(top: 8),
+          backgroundColor: Colors.white,
+          isVisible:
+              isVisible, // Use the static ValueNotifier to control visibility
+          animationSettings: const NavBarAnimationSettings(
+            navBarItemAnimation: ItemAnimationSettings(
+              // Navigation Bar's items animation properties.
+              duration: Duration(milliseconds: 400),
+              curve: Curves.ease,
+            ),
+            screenTransitionAnimation: ScreenTransitionAnimationSettings(
+              // Screen transition animation.
+              animateTabTransition: true,
+              duration: Duration(milliseconds: 200),
+              screenTransitionAnimationType:
+                  ScreenTransitionAnimationType.fadeIn,
+            ),
+          ),
+          confineToSafeArea: true,
+          navBarHeight: kBottomNavigationBarHeight,
+          navBarStyle: NavBarStyle.style13, // Use the defined nav bar style
+        );
+      },
     );
   }
 }
