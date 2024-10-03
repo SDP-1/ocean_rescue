@@ -25,25 +25,7 @@ class ReportDumpsFirestoreMethods {
     return await snapshot.ref.getDownloadURL();
   }
 
-  // Method to save a dump report
-  // Future<void> saveReportDump(ReportDump reportDump) async {
-  //   try {
-  //     // Create a map from the reportDump object
-  //     Map<String, dynamic> data = reportDump.toJson(); // Use toJson instead of toMap
-
-  //     // Add a timestamp field
-  //     data['timestamp'] = FieldValue.serverTimestamp();
-
-  //     await _firestore
-  //         .collection('report_dumps')
-  //         .doc(reportDump.id)
-  //         .set(data);
-  //   } catch (e) {
-  //     print('Failed to save dump report: $e');
-  //   }
-  // }
-
- // Method to save a dump report
+ 
 Future<void> saveReportDump({
   required String title,
   required String description,
