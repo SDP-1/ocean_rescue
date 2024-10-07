@@ -27,8 +27,9 @@ class MyApp extends StatelessWidget {
       home: SignInScreen(),
       // home: BottomNavBar(),
       // home: SplashScreen(),
-      //  home : DumpReportHistory(),
-      //home : delete_confirmation_popup(),
+     // home : DumpReportHistory(),
+     //home : delete_confirmation_popup(),
+    
     );
   }
 }

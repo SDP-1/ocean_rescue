@@ -11,7 +11,7 @@ class ReportDumpsFirestoreMethods {
   final FirebaseStorage _storage = FirebaseStorage.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-    // Get the current user UID
+  // Get the current user UID
   String getCurrentUserId() {
     return _auth.currentUser!.uid;
   }
@@ -25,31 +25,12 @@ class ReportDumpsFirestoreMethods {
     return await snapshot.ref.getDownloadURL();
   }
 
-  // Method to save a dump report
-  // Future<void> saveReportDump(ReportDump reportDump) async {
-  //   try {
-  //     // Create a map from the reportDump object
-  //     Map<String, dynamic> data = reportDump.toJson(); // Use toJson instead of toMap
-
-  //     // Add a timestamp field
-  //     data['timestamp'] = FieldValue.serverTimestamp();
-
-  //     await _firestore
-  //         .collection('report_dumps')
-  //         .doc(reportDump.id)
-  //         .set(data);
-  //   } catch (e) {
-  //     print('Failed to save dump report: $e');
-  //   }
-  // }
-
- // Method to save a dump report
-Future<void> saveReportDump({
+ Future<void> saveReportDump({
   required String title,
   required String description,
   required String eventLocation,
   required String urgencyLevel,
-  required File imageFile,
+  required File imageFile, required bool isReported,
 }) async {
   try {
     // Generate a unique ID for the dump report
@@ -58,7 +39,7 @@ Future<void> saveReportDump({
     // Upload the image to Firebase Storage and get the download URL
     String imageUrl = await uploadImageToStorage(id, imageFile);
 
-    //get current user id
+    // Get current user id
     String uid = getCurrentUserId();
 
     // Create a map from the provided parameters
@@ -71,13 +52,11 @@ Future<void> saveReportDump({
       'urgencyLevel': urgencyLevel,
       'imageUrl': imageUrl,
       'timestamp': FieldValue.serverTimestamp(), // Use Firestore's server timestamp
+      'isReported': true, // Set to true when initially saving
     };
 
     // Save the report to Firestore
-    await _firestore
-        .collection('report_dumps')
-        .doc(id)
-        .set(data);
+    await _firestore.collection('report_dumps').doc(id).set(data);
   } catch (e) {
     print('Failed to save dump report: $e');
   }
@@ -85,13 +64,42 @@ Future<void> saveReportDump({
 
 
   // Method to fetch all dump reports
-  Future<List<ReportDump>> fetchAllDumpReports() async {
-    try {
-      QuerySnapshot querySnapshot = await _firestore.collection('report_dumps').get();
-      return querySnapshot.docs.map((doc) => ReportDump.fromJson(doc.data() as Map<String, dynamic>)).toList();
-    } catch (e) {
-      print('Failed to fetch dump reports: $e');
-      return [];
-    }
+Future<List<ReportDump>> fetchReportedDumpReports() async {
+  try {
+    QuerySnapshot querySnapshot = await _firestore
+        .collection('report_dumps')
+        .where('isReported', isEqualTo: true) // Fetch only reported dumps
+        .limit(15) 
+        .get();
+    
+    print('Reported dump reports count: ${querySnapshot.docs.length}'); // Debugging info
+    
+    return querySnapshot.docs
+        .map((doc) => ReportDump.fromJson(doc.data() as Map<String, dynamic>))
+        .toList();
+  } catch (e) {
+    print('Failed to fetch reported dump reports: $e');
+    return [];
   }
+}
+
+
+Future<List<ReportDump>> fetchClearedDumpReports() async {
+  try {
+    QuerySnapshot querySnapshot = await _firestore
+        .collection('report_dumps')
+        .where('isReported', isEqualTo: false) // Fetch only cleared dumps
+        .get();
+    
+    print('Cleared dump reports count: ${querySnapshot.docs.length}'); // Debugging info
+    
+    return querySnapshot.docs
+        .map((doc) => ReportDump.fromJson(doc.data() as Map<String, dynamic>))
+        .toList();
+  } catch (e) {
+    print('Failed to fetch cleared dump reports: $e');
+    return [];
+  }
+}
+
 }
