@@ -81,6 +81,9 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
         timestamp: Timestamp.now(), // Use Firestore's server timestamp
       );
 
+      // Clear the message input field
+      _messageController.clear();
+
       // Add the new message to the messages collection
       DocumentReference messageRef =
           await _messagesCollection.add(newMessage.toMap());
@@ -121,9 +124,6 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
           .update({
         'chats': FieldValue.arrayUnion([widget.chatId])
       });
-
-      // Clear the message input field
-      _messageController.clear();
     }
   }
 

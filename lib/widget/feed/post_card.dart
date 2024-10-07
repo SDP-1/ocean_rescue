@@ -350,8 +350,8 @@ class _PostCardState extends State<PostCard> {
                               if (description.length > 100)
                                 TextSpan(
                                   text: isDescriptionExpanded
-                                      ? 'See less'
-                                      : 'See more',
+                                      ? '  See less'
+                                      : ' See more',
                                   style: const TextStyle(
                                     color: Colors.blue,
                                     fontSize: 14,
