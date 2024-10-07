@@ -44,14 +44,13 @@ class _ReportDumpPageState extends State<ReportDumpPage> {
 
 
 
-  // Method to handle report dump submission
 Future<void> _submitReportDump(BuildContext context) async {
+  // Save form state before validation
   if (_formKey.currentState?.validate() ?? false) {
-    _formKey.currentState?.save();
+    _formKey.currentState?.save(); // Save field values
 
     if (_selectedUrgency == null) {
-      showErrorPopup(
-          context, 'Urgency Level', 'Please select an urgency level.');
+      showErrorPopup(context, 'Urgency Level', 'Please select an urgency level.');
       return;
     }
 
@@ -60,34 +59,46 @@ Future<void> _submitReportDump(BuildContext context) async {
       return;
     }
 
+    setState(() => _isSubmitting = true); // Start loading
+
     try {
-      setState(() => _isSubmitting = true); // Set loading state to true
-
       await _firestoreMethods.saveReportDump(
-    title: _title,
-    description: _description,
-    eventLocation: _eventLocation,
-    urgencyLevel: _selectedUrgency!,
-    imageFile: _image!, // Pass the image file directly
-    isReported: true, // Set this according to your logic (true or false)
-  );
+        title: _title,
+        description: _description,
+        eventLocation: _eventLocation,
+        urgencyLevel: _selectedUrgency!,
+        imageFile: _image!,
+        isReported: true,
+      );
 
-      Navigator.push(
+      // Reset the form fields AFTER successful submission
+      showSuccessPopup(context, 'Report Submitted', 'Dump report has been successfully submitted.');
+
+      // Optionally clear the form fields only after successful submission
+      _formKey.currentState?.reset();
+
+      // Reset field variables
+      setState(() {
+        _title = '';
+        _description = '';
+        _eventLocation = '';
+        _selectedUrgency = null;
+        _image = null;
+      });
+
+      // Navigate to dashboard after resetting
+      Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => DumpsDashboard()),
       );
-
-      showSuccessPopup(context, 'Report Submitted',
-          'Dump report has been successfully submitted.');
     } catch (e) {
-      showErrorPopup(context, 'Submission Failed',
-          'Error occurred while submitting: $e');
+      print("Error: $e");
+      showErrorPopup(context, 'Submission Failed', 'Error occurred while submitting: $e');
     } finally {
-      setState(() => _isSubmitting = false); // Reset loading state to false
+      setState(() => _isSubmitting = false); // Reset loading state
     }
   } else {
-    showErrorPopup(
-        context, 'Invalid Form', 'Please fill all fields correctly.');
+    showErrorPopup(context, 'Invalid Form', 'Please fill all fields correctly.');
   }
 }
 
