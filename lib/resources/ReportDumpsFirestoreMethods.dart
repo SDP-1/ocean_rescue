@@ -30,7 +30,8 @@ class ReportDumpsFirestoreMethods {
   required String description,
   required String eventLocation,
   required String urgencyLevel,
-  required File imageFile, required bool isReported,
+  required File imageFile, 
+  required bool isReported,
 }) async {
   try {
     // Generate a unique ID for the dump report
