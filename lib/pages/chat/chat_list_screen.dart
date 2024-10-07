@@ -200,8 +200,31 @@ class _ChatListScreenState extends State<ChatListScreen> {
                         itemBuilder: (context, index) {
                           return ListTile(
                             leading: CircleAvatar(
-                              backgroundImage:
-                                  NetworkImage(filteredChats[index]['avatar']),
+                              radius: 24, // Adjust the size of the avatar
+                              backgroundColor: Colors.grey[200],
+                              child: ClipOval(
+                                child: FadeInImage.assetNetwork(
+                                  placeholder:
+                                      'assets/user/profile_pic.jpg', // Local default image
+                                  image: filteredChats[index]
+                                      ['avatar'], // User avatar URL
+                                  fit: BoxFit.cover,
+                                  width:
+                                      48, // Set the width to match avatar size
+                                  height:
+                                      48, // Set the height to match avatar size
+                                  imageErrorBuilder:
+                                      (context, error, stackTrace) {
+                                    // Display default image in case of an error
+                                    return Image.asset(
+                                      'assets/default_avatar.png',
+                                      fit: BoxFit.cover,
+                                      width: 48,
+                                      height: 48,
+                                    );
+                                  },
+                                ),
+                              ),
                             ),
                             title: Text(
                               filteredChats[index]['userName'],
