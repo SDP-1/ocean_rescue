@@ -124,7 +124,7 @@ class DumpsDashboard extends StatelessWidget {
               child: Row(
                 children: [
                   Text(
-                    "All Events",
+                    "All Dumps",
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   Spacer(),

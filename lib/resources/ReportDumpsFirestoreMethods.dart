@@ -102,4 +102,17 @@ Future<List<ReportDump>> fetchClearedDumpReports() async {
   }
 }
 
+
+Future<void> deleteReportDump(String id) async {
+  try {
+    await _firestore.collection('report_dumps').doc(id).delete();
+    print('Report with ID $id has been deleted');
+  } catch (e) {
+    print('Failed to delete report: $e');
+  }
+}
+
+
+
+
 }
