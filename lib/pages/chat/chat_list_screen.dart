@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:intl/intl.dart'; // Import the intl package
+import 'package:intl/intl.dart'; // For formatting timestamps
 import '../../widget/navbar/BottomNavBar.dart';
 import 'chat_detail_screen.dart';
 
 class ChatListScreen extends StatefulWidget {
-  const ChatListScreen({super.key});
+  const ChatListScreen({Key? key}) : super(key: key);
 
   @override
   State<ChatListScreen> createState() => _ChatListScreenState();
@@ -16,15 +16,36 @@ class _ChatListScreenState extends State<ChatListScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   late String currentUserId;
+  String? currentUserPhotoUrl; // To store the current user's profile picture
   List<Map<String, dynamic>> chats = [];
   List<Map<String, dynamic>> filteredChats = [];
   String searchQuery = '';
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
     currentUserId = _auth.currentUser!.uid;
+    loadUserProfile(); // Load current user profile data (photoUrl)
     loadChats();
+  }
+
+  // Load current user data to get the profile picture
+  Future<void> loadUserProfile() async {
+    try {
+      var userDoc =
+          await _firestore.collection('users').doc(currentUserId).get();
+      if (userDoc.exists) {
+        setState(() {
+          currentUserPhotoUrl = userDoc['photoUrl'];
+        });
+      }
+    } catch (error) {
+      print("Error loading user profile: $error");
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Error loading user profile")),
+      );
+    }
   }
 
   Future<void> loadChats() async {
@@ -46,9 +67,13 @@ class _ChatListScreenState extends State<ChatListScreen> {
       setState(() {
         chats = fetchedChats;
         filteredChats = chats;
+        isLoading = false;
       });
     } catch (error) {
       print("Error loading chats: $error");
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Error loading chats")),
+      );
     }
   }
 
@@ -71,8 +96,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
 
       var lastMessageData = messagesSnapshot.docs.first.data();
       String lastMessage = lastMessageData['text'];
-      String lastMessageTime = formatTimestamp(
-          lastMessageData['timestamp']); // Use the formatting function
+      String lastMessageTime = formatTimestamp(lastMessageData['timestamp']);
 
       var receiverData =
           await _firestore.collection('users').doc(receiverId).get();
@@ -101,16 +125,12 @@ class _ChatListScreenState extends State<ChatListScreen> {
     DateTime dateTime = timestamp.toDate();
     DateTime now = DateTime.now();
 
-    // Check if the date is today
     if (dateTime.year == now.year &&
         dateTime.month == now.month &&
         dateTime.day == now.day) {
       return DateFormat.Hm().format(dateTime); // Return only hour and minute
     } else {
-      // Return formatted date and time
-      return DateFormat.yMMMd()
-          .add_jm()
-          .format(dateTime); // Returns "Sep 14, 2024, 2:30 PM"
+      return DateFormat.yMMMd().add_jm().format(dateTime);
     }
   }
 
@@ -132,18 +152,22 @@ class _ChatListScreenState extends State<ChatListScreen> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        title: const Row(
+        title: Row(
           children: [
             CircleAvatar(
-              backgroundImage: AssetImage('assets/user/profile_pic.jpg'),
+              backgroundImage: currentUserPhotoUrl != null
+                  ? NetworkImage(currentUserPhotoUrl!)
+                  : const AssetImage('assets/user/profile_pic.jpg')
+                      as ImageProvider,
             ),
-            SizedBox(width: 10),
-            Text(
+            const SizedBox(width: 10),
+            const Text(
               'Chats',
               style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold),
+                color: Colors.black,
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ],
         ),
@@ -167,75 +191,102 @@ class _ChatListScreenState extends State<ChatListScreen> {
             ),
           ),
           Expanded(
-            child: filteredChats.isEmpty
+            child: isLoading
                 ? const Center(child: CircularProgressIndicator())
-                : ListView.builder(
-                    itemCount: filteredChats.length,
-                    itemBuilder: (context, index) {
-                      return ListTile(
-                        leading: CircleAvatar(
-                          backgroundImage:
-                              NetworkImage(filteredChats[index]['avatar']),
-                        ),
-                        title: Text(
-                          filteredChats[index]['userName']!,
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        subtitle: StreamBuilder<QuerySnapshot>(
-                          stream: _firestore
-                              .collection('chats')
-                              .doc(filteredChats[index]['chatId'])
-                              .collection('messages')
-                              .orderBy('timestamp', descending: true)
-                              .limit(1)
-                              .snapshots(),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return const Text('Loading...');
-                            }
-                            if (snapshot.hasError) {
-                              return const Text('Error loading messages');
-                            }
-                            if (snapshot.hasData &&
-                                snapshot.data!.docs.isNotEmpty) {
-                              var lastMessageData = snapshot.data!.docs.first
-                                  .data() as Map<String, dynamic>;
-                              String lastMessage = lastMessageData['text'];
-                              String lastMessageTime = formatTimestamp(
-                                  lastMessageData[
-                                      'timestamp']); // Use the formatting function
-                              return Text(
-                                '$lastMessage • $lastMessageTime',
-                                style: const TextStyle(color: Colors.grey),
-                              );
-                            } else {
-                              return const Text('No messages yet');
-                            }
-                          },
-                        ),
-                        trailing:
-                            const Icon(Icons.check_circle, color: Colors.grey),
-                        onTap: () {
-                          BottomNavBar.visibility(false);
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ChatDetailScreen(
-                                chatId: filteredChats[index]['chatId'],
-                                senderId: currentUserId,
-                                receiverId: filteredChats[index]['receiverId'],
-                                name: filteredChats[index]['userName'],
-                                avatar: filteredChats[index]['avatar'],
+                : filteredChats.isEmpty
+                    ? const Center(child: Text("No chats available"))
+                    : ListView.builder(
+                        itemCount: filteredChats.length,
+                        itemBuilder: (context, index) {
+                          return ListTile(
+                            leading: CircleAvatar(
+                              radius: 24, // Adjust the size of the avatar
+                              backgroundColor: Colors.grey[200],
+                              child: ClipOval(
+                                child: FadeInImage.assetNetwork(
+                                  placeholder:
+                                      'assets/user/profile_pic.jpg', // Local default image
+                                  image: filteredChats[index]
+                                      ['avatar'], // User avatar URL
+                                  fit: BoxFit.cover,
+                                  width:
+                                      48, // Set the width to match avatar size
+                                  height:
+                                      48, // Set the height to match avatar size
+                                  imageErrorBuilder:
+                                      (context, error, stackTrace) {
+                                    // Display default image in case of an error
+                                    return Image.asset(
+                                      'assets/default_avatar.png',
+                                      fit: BoxFit.cover,
+                                      width: 48,
+                                      height: 48,
+                                    );
+                                  },
+                                ),
                               ),
                             ),
-                          ).then((_) {
-                            BottomNavBar.visibility(true);
-                          });
+                            title: Text(
+                              filteredChats[index]['userName'],
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            subtitle: StreamBuilder<QuerySnapshot>(
+                              stream: _firestore
+                                  .collection('chats')
+                                  .doc(filteredChats[index]['chatId'])
+                                  .collection('messages')
+                                  .orderBy('timestamp', descending: true)
+                                  .limit(1)
+                                  .snapshots(),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return const Text('Loading...');
+                                }
+                                if (snapshot.hasError) {
+                                  return const Text('Error loading messages');
+                                }
+                                if (snapshot.hasData &&
+                                    snapshot.data!.docs.isNotEmpty) {
+                                  var lastMessageData =
+                                      snapshot.data!.docs.first.data()
+                                          as Map<String, dynamic>;
+                                  String lastMessage = lastMessageData['text'];
+                                  String lastMessageTime = formatTimestamp(
+                                      lastMessageData['timestamp']);
+                                  return Text(
+                                    '$lastMessage • $lastMessageTime',
+                                    style: const TextStyle(color: Colors.grey),
+                                  );
+                                } else {
+                                  return const Text('No messages yet');
+                                }
+                              },
+                            ),
+                            trailing: const Icon(Icons.check_circle,
+                                color: Colors.grey),
+                            onTap: () {
+                              BottomNavBar.visibility(false);
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ChatDetailScreen(
+                                    chatId: filteredChats[index]['chatId'],
+                                    senderId: currentUserId,
+                                    receiverId: filteredChats[index]
+                                        ['receiverId'],
+                                    name: filteredChats[index]['userName'],
+                                    avatar: filteredChats[index]['avatar'],
+                                  ),
+                                ),
+                              ).then((_) {
+                                BottomNavBar.visibility(true);
+                              });
+                            },
+                          );
                         },
-                      );
-                    },
-                  ),
+                      ),
           ),
         ],
       ),
