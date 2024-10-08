@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart'; // Import the provider package
-import '../../models/notification.dart' as CustomNotification;
-import '../../providers/notification_provider.dart';
+import '../../models/notification.dart'
+    as CustomNotification; // Adjust the import as necessary
+import '../../providers/notification_provider.dart'; // Import the NotificationProvider
+import '../../widget/notification/notification_list.dart'; // Import the NotificationList widget
 
 class NotificationScreen extends StatefulWidget {
-  const NotificationScreen({super.key});
+  const NotificationScreen({Key? key})
+      : super(key: key); // Key changed to `Key?`
 
   @override
   State<NotificationScreen> createState() => _NotificationScreenState();
@@ -35,12 +38,8 @@ class _NotificationScreenState extends State<NotificationScreen>
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        // leading: IconButton(
-        //   icon: const Icon(Icons.arrow_back, color: Colors.black),
-        //   onPressed: () => Navigator.pop(context),
-        // ),
         title: const Text(
-          'Notification',
+          'Notifications',
           style: TextStyle(color: Colors.black),
         ),
         bottom: TabBar(
@@ -59,45 +58,13 @@ class _NotificationScreenState extends State<NotificationScreen>
         controller: _tabController,
         children: [
           // Unread notifications tab
-          _buildNotificationList(notificationProvider.getUnreadNotifications()),
+          NotificationList(
+              notifications: notificationProvider.getUnreadNotifications()),
           // Read notifications tab
-          _buildNotificationList(notificationProvider.getReadNotifications()),
+          NotificationList(
+              notifications: notificationProvider.getReadNotifications()),
         ],
       ),
-    );
-  }
-
-  Widget _buildNotificationList(
-      List<CustomNotification.Notification> notifications) {
-    if (notifications.isEmpty) {
-      return const Center(
-        child: Text('No notifications yet!'),
-      ); // Handle empty state
-    }
-
-    return ListView.builder(
-      itemCount: notifications.length,
-      itemBuilder: (context, index) {
-        final notification = notifications[index];
-
-        return ListTile(
-          leading: CircleAvatar(
-            backgroundImage: NetworkImage(notification.userProfileUrl),
-          ),
-          title: Text(
-            notification.title,
-            style: const TextStyle(fontWeight: FontWeight.bold),
-          ),
-          subtitle: Text(notification.message),
-          trailing: notification.isRead
-              ? null
-              : const Icon(
-                  Icons.circle,
-                  color: Colors.red,
-                  size: 12,
-                ),
-        );
-      },
     );
   }
 }

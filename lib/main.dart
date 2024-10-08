@@ -1,18 +1,38 @@
 import 'package:firebase_core/firebase_core.dart'; // Import Firebase Core
+import 'package:firebase_messaging/firebase_messaging.dart'; // Import Firebase Messaging
 import 'package:flutter/material.dart';
 import 'package:ocean_rescue/pages/welcome/signin_screen.dart'; // Ensure this path is correct
 import 'package:ocean_rescue/providers/notification_provider.dart';
 import 'package:provider/provider.dart';
 
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  // Handle background messages here
+  print('Handling a background message: ${message.messageId}');
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize Firebase
   try {
     await Firebase.initializeApp();
   } catch (e) {
-    print('Error initializing Firebase: $e');
+    print('FIREBASE ERROR : $e');
   }
 
-  runApp(const MyApp());
+  // Set up the background messaging handler
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+            create: (context) =>
+                NotificationProvider()), // Register NotificationProvider
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -20,15 +40,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(
-            create: (_) => NotificationProvider()), // Notification Provider
-      ],
-      child: MaterialApp(
-        title: 'Ocean Rescue',
-        debugShowCheckedModeBanner: false,
-        home: const SignInScreen(),
+    return MaterialApp(
+      title: 'Ocean Rescue',
+      debugShowCheckedModeBanner: false,
+      home: const SignInScreen(),
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        // You can define other theme properties here
       ),
     );
   }

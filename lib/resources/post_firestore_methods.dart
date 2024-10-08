@@ -102,9 +102,11 @@ class PostFireStoreMethods {
           title: 'New Post Alert!',
           message: 'Check out the new post: $postTitle',
           timestamp: DateTime.now(),
-          userProfileUrl: 'assets/user/profile_pic.jpg', // Optional
+          userId: userId, // Use userId instead of userProfileUrl
           isRead: false,
           isForeground: false,
+          isFor: NotificationType.post, // Set isFor attribute to 'post'
+          postId: postId, // Add postId to the notification
         );
 
         // Add the notification to the notifications collection

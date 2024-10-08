@@ -17,39 +17,56 @@ class NotificationProvider with ChangeNotifier {
     _loadCurrentUser();
   }
 
+  // Method to listen for changes in the notifications collection
+  void startListeningForNotifications() {
+    if (_currentUser != null) {
+      _firestore
+          .collection('notifications')
+          .where('userId', isEqualTo: _currentUser!.uid)
+          .snapshots()
+          .listen((snapshot) {
+        _loadNotifications();
+      });
+    }
+  }
+
   List<CustomNotification.Notification> get notifications => _notifications;
 
   Future<void> _loadCurrentUser() async {
-    firebase_auth.User? user = _auth.currentUser; // Use the prefixed import
+    firebase_auth.User? user = _auth.currentUser;
     if (user != null) {
       DocumentSnapshot userDoc =
           await _firestore.collection('users').doc(user.uid).get();
       _currentUser = User.fromSnap(userDoc);
       await _loadNotifications();
+      startListeningForNotifications(); // Start listening for notifications
     }
   }
 
   Future<void> _loadNotifications() async {
     if (_currentUser != null) {
       try {
-        // Fetch notifications for the current user based on their notification IDs
         if (_currentUser!.notifications.isNotEmpty) {
           final snapshot = await _firestore
               .collection('notifications')
-              .where(FieldPath.documentId,
-                  whereIn:
-                      _currentUser!.notifications) // Filter by notification IDs
+              .where(FieldPath.documentId, whereIn: _currentUser!.notifications)
               .get();
 
           _notifications = snapshot.docs.map((doc) {
-            final data = doc.data();
+            final data = doc.data() as Map<String, dynamic>;
             return CustomNotification.Notification(
               id: doc.id,
               title: data['title'],
               message: data['message'],
-              timestamp: (data['timestamp'] as Timestamp).toDate(),
-              userProfileUrl: data['userProfileUrl'],
+              timestamp: DateTime.parse(data['timestamp']),
+              userId: data['userId'],
               isRead: data['isRead'] ?? false,
+              isForeground: data['isForeground'] ?? false,
+              isFor: CustomNotification.NotificationType.values.firstWhere(
+                (type) => type.toString().split('.').last == data['isFor'],
+                orElse: () => CustomNotification.NotificationType.post,
+              ),
+              postId: data['postId'],
             );
           }).toList();
           notifyListeners();
@@ -68,7 +85,12 @@ class NotificationProvider with ChangeNotifier {
         'message': notification.message,
         'timestamp': notification.timestamp,
         'isRead': notification.isRead,
-        'userProfileUrl': notification.userProfileUrl,
+        'userId': notification.userId, // Use userId instead of userProfileUrl
+        'isFor':
+            notification.isFor.toString().split('.').last, // Store as string
+        'postId': notification.postId, // New attribute
+        'eventId': notification.eventId, // New attribute
+        'reportDumpId': notification.reportDumpId, // New attribute
       });
 
       if (_currentUser != null) {
@@ -85,7 +107,13 @@ class NotificationProvider with ChangeNotifier {
         title: notification.title,
         message: notification.message,
         timestamp: notification.timestamp,
-        userProfileUrl: notification.userProfileUrl,
+        userId: notification.userId, // Use userId instead of userProfileUrl
+        isRead: notification.isRead,
+        isForeground: notification.isForeground,
+        isFor: notification.isFor,
+        postId: notification.postId,
+        eventId: notification.eventId,
+        reportDumpId: notification.reportDumpId,
       ));
       notifyListeners();
     } catch (e) {
@@ -122,7 +150,7 @@ class NotificationProvider with ChangeNotifier {
     }
   }
 
-  List <CustomNotification.Notification> getUnreadNotifications() {
+  List<CustomNotification.Notification> getUnreadNotifications() {
     return _notifications.where((notif) => !notif.isRead).toList();
   }
 
