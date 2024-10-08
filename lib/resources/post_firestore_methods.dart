@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:ocean_rescue/models/post.dart';
+import 'package:ocean_rescue/providers/notification_provider.dart';
 import 'package:ocean_rescue/resources/storage_methods.dart';
 import 'package:uuid/uuid.dart';
 
@@ -83,6 +84,49 @@ class PostFireStoreMethods {
     return res;
   }
 
+  // Future<void> sendNewPostNotificationToAllUsers(
+  //     String postId, String postTitle) async {
+  //   try {
+  //     // Fetch all users
+  //     QuerySnapshot usersSnapshot = await _firestore.collection('users').get();
+  //     List<DocumentSnapshot> userDocs = usersSnapshot.docs;
+
+  //     for (var userDoc in userDocs) {
+  //       String userId = userDoc.id;
+
+  //       // Create a unique notification ID
+  //       String notificationId = const Uuid().v1();
+
+  //       // Create the notification data
+  //       Notification notification = Notification(
+  //         id: notificationId,
+  //         title: 'New Post Alert!',
+  //         message: 'Check out the new post: $postTitle',
+  //         timestamp: DateTime.now(),
+  //         userId: userId, // Use userId instead of userProfileUrl
+  //         isRead: false,
+  //         isForeground: false,
+  //         isFor: NotificationType.post, // Set isFor attribute to 'post'
+  //         postId: postId, // Add postId to the notification
+  //       );
+
+  //       // Add the notification to the notifications collection
+  //       await _firestore
+  //           .collection('notifications')
+  //           .doc(notificationId)
+  //           .set(notification.toJson());
+
+  //       // Add the notification ID to the user's notifications array
+  //       await _firestore.collection('users').doc(userId).update({
+  //         'notifications': FieldValue.arrayUnion([notificationId]),
+  //       });
+  //     }
+  //   } catch (err) {
+  //     print("Failed to send notifications: $err");
+  //   }
+  // }
+
+// Assuming this is part of your NotificationProvider class
   Future<void> sendNewPostNotificationToAllUsers(
       String postId, String postTitle) async {
     try {
@@ -115,10 +159,14 @@ class PostFireStoreMethods {
             .doc(notificationId)
             .set(notification.toJson());
 
-        // Add the notification ID to the user's notifications array
+         // Add the notification ID to the user's notifications array
         await _firestore.collection('users').doc(userId).update({
           'notifications': FieldValue.arrayUnion([notificationId]),
         });
+
+        // Call the addNotification method to add the notification
+        NotificationProvider notificationProvider = NotificationProvider();
+        await notificationProvider.addNotification(notification);
       }
     } catch (err) {
       print("Failed to send notifications: $err");

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import '../models/notification.dart' as CustomNotification;
 import '../models/user.dart';
 
@@ -10,8 +11,24 @@ class NotificationProvider with ChangeNotifier {
   final firebase_auth.FirebaseAuth _auth = firebase_auth.FirebaseAuth.instance;
   User? _currentUser;
 
+  // Initialize local notifications
+  final FlutterLocalNotificationsPlugin _localNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+
   NotificationProvider() {
     _loadCurrentUser();
+    _initializeLocalNotifications();
+  }
+
+  // Initialize local notifications
+  void _initializeLocalNotifications() {
+    const AndroidInitializationSettings initializationSettingsAndroid =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
+
+    const InitializationSettings initializationSettings =
+        InitializationSettings(android: initializationSettingsAndroid);
+
+    _localNotificationsPlugin.initialize(initializationSettings);
   }
 
   // Getter to expose notifications list
@@ -21,7 +38,8 @@ class NotificationProvider with ChangeNotifier {
   Future<void> _loadCurrentUser() async {
     firebase_auth.User? user = _auth.currentUser;
     if (user != null) {
-      DocumentSnapshot userDoc = await _firestore.collection('users').doc(user.uid).get();
+      DocumentSnapshot userDoc =
+          await _firestore.collection('users').doc(user.uid).get();
       _currentUser = User.fromSnap(userDoc);
       startListeningForNotifications(); // Start real-time listener
     }
@@ -35,6 +53,7 @@ class NotificationProvider with ChangeNotifier {
           .where('userId', isEqualTo: _currentUser!.uid)
           .snapshots()
           .listen((snapshot) {
+        // Check if notifications have been updated
         _notifications = snapshot.docs.map((doc) {
           final data = doc.data() as Map<String, dynamic>;
           return CustomNotification.Notification(
@@ -61,31 +80,47 @@ class NotificationProvider with ChangeNotifier {
   }
 
   // Function to add a new notification
-  Future<void> addNotification(CustomNotification.Notification notification) async {
-    try {
-      final docRef = await _firestore.collection('notifications').add({
-        'title': notification.title,
-        'message': notification.message,
-        'timestamp': notification.timestamp.toIso8601String(),
-        'isRead': notification.isRead,
-        'userId': notification.userId,
-        'isFor': notification.isFor.toString().split('.').last,
-        'postId': notification.postId,
-        'eventId': notification.eventId,
-        'reportDumpId': notification.reportDumpId,
-      });
+  Future<void> addNotification(
+      CustomNotification.Notification notification) async {
+    // try {
+    //   final docRef = await _firestore.collection('notifications').add({
+    //     'title': notification.title,
+    //     'message': notification.message,
+    //     'timestamp': notification.timestamp.toIso8601String(),
+    //     'isRead': notification.isRead,
+    //     'userId': notification.userId,
+    //     'isFor': notification.isFor.toString().split('.').last,
+    //     'postId': notification.postId,
+    //     'eventId': notification.eventId,
+    //     'reportDumpId': notification.reportDumpId,
+    //   });
+    _showLocalNotification(notification);
+    // }
+    //  catch (e) {
+    //   print("Error adding notification: $e");
+    // }
+  }
 
-      if (_currentUser != null) {
-        // Update the current user's notification array
-        _currentUser!.addNotification(docRef.id);
-        await _firestore.collection('users').doc(_currentUser!.uid).update({
-          'notifications': FieldValue.arrayUnion([docRef.id]),
-        });
-      }
-      notifyListeners();
-    } catch (e) {
-      print("Error adding notification: $e");
-    }
+  // Function to show local notification
+  Future<void> _showLocalNotification(
+      CustomNotification.Notification notification) async {
+    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails('your_channel_id', 'your_channel_name',
+            channelDescription: 'Your channel description',
+            importance: Importance.max,
+            priority: Priority.high,
+            showWhen: true);
+
+    const NotificationDetails platformChannelSpecifics =
+        NotificationDetails(android: androidPlatformChannelSpecifics);
+
+    await _localNotificationsPlugin.show(
+      0,
+      notification.title,
+      notification.message,
+      platformChannelSpecifics,
+      payload: 'Default_Sound', // You can add additional data here
+    );
   }
 
   // Function to delete a notification
@@ -109,7 +144,8 @@ class NotificationProvider with ChangeNotifier {
 
   // Mark a notification as read
   void markAsRead(String id) {
-    final index = _notifications.indexWhere((notification) => notification.id == id);
+    final index =
+        _notifications.indexWhere((notification) => notification.id == id);
     if (index != -1) {
       _notifications[index].isRead = true;
       _firestore.collection('notifications').doc(id).update({'isRead': true});
@@ -130,19 +166,27 @@ class NotificationProvider with ChangeNotifier {
   // Get today's notifications
   List<CustomNotification.Notification> getTodayNotifications() {
     DateTime today = DateTime.now();
-    return _notifications.where((notif) => isSameDate(notif.timestamp, today)).toList();
+    return _notifications
+        .where((notif) => isSameDate(notif.timestamp, today))
+        .toList();
   }
 
   // Get new notifications (within the last 24 hours)
   List<CustomNotification.Notification> getNewNotifications() {
     DateTime now = DateTime.now();
-    return _notifications.where((notif) => notif.timestamp.isAfter(now.subtract(Duration(days: 1)))).toList();
+    return _notifications
+        .where(
+            (notif) => notif.timestamp.isAfter(now.subtract(Duration(days: 1))))
+        .toList();
   }
 
   // Get older notifications (older than 24 hours)
   List<CustomNotification.Notification> getOlderNotifications() {
     DateTime now = DateTime.now();
-    return _notifications.where((notif) => notif.timestamp.isBefore(now.subtract(Duration(days: 1)))).toList();
+    return _notifications
+        .where((notif) =>
+            notif.timestamp.isBefore(now.subtract(Duration(days: 1))))
+        .toList();
   }
 
   // Helper function to check if two dates are the same
