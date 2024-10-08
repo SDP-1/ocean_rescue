@@ -17,8 +17,8 @@ class ReportDumpsFirestoreMethods {
   }
 
   // Method to upload image and get the download URL
-  Future<String> uploadImageToStorage(String id, File imageFile) async {
-    Reference ref = _storage.ref().child('report_dumps').child(id);
+  Future<String> uploadImageToStorage(String rdid, File imageFile) async {
+    Reference ref = _storage.ref().child('report_dumps').child(rdid);
     UploadTask uploadTask = ref.putFile(imageFile);
 
     TaskSnapshot snapshot = await uploadTask;
@@ -35,17 +35,17 @@ class ReportDumpsFirestoreMethods {
 }) async {
   try {
     // Generate a unique ID for the dump report
-    String id = const Uuid().v1();
+    String rdid = const Uuid().v1();
 
     // Upload the image to Firebase Storage and get the download URL
-    String imageUrl = await uploadImageToStorage(id, imageFile);
+    String imageUrl = await uploadImageToStorage(rdid, imageFile);
 
     // Get current user id
     String uid = getCurrentUserId();
 
     // Create a map from the provided parameters
     Map<String, dynamic> data = {
-      'id': id,
+      'rdid': rdid,
       'uid': uid,
       'title': title,
       'description': description,
@@ -57,7 +57,7 @@ class ReportDumpsFirestoreMethods {
     };
 
     // Save the report to Firestore
-    await _firestore.collection('report_dumps').doc(id).set(data);
+    await _firestore.collection('report_dumps').doc(rdid).set(data);
   } catch (e) {
     print('Failed to save dump report: $e');
   }
@@ -103,11 +103,34 @@ Future<List<ReportDump>> fetchClearedDumpReports() async {
   }
 }
 
-
-Future<void> deleteReportDump(String id) async {
+ Future<void> updateDumpDetails(String rdid, String newTitle, String newDescription) async {
   try {
-    await _firestore.collection('report_dumps').doc(id).delete();
-    print('Report with ID $id has been deleted');
+    if (rdid.isEmpty) {
+      print('Document ID is empty222222!');
+      return; // Return early if the document ID is empty
+    }
+    
+    //DocumentReference dumpDoc = _firestore.collection('report_dumps').doc(rdid);
+    DocumentReference dumpDoc = FirebaseFirestore.instance.collection('report_dumps').doc(rdid);
+    print('Document Path: ${dumpDoc.path}'); // Add this line for debugging
+
+ 
+    await dumpDoc.update({
+      'title': newTitle,
+      'description': newDescription,
+    });
+
+    print('Dump details updated successfully for ID: $rdid');
+  } catch (e) {
+    print('Error updating document: $e'); // This is where your error message is printed
+  }
+}
+
+
+Future<void> deleteReportDump(String rdid) async {
+  try {
+    await _firestore.collection('report_dumps').doc(rdid).delete();
+    print('Report with ID $rdid has been deleted');
   } catch (e) {
     print('Failed to delete report: $e');
   }

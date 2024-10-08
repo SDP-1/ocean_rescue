@@ -170,16 +170,25 @@ Widget _buildDumpList({required bool isReported}) {
       onTap: () {
         // Navigate to DumpDetailsScreen when the card is tapped, passing rdid, title, and description
         Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => DumpDetailsScreen(
-             rdid: report.rdid, // Pass the unique rdid
-              title: report.title, // Pass the title
-             description: report.description, // Pass the description// Pass the description
-              imageUrl: report.imageUrl,    
-            ),
-          ),
-        );
+  context,
+  MaterialPageRoute(
+    builder: (context) {
+      print('Navigating to details:');
+      print('Dump ID: ${report.rdid}');
+      print('Title: ${report.title}');
+      print('Description: ${report.description}');
+      print('Image URL: ${report.imageUrl}');
+      
+      return DumpDetailsScreen(
+        rdid: report.rdid, // Pass the unique rdid
+        title: report.title, // Pass the title
+        description: report.description, // Pass the description
+        imageUrl: report.imageUrl,  
+      );
+    },
+  ),
+);
+
       
 
         },
