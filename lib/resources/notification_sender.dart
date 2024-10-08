@@ -44,32 +44,79 @@ class NotificationSender {
         'notifications': FieldValue.arrayUnion([notification.id]),
       });
 
-      // Show a local notification (you cannot directly call an instance method from a static method)
-      await _showLocalNotification(notification);
+      // await showLocalNotification(notification);
     } catch (e) {
       print("Error adding notification: $e");
     }
   }
 
   // Static function to show local notification
-  static Future<void> _showLocalNotification(
+  // static Future<void> showLocalNotification(
+  //     CustomNotification.Notification notification) async {
+  //   const AndroidNotificationDetails androidPlatformChannelSpecifics =
+  //       AndroidNotificationDetails('your_channel_id', 'your_channel_name',
+  //           channelDescription: 'Your channel description',
+  //           importance: Importance.max,
+  //           priority: Priority.high,
+  //           showWhen: true);
+
+  //   const NotificationDetails platformChannelSpecifics =
+  //       NotificationDetails(android: androidPlatformChannelSpecifics);
+
+  //   await _localNotificationsPlugin.show(
+  //     0,
+  //     notification.title,
+  //     notification.message,
+  //     platformChannelSpecifics,
+  //     payload: 'Default_Sound', // You can add additional data here
+  //   );
+  // }
+
+// Static function to show local notification
+  static Future<void> showLocalNotification(
       CustomNotification.Notification notification) async {
-    const AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails('your_channel_id', 'your_channel_name',
-            channelDescription: 'Your channel description',
-            importance: Importance.max,
-            priority: Priority.high,
-            showWhen: true);
+    // Assuming NotificationHandler is instantiated and _localNotificationsPlugin is accessible here
 
-    const NotificationDetails platformChannelSpecifics =
-        NotificationDetails(android: androidPlatformChannelSpecifics);
+    try {
+      // Get the post details
+      DocumentSnapshot postSnapshot =
+          await _firestore.collection('posts').doc(notification.postId).get();
+      Map<String, dynamic> postData =
+          postSnapshot.data() as Map<String, dynamic>;
 
-    await _localNotificationsPlugin.show(
-      0,
-      notification.title,
-      notification.message,
-      platformChannelSpecifics,
-      payload: 'Default_Sound', // You can add additional data here
-    );
+      // Get the user details
+      DocumentSnapshot userSnapshot =
+          await _firestore.collection('users').doc(notification.userId).get();
+      Map<String, dynamic> userData =
+          userSnapshot.data() as Map<String, dynamic>;
+
+      // Extract required details
+      String postTitle = postData['title'];
+      String userName = userData['username'];
+      String userImage = userData['photoUrl'];
+
+      // Create a notification message
+      String notificationMessage = "$userName add post : $postTitle";
+
+      const AndroidNotificationDetails androidPlatformChannelSpecifics =
+          AndroidNotificationDetails('your_channel_id', 'your_channel_name',
+              channelDescription: 'Your channel description',
+              importance: Importance.max,
+              priority: Priority.high,
+              showWhen: true);
+
+      const NotificationDetails platformChannelSpecifics =
+          NotificationDetails(android: androidPlatformChannelSpecifics);
+
+      await _localNotificationsPlugin.show(
+        0, // Unique ID for the notification
+        userName, // Title of the notification
+        notificationMessage, // Constructed message
+        platformChannelSpecifics,
+        payload: 'Default_Sound', // Additional data if needed
+      );
+    } catch (e) {
+      print("Error fetching post/user data: $e");
+    }
   }
 }

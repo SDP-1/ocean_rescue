@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:ocean_rescue/resources/notification_sender.dart';
 import '../models/notification.dart' as CustomNotification;
 import '../models/user.dart';
 
 class NotificationProvider with ChangeNotifier {
   List<CustomNotification.Notification> _notifications = [];
+  Set<String> _previousNotificationIds =
+      {}; // To store the previous notification IDs
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final firebase_auth.FirebaseAuth _auth = firebase_auth.FirebaseAuth.instance;
   User? _currentUser;
@@ -46,40 +49,6 @@ class NotificationProvider with ChangeNotifier {
   }
 
   // Start listening for real-time notification updates
-  // void startListeningForNotifications() {
-  //   if (_currentUser != null) {
-  //     _firestore
-  //         .collection('notifications')
-  //         .where('userId', isEqualTo: _currentUser!.uid)
-  //         .snapshots()
-  //         .listen((snapshot) {
-  //       // Check if notifications have been updated
-  //       _notifications = snapshot.docs.map((doc) {
-  //         final data = doc.data() as Map<String, dynamic>;
-  //         return CustomNotification.Notification(
-  //           id: doc.id,
-  //           title: data['title'],
-  //           message: data['message'],
-  //           timestamp: DateTime.parse(data['timestamp']),
-  //           userId: data['userId'],
-  //           isRead: data['isRead'] ?? false,
-  //           isForeground: data['isForeground'] ?? false,
-  //           isFor: CustomNotification.NotificationType.values.firstWhere(
-  //             (type) => type.toString().split('.').last == data['isFor'],
-  //             orElse: () => CustomNotification.NotificationType.post,
-  //           ),
-  //           postId: data['postId'],
-  //           eventId: data['eventId'],
-  //           reportDumpId: data['reportDumpId'],
-  //         );
-  //       }).toList();
-
-  //       notifyListeners(); // Notify UI that data has changed
-  //     });
-  //   }
-  // }
-
-// Start listening for real-time notification updates
   void startListeningForNotifications() {
     if (_currentUser != null) {
       // Listen to changes in the user's document to get updated notifications array
@@ -107,7 +76,8 @@ class NotificationProvider with ChangeNotifier {
               .get();
 
           // Convert the notification documents to your custom Notification model
-          _notifications = notificationsSnapshot.docs.map((doc) {
+          List<CustomNotification.Notification> fetchedNotifications =
+              notificationsSnapshot.docs.map((doc) {
             final data = doc.data() as Map<String, dynamic>;
             return CustomNotification.Notification(
               id: doc.id,
@@ -127,55 +97,29 @@ class NotificationProvider with ChangeNotifier {
             );
           }).toList();
 
+          // Detect newly added notifications
+          Set<String> currentNotificationIds =
+              fetchedNotifications.map((notif) => notif.id).toSet();
+          Set<String> newNotificationIds =
+              currentNotificationIds.difference(_previousNotificationIds);
+
+          // Show local notifications for newly added notifications
+          for (var notification in fetchedNotifications) {
+            if (newNotificationIds.contains(notification.id)) {
+              NotificationSender.showLocalNotification(
+                  notification); // Call the static method to show notification
+            }
+          }
+
+          // Update the _notifications list and the previous notification IDs set
+          _notifications = fetchedNotifications;
+          _previousNotificationIds = currentNotificationIds;
+
           // Notify the UI that the notifications list has been updated
           notifyListeners();
         }
       });
     }
-  }
-
-  // Function to add a new notification
-  // Future<void> addNotification(
-  //     CustomNotification.Notification notification) async {
-    // try {
-    //   final docRef = await _firestore.collection('notifications').add({
-    //     'title': notification.title,
-    //     'message': notification.message,
-    //     'timestamp': notification.timestamp.toIso8601String(),
-    //     'isRead': notification.isRead,
-    //     'userId': notification.userId,
-    //     'isFor': notification.isFor.toString().split('.').last,
-    //     'postId': notification.postId,
-    //     'eventId': notification.eventId,
-    //     'reportDumpId': notification.reportDumpId,
-    //   });
-    // _showLocalNotification(notification);
-    // }
-    //  catch (e) {
-    //   print("Error adding notification: $e");
-    // }
-  // }
-
-  // Function to show local notification
-  Future<void> _showLocalNotification(
-      CustomNotification.Notification notification) async {
-    const AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails('your_channel_id', 'your_channel_name',
-            channelDescription: 'Your channel description',
-            importance: Importance.max,
-            priority: Priority.high,
-            showWhen: true);
-
-    const NotificationDetails platformChannelSpecifics =
-        NotificationDetails(android: androidPlatformChannelSpecifics);
-
-    await _localNotificationsPlugin.show(
-      0,
-      notification.title,
-      notification.message,
-      platformChannelSpecifics,
-      payload: 'Default_Sound', // You can add additional data here
-    );
   }
 
   // Function to delete a notification
