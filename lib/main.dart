@@ -26,9 +26,7 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(
-            create: (context) =>
-                NotificationProvider()), // Register NotificationProvider
+        ChangeNotifierProvider(create: (context) => NotificationProvider()), // Register NotificationProvider
       ],
       child: const MyApp(),
     ),
