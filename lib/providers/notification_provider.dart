@@ -46,42 +46,97 @@ class NotificationProvider with ChangeNotifier {
   }
 
   // Start listening for real-time notification updates
+  // void startListeningForNotifications() {
+  //   if (_currentUser != null) {
+  //     _firestore
+  //         .collection('notifications')
+  //         .where('userId', isEqualTo: _currentUser!.uid)
+  //         .snapshots()
+  //         .listen((snapshot) {
+  //       // Check if notifications have been updated
+  //       _notifications = snapshot.docs.map((doc) {
+  //         final data = doc.data() as Map<String, dynamic>;
+  //         return CustomNotification.Notification(
+  //           id: doc.id,
+  //           title: data['title'],
+  //           message: data['message'],
+  //           timestamp: DateTime.parse(data['timestamp']),
+  //           userId: data['userId'],
+  //           isRead: data['isRead'] ?? false,
+  //           isForeground: data['isForeground'] ?? false,
+  //           isFor: CustomNotification.NotificationType.values.firstWhere(
+  //             (type) => type.toString().split('.').last == data['isFor'],
+  //             orElse: () => CustomNotification.NotificationType.post,
+  //           ),
+  //           postId: data['postId'],
+  //           eventId: data['eventId'],
+  //           reportDumpId: data['reportDumpId'],
+  //         );
+  //       }).toList();
+
+  //       notifyListeners(); // Notify UI that data has changed
+  //     });
+  //   }
+  // }
+
+// Start listening for real-time notification updates
   void startListeningForNotifications() {
     if (_currentUser != null) {
+      // Listen to changes in the user's document to get updated notifications array
       _firestore
-          .collection('notifications')
-          .where('userId', isEqualTo: _currentUser!.uid)
+          .collection('users')
+          .doc(_currentUser!.uid)
           .snapshots()
-          .listen((snapshot) {
-        // Check if notifications have been updated
-        _notifications = snapshot.docs.map((doc) {
-          final data = doc.data() as Map<String, dynamic>;
-          return CustomNotification.Notification(
-            id: doc.id,
-            title: data['title'],
-            message: data['message'],
-            timestamp: DateTime.parse(data['timestamp']),
-            userId: data['userId'],
-            isRead: data['isRead'] ?? false,
-            isForeground: data['isForeground'] ?? false,
-            isFor: CustomNotification.NotificationType.values.firstWhere(
-              (type) => type.toString().split('.').last == data['isFor'],
-              orElse: () => CustomNotification.NotificationType.post,
-            ),
-            postId: data['postId'],
-            eventId: data['eventId'],
-            reportDumpId: data['reportDumpId'],
-          );
-        }).toList();
+          .listen((userSnapshot) async {
+        if (userSnapshot.exists) {
+          // Get the list of notification IDs from the user's document
+          List<dynamic> notificationIds =
+              userSnapshot.data()?['notifications'] ?? [];
 
-        notifyListeners(); // Notify UI that data has changed
+          // If there are no notifications, reset the _notifications list
+          if (notificationIds.isEmpty) {
+            _notifications = [];
+            notifyListeners();
+            return;
+          }
+
+          // Fetch all notifications with the matching IDs from the 'notifications' collection
+          QuerySnapshot notificationsSnapshot = await _firestore
+              .collection('notifications')
+              .where(FieldPath.documentId, whereIn: notificationIds)
+              .get();
+
+          // Convert the notification documents to your custom Notification model
+          _notifications = notificationsSnapshot.docs.map((doc) {
+            final data = doc.data() as Map<String, dynamic>;
+            return CustomNotification.Notification(
+              id: doc.id,
+              title: data['title'],
+              message: data['message'],
+              timestamp: DateTime.parse(data['timestamp']),
+              userId: data['userId'],
+              isRead: data['isRead'] ?? false,
+              isForeground: data['isForeground'] ?? false,
+              isFor: CustomNotification.NotificationType.values.firstWhere(
+                (type) => type.toString().split('.').last == data['isFor'],
+                orElse: () => CustomNotification.NotificationType.post,
+              ),
+              postId: data['postId'],
+              eventId: data['eventId'],
+              reportDumpId: data['reportDumpId'],
+            );
+          }).toList();
+
+          // Notify the UI that the notifications list has been updated
+          notifyListeners();
+        }
       });
     }
   }
 
   // Function to add a new notification
-  Future<void> addNotification(
-      CustomNotification.Notification notification) async {
+  // Future<void> addNotification(
+  //     CustomNotification.Notification notification) async {
     // try {
     //   final docRef = await _firestore.collection('notifications').add({
     //     'title': notification.title,
@@ -94,12 +149,12 @@ class NotificationProvider with ChangeNotifier {
     //     'eventId': notification.eventId,
     //     'reportDumpId': notification.reportDumpId,
     //   });
-    _showLocalNotification(notification);
+    // _showLocalNotification(notification);
     // }
     //  catch (e) {
     //   print("Error adding notification: $e");
     // }
-  }
+  // }
 
   // Function to show local notification
   Future<void> _showLocalNotification(

@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:ocean_rescue/models/post.dart';
 import 'package:ocean_rescue/providers/notification_provider.dart';
+import 'package:ocean_rescue/resources/notification_sender.dart';
 import 'package:ocean_rescue/resources/storage_methods.dart';
 import 'package:uuid/uuid.dart';
 
@@ -146,7 +147,7 @@ class PostFireStoreMethods {
           title: 'New Post Alert!',
           message: 'Check out the new post: $postTitle',
           timestamp: DateTime.now(),
-          userId: userId, // Use userId instead of userProfileUrl
+          userId: getCurrentUserId(), // Use userId instead of userProfileUrl
           isRead: false,
           isForeground: false,
           isFor: NotificationType.post, // Set isFor attribute to 'post'
@@ -154,19 +155,22 @@ class PostFireStoreMethods {
         );
 
         // Add the notification to the notifications collection
-        await _firestore
-            .collection('notifications')
-            .doc(notificationId)
-            .set(notification.toJson());
+        // await _firestore
+        //     .collection('notifications')
+        //     .doc(notificationId)
+        //     .set(notification.toJson());
 
-         // Add the notification ID to the user's notifications array
-        await _firestore.collection('users').doc(userId).update({
-          'notifications': FieldValue.arrayUnion([notificationId]),
-        });
+        // Add the notification ID to the user's notifications array
+        // await _firestore.collection('users').doc(userId).update({
+        //   'notifications': FieldValue.arrayUnion([notificationId]),
+        // });
 
         // Call the addNotification method to add the notification
-        NotificationProvider notificationProvider = NotificationProvider();
-        await notificationProvider.addNotification(notification);
+        // NotificationProvider notificationProvider = NotificationProvider();
+        // await notificationProvider.addNotification(notification);
+
+        // Add the notification to the notifications collection
+        NotificationSender.addNotificationToDatabase( notification,userId);
       }
     } catch (err) {
       print("Failed to send notifications: $err");
