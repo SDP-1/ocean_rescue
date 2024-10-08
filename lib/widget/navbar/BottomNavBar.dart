@@ -33,7 +33,7 @@ class BottomNavBar extends StatelessWidget {
         const FeedScreen(),
         DumpsDashboard(),
         const QrScanner(),
-        const NotificationScreen(),
+        NotificationScreen(),
         const MenuScreen(),
       ];
     }

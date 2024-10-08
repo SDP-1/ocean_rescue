@@ -8,7 +8,8 @@ class User {
   final String bio;
   final List followers;
   final List following;
-  List<String> chats; // New property to hold chat IDs
+  List<String> chats; // Property to hold chat IDs
+  List<String> notifications; // Property to hold notification IDs
 
   User({
     required this.username,
@@ -18,10 +19,11 @@ class User {
     required this.bio,
     required this.followers,
     required this.following,
-    this.chats =
-        const [], // Add chats as a named parameter with a default value
+    this.chats = const [], 
+    this.notifications = const [], 
   });
 
+  // Factory method to create User from Firestore snapshot
   static User fromSnap(DocumentSnapshot snap) {
     var snapshot = snap.data() as Map<String, dynamic>;
 
@@ -33,11 +35,12 @@ class User {
       bio: snapshot["bio"],
       followers: snapshot["followers"],
       following: snapshot["following"],
-      chats: List<String>.from(
-          snapshot["chats"] ?? []), // Initialize with chats from Firestore
+      chats: List<String>.from(snapshot["chats"] ?? []), // Initialize chats
+      notifications: List<String>.from(snapshot["notifications"] ?? []), // Initialize notifications
     );
   }
 
+  // Convert User to JSON format for Firestore
   Map<String, dynamic> toJson() => {
         "username": username,
         "uid": uid,
@@ -46,13 +49,21 @@ class User {
         "bio": bio,
         "followers": followers,
         "following": following,
-        "chats": chats, // Include chats when saving to Firestore
+        "chats": chats,
+        "notifications": notifications, // Include notifications in Firestore
       };
 
-  // Add a method to add a chat ID to the user's chats list
+  // Add a chat ID to the user's chats list
   void addChat(String chatId) {
     if (!chats.contains(chatId)) {
       chats.add(chatId);
+    }
+  }
+
+  // Add a notification ID to the user's notifications list
+  void addNotification(String notificationId) {
+    if (!notifications.contains(notificationId)) {
+      notifications.add(notificationId);
     }
   }
 }
