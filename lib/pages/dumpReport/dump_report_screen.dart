@@ -36,6 +36,7 @@ class _ReportDumpPageState extends State<ReportDumpPage> {
     if (pickedFile != null) {
       setState(() {
         _image = File(pickedFile.path);
+        // Keep the existing title and description intact
       });
     }
   }
@@ -122,73 +123,76 @@ class _ReportDumpPageState extends State<ReportDumpPage> {
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
-          child: ListView(
-            children: [
-              const SizedBox(height: 16),
-              _buildHeader(),
-              const SizedBox(height: 16),
-              _buildLabeledTextField(
-                label: 'Title',
-                hintText: 'Enter title',
-                onSaved: (value) => _title = value ?? '',
-                validator: (value) => value == null || value.isEmpty
-                    ? 'Please enter your title'
-                    : null,
-              ),
-              const SizedBox(height: 16),
-              _buildLabeledTextField(
-                label: 'Description',
-                hintText: 'Enter description',
-                maxLines: 3,
-                onSaved: (value) => _description = value ?? '',
-                validator: (value) => value == null || value.isEmpty
-                    ? 'Please enter a description'
-                    : null,
-              ),
-              const SizedBox(height: 16),
-              const Text('Urgency Level'),
-              const SizedBox(height: 8),
-              _buildUrgencyButtons(),
-              const SizedBox(height: 16),
-              _buildLabeledTextField(
-                label: 'Event Location',
-                hintText: 'Enter event location',
-                suffixIcon: const Icon(Icons.search),
-                onSaved: (value) => _eventLocation = value ?? '',
-                validator: (value) => value == null || value.isEmpty
-                    ? 'Please enter event location'
-                    : null,
-              ),
-              const SizedBox(height: 16),
-              Container(
-                height: 200,
-                decoration: BoxDecoration(
-                  color: ColorTheme.liteGreen1,
-                  borderRadius: BorderRadius.circular(10),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                const SizedBox(height: 16),
+                _buildHeader(),
+                const SizedBox(height: 16),
+                _buildLabeledTextField(
+                  label: 'Title',
+                  hintText: 'Enter title',
+                  onSaved: (value) => _title = value ?? '',
+                  validator: (value) => value == null || value.isEmpty
+                      ? 'Please enter your title'
+                      : null,
                 ),
-                child: const Center(child: Text('Map Placeholder')),
-              ),
-              const SizedBox(height: 16),
-              const Text('Image Upload',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-              _buildImagePreview(),
-              const SizedBox(height: 16),
-              Align(
-                alignment: Alignment.center,
-                child: OutlinedButton.icon(
-                  onPressed: () => _pickImage(context),
-                  icon: const Icon(Icons.upload_file),
-                  label: const Text('Upload Image'),
-                  style: OutlinedButton.styleFrom(
-                    side: const BorderSide(color: Colors.grey),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)),
+                const SizedBox(height: 16),
+                _buildLabeledTextField(
+                  label: 'Description',
+                  hintText: 'Enter description',
+                  maxLines: 3,
+                  onSaved: (value) => _description = value ?? '',
+                  validator: (value) => value == null || value.isEmpty
+                      ? 'Please enter a description'
+                      : null,
+                ),
+                const SizedBox(height: 16),
+                const Text('Urgency Level'),
+                const SizedBox(height: 8),
+                _buildUrgencyButtons(),
+                const SizedBox(height: 16),
+                _buildLabeledTextField(
+                  label: 'Event Location',
+                  hintText: 'Enter event location',
+                  suffixIcon: const Icon(Icons.search),
+                  onSaved: (value) => _eventLocation = value ?? '',
+                  validator: (value) => value == null || value.isEmpty
+                      ? 'Please enter event location'
+                      : null,
+                ),
+                const SizedBox(height: 16),
+                Container(
+                  height: 200,
+                  decoration: BoxDecoration(
+                    color: ColorTheme.liteGreen1,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Center(child: Text('Map Placeholder')),
+                ),
+                const SizedBox(height: 16),
+                const Text('Image Upload',
+                    style:
+                        TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                _buildImagePreview(),
+                const SizedBox(height: 16),
+                Align(
+                  alignment: Alignment.center,
+                  child: OutlinedButton.icon(
+                    onPressed: () => _pickImage(context),
+                    icon: const Icon(Icons.upload_file),
+                    label: const Text('Upload Image'),
+                    style: OutlinedButton.styleFrom(
+                      side: const BorderSide(color: Colors.grey),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10)),
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 16),
-              _buildReportButton(),
-            ],
+                const SizedBox(height: 16),
+                _buildReportButton(),
+              ],
+            ),
           ),
         ),
       ),

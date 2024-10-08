@@ -7,6 +7,8 @@ import 'package:ocean_rescue/models/post.dart';
 import 'package:ocean_rescue/resources/storage_methods.dart';
 import 'package:uuid/uuid.dart';
 
+import '../models/notification.dart';
+
 class PostFireStoreMethods {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -70,11 +72,55 @@ class PostFireStoreMethods {
       );
 
       await _firestore.collection('posts').doc(postId).set(post.toJson());
+
+      // Send notifications to all users
+      await sendNewPostNotificationToAllUsers(postId, title);
+
       res = "success";
     } catch (err) {
       res = err.toString();
     }
     return res;
+  }
+
+  Future<void> sendNewPostNotificationToAllUsers(
+      String postId, String postTitle) async {
+    try {
+      // Fetch all users
+      QuerySnapshot usersSnapshot = await _firestore.collection('users').get();
+      List<DocumentSnapshot> userDocs = usersSnapshot.docs;
+
+      for (var userDoc in userDocs) {
+        String userId = userDoc.id;
+
+        // Create a unique notification ID
+        String notificationId = const Uuid().v1();
+
+        // Create the notification data
+        Notification notification = Notification(
+          id: notificationId,
+          title: 'New Post Alert!',
+          message: 'Check out the new post: $postTitle',
+          timestamp: DateTime.now(),
+          userProfileUrl: 'assets/user/profile_pic.jpg', // Optional
+          isRead: false,
+          isForeground: false,
+        );
+
+        // Add the notification to the notifications collection
+        await _firestore
+            .collection('notifications')
+            .doc(notificationId)
+            .set(notification.toJson());
+
+        // Add the notification ID to the user's notifications array
+        await _firestore.collection('users').doc(userId).update({
+          'notifications': FieldValue.arrayUnion([notificationId]),
+        });
+      }
+    } catch (err) {
+      print("Failed to send notifications: $err");
+    }
   }
 
 // Like or unlike a post
