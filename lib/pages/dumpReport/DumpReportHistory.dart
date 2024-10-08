@@ -6,7 +6,7 @@ import '../../widget/feed/TopAppBar .dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../models/reportdump.dart';
 import '../../resources/ReportDumpsFirestoreMethods.dart';
-
+import '../dumpReport/dump_description_edit.dart';
 
 class DumpReportHistory extends StatefulWidget {
   @override
@@ -164,61 +164,79 @@ Widget _buildDumpList({required bool isReported}) {
     physics: NeverScrollableScrollPhysics(), // Prevent scrolling inside the ListView
     shrinkWrap: true, // Allow ListView to take the height of its children
     itemCount: dumps.length,
-    itemBuilder: (context, index) {
-      final report = dumps[index];
-      return Card(
-        margin: EdgeInsets.symmetric(vertical: 8.0),
-        child: Padding(
-          padding: const EdgeInsets.all(8.0), // Add padding for better spacing
-          child: Row(
-            children: [
-              // Left Image Container
-              Container(
-                width: 80, // Set image width
-                height: 60, // Set image height
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8.0),
-                  image: DecorationImage(
-                    image: NetworkImage(report.imageUrl),
-                    fit: BoxFit.cover,
+ itemBuilder: (context, index) {
+    final ReportDump report = dumps[index]; // Explicitly declare the type as ReportDump
+    return GestureDetector(
+      onTap: () {
+        // Navigate to DumpDetailsScreen when the card is tapped, passing rdid, title, and description
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => DumpDetailsScreen(
+             rdid: report.rdid, // Pass the unique rdid
+              title: report.title, // Pass the title
+             description: report.description, // Pass the description// Pass the description
+              imageUrl: report.imageUrl,    
+            ),
+          ),
+        );
+      
+
+        },
+        child: Card(
+          margin: EdgeInsets.symmetric(vertical: 8.0),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0), // Add padding for better spacing
+            child: Row(
+              children: [
+                // Left Image Container
+                Container(
+                  width: 80, // Set image width
+                  height: 60, // Set image height
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8.0),
+                    image: DecorationImage(
+                      image: NetworkImage(report.imageUrl),
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
-              ),
-              SizedBox(width: 12), // Spacing between image and text
-              
-              // Description Text
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      report.title,
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
+                SizedBox(width: 12), // Spacing between image and text
+                
+                // Description Text
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        report.title,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 4), // Spacing between title and description
-                    Text(
-                      report.description,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey[600], // Optional: Set a lighter color for the description
+                      SizedBox(height: 4), // Spacing between title and description
+                      Text(
+                        report.description,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey[600], // Optional: Set a lighter color for the description
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              
-              // Delete Icon Button
-              IconButton(
-                icon: Icon(Icons.delete, color: Colors.red),
-                onPressed: () {
-                  // Add your delete logic here
+                
+                // Delete Icon Button
+                IconButton(
+                  icon: Icon(Icons.delete, color: Colors.red),
+                  onPressed: () {
+                    // Add your delete logic here
                 },
               ),
             ],
           ),
+        ),
         ),
       );
     },

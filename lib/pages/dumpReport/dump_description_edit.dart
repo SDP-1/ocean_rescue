@@ -1,7 +1,19 @@
 import 'package:flutter/material.dart';
-import '../../widget/feed/TopAppBar .dart';
 
 class DumpDetailsScreen extends StatelessWidget {
+  final String rdid;         // Unique dump ID
+  final String title;        // Dump title
+  final String description;  // Dump description
+  final String imageUrl;     // Image URL
+
+  // Constructor that accepts all required parameters
+  DumpDetailsScreen({
+    required this.rdid,
+    required this.title,
+    required this.description,
+    required this.imageUrl,
+  });
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -16,7 +28,7 @@ class DumpDetailsScreen extends StatelessWidget {
           },
         ),
         title: Text(
-          'Dump #12345',
+          title,  // Use the title parameter for the AppBar title
           style: TextStyle(
             color: Colors.black,
             fontSize: 20,
@@ -30,17 +42,28 @@ class DumpDetailsScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Image section
+            // Updated Image Section: Use imageUrl to load the image
             ClipRRect(
               borderRadius: BorderRadius.circular(10.0),
-              child: Image.asset(
-                'assets/event/event02.png',  // Change this to the actual path of your image
+              child: Image.network(
+                imageUrl,  // Use the passed imageUrl parameter
                 width: double.infinity,
                 height: 200,
                 fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    color: Colors.grey[200],
+                    height: 200,
+                    width: double.infinity,
+                    child: Center(
+                      child: Icon(Icons.broken_image, color: Colors.grey),
+                    ),
+                  );
+                },
               ),
             ),
             SizedBox(height: 16),
+
             // Description section
             Row(
               children: [
@@ -49,16 +72,18 @@ class DumpDetailsScreen extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: Colors.black, // Change color to black
+                    color: Colors.black,
                   ),
                 ),
-                SizedBox(width: 8),  // Adjust spacing between text and icon
+                SizedBox(width: 8), // Adjust spacing between text and icon
                 Icon(Icons.edit, color: Colors.indigo),
               ],
             ),
             SizedBox(height: 8),
+
+            // Display the description passed as a parameter
             Text(
-              'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
+              description,
               style: TextStyle(
                 color: Colors.indigo.shade300,
                 fontSize: 14,
