@@ -4,9 +4,11 @@ import 'package:ocean_rescue/resources/ReportDumpsFirestoreMethods.dart';
 import 'package:ocean_rescue/theme/colorTheme.dart';
 import 'package:ocean_rescue/widget/navbar/TopAppBar%20.dart';
 import 'package:ocean_rescue/widget/dumpReport/eventCard.dart';
+import 'AllDumpsSection.dart';
 import 'DumpReportHistory.dart';
 import 'dump_description_edit.dart';
 import 'dump_report_screen.dart';
+import 'CriticalDumpsSeaction.dart';
 
 class DumpsDashboard extends StatelessWidget {
   const DumpsDashboard({super.key});
@@ -103,77 +105,13 @@ class DumpsDashboard extends StatelessWidget {
                   'assets/dump/beach.png',
                   fit: BoxFit.cover, // Ensures the image covers the container
                   height: 150, // Set height to match the container
-                  width: double
-                      .infinity, // Make the image take the full width of the container
+                  width: double.infinity, // Full width of the container
                 ),
               ),
             ),
 
             // Critical Dumps Section
-            const Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Text(
-                "Critical Dumps",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-            ),
-            SizedBox(
-              height: 100,
-              child: FutureBuilder<List<ReportDump>>(
-                future:
-                    ReportDumpsFirestoreMethods().fetchReportedDumpReports(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (snapshot.hasError) {
-                    return const Center(child: Text("Failed to load data."));
-                  } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                    // Filter only the dumps with urgencyLevel = "Urgent"
-                    final criticalDumps = snapshot.data!
-                        .where((dump) => dump.urgencyLevel == "Urgent")
-                        .toList();
-
-                    // Check if there are any critical dumps
-                    if (criticalDumps.isNotEmpty) {
-                      return ListView(
-                        scrollDirection: Axis.horizontal,
-                        children: criticalDumps
-                            .map((dump) => GestureDetector(
-                                  // Use GestureDetector for tap detection
-                                  onTap: () {
-                                    // Navigate to DumpDetailsScreen when image is tapped
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => DumpDetailsScreen(
-                                          rdid: dump
-                                              .rdid, // Pass the unique dump ID
-                                          title: dump
-                                              .title, // Pass the title of the dump
-                                          description: dump
-                                              .description, // Pass the description
-                                          imageUrl: dump
-                                              .imageUrl, // Pass the image URL
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                  child: CriticalDumpImage(dump
-                                      .imageUrl), // Your existing widget for displaying images
-                                ))
-                            .toList(),
-                      );
-                    } else {
-                      return const Center(
-                          child: Text("No critical dumps found."));
-                    }
-                  } else {
-                    return const Center(
-                        child: Text("No critical dumps found."));
-                  }
-                },
-              ),
-            ),
+            const CriticalDumpSection(),  // Using the extracted CriticalDumpSection
 
             // All Dumps Section
             const Padding(
@@ -190,28 +128,7 @@ class DumpsDashboard extends StatelessWidget {
               ),
             ),
             // Placeholder Event Cards (Replace these with fetched data if needed)
-            EventCard(isCritical: true, imageUrl: 'assets/dump/dump1.jpeg'),
-            EventCard(isCritical: false, imageUrl: 'assets/dump/dump1.jpeg'),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Center(
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    foregroundColor: ColorTheme.lightBlue1,
-                    side: const BorderSide(
-                        color: ColorTheme.lightBlue1, width: 2),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  onPressed: () {
-                    // Load more action
-                  },
-                  child: const Text("Load More"),
-                ),
-              ),
-            ),
+            const AllDumpsSection(), 
           ],
         ),
       ),
@@ -238,27 +155,6 @@ class DumpsDashboard extends StatelessWidget {
           style: const TextStyle(fontSize: 9, color: Colors.black54),
         ),
       ],
-    );
-  }
-}
-
-class CriticalDumpImage extends StatelessWidget {
-  final String imageUrl;
-
-  const CriticalDumpImage(this.imageUrl, {super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(left: 16),
-      width: 150,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
-        image: DecorationImage(
-          image: NetworkImage(imageUrl),
-          fit: BoxFit.cover,
-        ),
-      ),
     );
   }
 }

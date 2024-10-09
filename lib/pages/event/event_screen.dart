@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ocean_rescue/pages/event/create_event_screen1.dart';
 import 'package:ocean_rescue/theme/colorTheme.dart';
 import 'package:ocean_rescue/widget/navbar/TopAppBar%20.dart';
 
@@ -45,11 +46,11 @@ class EventScreen extends StatelessWidget {
                     "Create Event",
                     ColorTheme.lightBlue1,
                     () {
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(
-                      // builder: (context) => DumpReportHistory()),
-                      // );
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => CreateEventScreen1()),
+                      );
                     },
                   ),
                 ],

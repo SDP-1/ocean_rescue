@@ -137,6 +137,27 @@ Future<void> deleteReportDump(String rdid) async {
 }
 
 
+// Method to fetch all dump reports without filtering
+Future<List<ReportDump>> fetchAllDumpReports() async {
+  try {
+    QuerySnapshot querySnapshot = await _firestore
+        .collection('report_dumps') // Collection for dump reports
+        .limit(15) // Optionally limit the number of dumps fetched
+        .get(); // Fetch all documents without filters
+    
+    print('Total dump reports count: ${querySnapshot.docs.length}'); // Debugging info
+    
+    // Map the Firestore documents to ReportDump model instances
+    return querySnapshot.docs
+        .map((doc) => ReportDump.fromJson(doc.data() as Map<String, dynamic>))
+        .toList();
+  } catch (e) {
+    print('Failed to fetch dump reports: $e'); // Error handling
+    return [];
+  }
+}
+
+
 
 
 }

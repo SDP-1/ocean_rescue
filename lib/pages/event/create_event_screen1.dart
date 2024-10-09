@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:ocean_rescue/pages/event/CreateEventScreen2.dart';
 import 'package:ocean_rescue/theme/colorTheme.dart';
 import 'package:ocean_rescue/widget/common/CreateFormTopWidget.dart';
 import 'dart:io';
@@ -18,6 +19,7 @@ class _CreateEventScreen1State extends State<CreateEventScreen1> {
       TextEditingController();
   XFile? _image;
   final ImagePicker _picker = ImagePicker();
+  String? _selectedSize; // Track the selected size
 
   Future<void> _pickImage() async {
     final XFile? selectedImage =
@@ -52,7 +54,7 @@ class _CreateEventScreen1State extends State<CreateEventScreen1> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             CreateFormTopWidget(
-              title: 'Create New Event',
+              title: 'Create New Event P1',
               imagePath: 'assets/post/createNewPost.png',
             ),
             // Top Instructional Info
@@ -156,7 +158,7 @@ class _CreateEventScreen1State extends State<CreateEventScreen1> {
               ),
             ),
             const SizedBox(height: 20),
-            // Size Section
+
             const Text(
               'Size',
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
@@ -165,9 +167,14 @@ class _CreateEventScreen1State extends State<CreateEventScreen1> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _buildSizeOption('2 - 5', Icons.people_outline),
-                _buildSizeOption('5 - 20', Icons.groups_outlined),
-                _buildSizeOption('20 +', Icons.people_alt_outlined),
+                // Option for '2 - 5'
+                _groupSizeOption('2 - 5', Icons.people_outline),
+                const SizedBox(width: 10), // Space between options
+                // Option for '5 - 20'
+                _groupSizeOption('5 - 20', Icons.groups_outlined),
+                const SizedBox(width: 10), // Space between options
+                // Option for '20 +'
+                _groupSizeOption('20 +', Icons.people_alt_outlined),
               ],
             ),
             const SizedBox(height: 30),
@@ -176,6 +183,10 @@ class _CreateEventScreen1State extends State<CreateEventScreen1> {
               text: 'Next',
               onTap: () {
                 // Navigate or perform action
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => CreateEventScreen2()),
+                );
               },
               width: double.infinity, // Set width to take full width
               height: 50.0, // Optional: You can set a specific height if needed
@@ -186,28 +197,41 @@ class _CreateEventScreen1State extends State<CreateEventScreen1> {
     );
   }
 
-  Widget _buildSizeOption(String text, IconData icon) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 15),
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.blue),
-        borderRadius: BorderRadius.circular(10),
-        color: Colors.white, // Added background color
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.3),
-            blurRadius: 5,
-            spreadRadius: 1,
-            offset: const Offset(0, 2), // Shadow position
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          Icon(icon, color: Colors.blue),
-          const SizedBox(height: 5),
-          Text(text, style: const TextStyle(color: Colors.blue)),
-        ],
+// Widget to build the size option
+  Widget _groupSizeOption(String text, IconData icon) {
+    bool isSelected =
+        _selectedSize == text; // Check if the current option is selected
+
+    return GestureDetector(
+      onTap: () =>
+          setState(() => _selectedSize = text), // Update the selected size
+      child: Container(
+        height: 80,
+        width: 100,
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          border: Border.all(color: isSelected ? Colors.blue : Colors.grey),
+          borderRadius: BorderRadius.circular(10),
+          color: isSelected ? Colors.blue.shade100 : Colors.white,
+          boxShadow: [
+            BoxShadow(
+                color: Colors.grey.withOpacity(0.3),
+                blurRadius: 5,
+                spreadRadius: 1,
+                offset: const Offset(0, 2))
+          ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, size: 30, color: isSelected ? Colors.blue : Colors.grey),
+            const SizedBox(height: 5),
+            Text(text,
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: isSelected ? Colors.blue : Colors.grey)),
+          ],
+        ),
       ),
     );
   }

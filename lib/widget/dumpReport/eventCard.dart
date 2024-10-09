@@ -4,26 +4,29 @@ import 'package:ocean_rescue/theme/colorTheme.dart';
 class EventCard extends StatelessWidget {
   final bool isCritical;
   final String imageUrl;
+  final String title;
+  final String description;
   final Color backgroundColor;
   final Color buttonColor;
 
-  const EventCard({super.key, 
+  const EventCard({
+    super.key,
     this.isCritical = false,
     this.backgroundColor = const Color(0xFFE3F2FD),
     this.buttonColor = const Color(0xFF4CAF50),
     required this.imageUrl,
+    required this.title,
+    required this.description,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin:
-          const EdgeInsets.symmetric(horizontal: 8, vertical: 4), // Reduced margin
+      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4), // Reduced margin
       padding: const EdgeInsets.all(8), // Reduced padding
       decoration: BoxDecoration(
         color: isCritical ? ColorTheme.lightRed2 : backgroundColor,
-        borderRadius:
-            BorderRadius.circular(6), // Slightly smaller border radius
+        borderRadius: BorderRadius.circular(6), // Slightly smaller border radius
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -34,7 +37,7 @@ class EventCard extends StatelessWidget {
               // Image with reduced size
               ClipRRect(
                 borderRadius: BorderRadius.circular(6.0),
-                child: Image.asset(
+                child: Image.network(
                   imageUrl,
                   width: 110, // Reduced image width
                   height: 65, // Reduced image height
@@ -42,23 +45,22 @@ class EventCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 8), // Reduced space between image and text
-              const Expanded(
+              Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Galle Face Dump",
-                      style: TextStyle(
+                      title,
+                      style: const TextStyle(
                         fontSize: 13, // Reduced title size
                         fontWeight: FontWeight.bold,
                       ),
                       overflow: TextOverflow.ellipsis,
                     ),
-                    SizedBox(height: 2), // Smaller gap
+                    const SizedBox(height: 2), // Smaller gap
                     Text(
-                      "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-                      style:
-                          TextStyle(fontSize: 11), // Reduced description size
+                      description,
+                      style: const TextStyle(fontSize: 11), // Reduced description size
                       overflow: TextOverflow.ellipsis,
                       maxLines: 2,
                     ),
@@ -96,14 +98,11 @@ class EventCard extends StatelessWidget {
               // Let's Clean Up button
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor:
-                      isCritical ? ColorTheme.lightRed : buttonColor,
+                  backgroundColor: isCritical ? ColorTheme.lightRed : buttonColor,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(
-                        16), // Reduced button corner radius
+                    borderRadius: BorderRadius.circular(16), // Reduced button corner radius
                   ),
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 12, vertical: 6), // Reduced padding
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6), // Reduced padding
                 ),
                 onPressed: () {
                   // Clean Up action
@@ -111,8 +110,9 @@ class EventCard extends StatelessWidget {
                 child: const Text(
                   "Let's Clean Up",
                   style: TextStyle(
-                      fontSize: 11,
-                      color: ColorTheme.black), // Smaller button text
+                    fontSize: 11,
+                    color: ColorTheme.black, // Smaller button text
+                  ),
                 ),
               ),
             ],
