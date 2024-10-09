@@ -2,18 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ocean_rescue/widget/popup/SuccessPopup.dart';
 import '../../resources/ReportDumpsFirestoreMethods.dart'; // Import your Firestore methods file
+import '../../resources/auth_methods.dart';
 
 class DumpDetailsScreen extends StatefulWidget {
   final String rdid; // Unique dump ID
   final String title; // Dump title
   final String description; // Dump description
   final String imageUrl; // Image URL
+  final String uid; // User ID associated with the dump
 
   DumpDetailsScreen({
     required this.rdid,
     required this.title,
     required this.description,
     required this.imageUrl,
+    required this.uid, // Accept user ID
   });
 
   @override
@@ -27,29 +30,31 @@ class _DumpDetailsScreenState extends State<DumpDetailsScreen> {
   late TextEditingController titleController;
   late TextEditingController descriptionController;
 
-  // Variables for the dump details
   late String rdid;
   late String title;
   late String description;
 
   bool isEditing = false; // To track whether we're in edit mode or not
+  String? currentUserUid; // To hold the current user ID
 
   @override
   void initState() {
     super.initState();
-    // Assign values from widget to local variables
-    rdid = widget.rdid; // Now we're directly using the rdid variable
+    
+    // Get the current user's ID
+    AuthMethods authMethods = AuthMethods();
+    currentUserUid = authMethods.getCurrentUserId();
+
+    rdid = widget.rdid;
     title = widget.title;
     description = widget.description;
 
-    // Initialize controllers
     titleController = TextEditingController(text: title);
     descriptionController = TextEditingController(text: description);
   }
 
   @override
   void dispose() {
-    // Clean up the controllers when the widget is disposed
     titleController.dispose();
     descriptionController.dispose();
     super.dispose();
@@ -84,7 +89,6 @@ class _DumpDetailsScreenState extends State<DumpDetailsScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Image Section
               ClipRRect(
                 borderRadius: BorderRadius.circular(10.0),
                 child: Image.network(
@@ -105,13 +109,8 @@ class _DumpDetailsScreenState extends State<DumpDetailsScreen> {
                 ),
               ),
               SizedBox(height: 16),
-
-              // Title and Description Editable Section
               _buildEditableSection(),
-              
               SizedBox(height: 16),
-
-              // Save and Cancel Buttons when in Edit Mode
               if (isEditing)
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -124,7 +123,6 @@ class _DumpDetailsScreenState extends State<DumpDetailsScreen> {
                     ElevatedButton(
                       onPressed: () {
                         setState(() {
-                          // Reset the values if cancel is pressed
                           titleController.text = widget.title;
                           descriptionController.text = widget.description;
                           title = widget.title;
@@ -150,7 +148,6 @@ class _DumpDetailsScreenState extends State<DumpDetailsScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Title Section
         Text(
           'Title',
           style: TextStyle(
@@ -185,19 +182,19 @@ class _DumpDetailsScreenState extends State<DumpDetailsScreen> {
                       ),
                     ),
                   ),
-                  IconButton(
-                    icon: Icon(Icons.edit, color: Colors.indigo),
-                    onPressed: () {
-                      setState(() {
-                        isEditing = true; // Enter edit mode
-                      });
-                    },
-                  ),
+                  // Conditionally render the IconButton based on user ID
+                  if (currentUserUid == widget.uid)
+                    IconButton(
+                      icon: Icon(Icons.edit, color: Colors.indigo),
+                      onPressed: () {
+                        setState(() {
+                          isEditing = true; // Enter edit mode
+                        });
+                      },
+                    ),
                 ],
               ),
         SizedBox(height: 16),
-
-        // Description Section
         Text(
           'Description',
           style: TextStyle(
@@ -233,14 +230,6 @@ class _DumpDetailsScreenState extends State<DumpDetailsScreen> {
                       ),
                     ),
                   ),
-                  IconButton(
-                    icon: Icon(Icons.edit, color: Colors.indigo),
-                    onPressed: () {
-                      setState(() {
-                        isEditing = true; // Enter edit mode
-                      });
-                    },
-                  ),
                 ],
               ),
       ],
@@ -248,7 +237,6 @@ class _DumpDetailsScreenState extends State<DumpDetailsScreen> {
   }
 
   Future<void> _updateDetails() async {
-    // Directly using the `rdid` variable (not accessing via `widget`)
     if (rdid.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Document ID is empty!')),
@@ -258,24 +246,17 @@ class _DumpDetailsScreenState extends State<DumpDetailsScreen> {
 
     // Save the updated values to Firestore
     await _firestoreMethods.updateDumpDetails(
-      rdid, // Directly passing the `rdid` variable
+      rdid,
       title,
       description,
     );
 
-    // Provide user feedback and exit edit mode
-    // ScaffoldMessenger.of(context).showSnackBar(
-    //   SnackBar(content: Text('Dump details updated successfully')),
-    // );
-
     showSuccessPopup(context, title, 'Dump details updated successfully');
 
-    // Close the edit mode
     setState(() {
       isEditing = false;
     });
 
-    // Optionally return updated data to the previous screen
     Navigator.pop(context, {
       'title': title,
       'description': description,

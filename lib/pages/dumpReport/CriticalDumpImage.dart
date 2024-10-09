@@ -39,7 +39,7 @@ class CriticalDumpImage extends StatelessWidget {
                 style: const TextStyle(
                   color: Colors.white, // Keeps the text white for visibility
                   fontSize: 10,        // Reduced font size
-                  fontWeight: FontWeight.w300, // Very thin font
+                  fontWeight: FontWeight.w400, // Very thin font
                 ),
               ),
             ),

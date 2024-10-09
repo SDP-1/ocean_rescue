@@ -58,7 +58,8 @@ class _CriticalDumpSectionState extends State<CriticalDumpSection> {
                             rdid: dump.rdid, // Pass the unique dump ID
                             title: dump.title, // Pass the title of the dump
                             description: dump.description, // Pass the description
-                            imageUrl: dump.imageUrl, // Pass the image URL
+                            imageUrl: dump.imageUrl,
+                            uid:dump.uid, // Pass the image URL
                           ),
                         ),
                       ).then((_) {

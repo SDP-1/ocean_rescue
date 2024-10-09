@@ -184,6 +184,7 @@ Widget _buildDumpList({required bool isReported}) {
         title: report.title, // Pass the title
         description: report.description, // Pass the description
         imageUrl: report.imageUrl,  
+        uid: report.uid, 
       );
     },
   ),
