@@ -7,7 +7,7 @@ import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore for f
 class NotificationList extends StatelessWidget {
   final List<CustomNotification.Notification> notifications;
 
-  NotificationList({required this.notifications});
+  NotificationList({required this.notifications, required void Function(CustomNotification.Notification notification) onNotificationTap});
 
   @override
   Widget build(BuildContext context) {
@@ -24,29 +24,24 @@ class NotificationList extends StatelessWidget {
 
         return GestureDetector(
           onLongPress: () {
-            _seekNotification(
-                context, notification); // Correctly using context here
+            _seekNotification(context, notification);
           },
           child: Dismissible(
             key: Key(notification.id),
-            direction: DismissDirection
-                .endToStart, // Slide to delete from right to left
+            direction: DismissDirection.endToStart,
             background: _buildDismissBackground(),
             onDismissed: (direction) {
-              Provider.of<NotificationProvider>(context, listen: false)
-                  .deleteNotification(notification.id);
+              _deleteNotification(context, notification.id);
             },
             child: FutureBuilder<String>(
-              future: _fetchUserPhotoUrl(
-                  notification.userId), // Fetch user photo URL
+              future: _fetchUserPhotoUrl(notification.userId),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return _buildNotificationTile(notification, null, true);
+                  return _buildNotificationTile(context, notification, null, true);
                 } else if (snapshot.hasError) {
-                  return _buildNotificationTile(notification, null, false);
+                  return _buildNotificationTile(context, notification, null, false);
                 } else {
-                  return _buildNotificationTile(
-                      notification, snapshot.data, false);
+                  return _buildNotificationTile(context, notification, snapshot.data, false);
                 }
               },
             ),
@@ -56,7 +51,7 @@ class NotificationList extends StatelessWidget {
     );
   }
 
-  Widget _buildNotificationTile(CustomNotification.Notification notification,
+  Widget _buildNotificationTile(BuildContext context, CustomNotification.Notification notification,
       String? photoUrl, bool isLoading) {
     return ListTile(
       leading: CircleAvatar(
@@ -65,7 +60,7 @@ class NotificationList extends StatelessWidget {
             : (photoUrl != null && photoUrl.isNotEmpty
                 ? NetworkImage(photoUrl)
                 : AssetImage('assets/images/default_user.png')
-                    as ImageProvider), // Use a default image if URL fails
+                    as ImageProvider),
         child: isLoading ? CircularProgressIndicator() : null,
       ),
       title: Text(
@@ -77,8 +72,7 @@ class NotificationList extends StatelessWidget {
           ? const Icon(Icons.check, color: Colors.green)
           : const Icon(Icons.new_releases, color: Colors.red),
       onTap: () {
-        // Provider.of<NotificationProvider>(context, listen: false)
-        //     .markAsRead(notification.id);
+        _markAsRead(context, notification); // Mark as read on tap
       },
     );
   }
@@ -92,8 +86,7 @@ class NotificationList extends StatelessWidget {
     );
   }
 
-  void _seekNotification(
-      BuildContext context, CustomNotification.Notification notification) {
+  void _seekNotification(BuildContext context, CustomNotification.Notification notification) {
     showModalBottomSheet(
       context: context,
       builder: (_) {
@@ -103,12 +96,10 @@ class NotificationList extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               FutureBuilder<String>(
-                future: _fetchUserPhotoUrl(
-                    notification.userId), // Fetch user photo URL
+                future: _fetchUserPhotoUrl(notification.userId),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const CircleAvatar(
-                        child: CircularProgressIndicator());
+                    return const CircleAvatar(child: CircularProgressIndicator());
                   } else if (snapshot.hasError) {
                     return const CircleAvatar(backgroundColor: Colors.grey);
                   } else {
@@ -121,8 +112,7 @@ class NotificationList extends StatelessWidget {
               ),
               const SizedBox(height: 16.0),
               Text(notification.title,
-                  style: const TextStyle(
-                      fontSize: 18, fontWeight: FontWeight.bold)),
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
               const SizedBox(height: 8.0),
               Text(notification.message),
               const SizedBox(height: 16.0),
@@ -131,8 +121,7 @@ class NotificationList extends StatelessWidget {
                 children: [
                   ElevatedButton(
                     onPressed: () {
-                      Provider.of<NotificationProvider>(context, listen: false)
-                          .markAsRead(notification.id);
+                      _markAsRead(context, notification);
                       Navigator.of(context).pop(); // Close the modal
                     },
                     child: const Text('Mark as Read'),
@@ -142,8 +131,7 @@ class NotificationList extends StatelessWidget {
                       backgroundColor: MaterialStateProperty.all(Colors.red),
                     ),
                     onPressed: () {
-                      Provider.of<NotificationProvider>(context, listen: false)
-                          .deleteNotification(notification.id);
+                      _deleteNotification(context, notification.id);
                       Navigator.of(context).pop(); // Close the modal
                     },
                     child: const Text('Delete'),
@@ -163,11 +151,26 @@ class NotificationList extends StatelessWidget {
           .collection('users')
           .doc(userId)
           .get();
-      return userDoc['photoUrl'] ??
-          ''; // Return the photoUrl or an empty string if not available
+      return userDoc['photoUrl'] ?? ''; // Return the photoUrl or an empty string if not available
     } catch (e) {
       print("Error fetching user photo URL: $e");
       return ''; // Return an empty string in case of error
     }
+  }
+
+  void _markAsRead(BuildContext context, CustomNotification.Notification notification) {
+    Provider.of<NotificationProvider>(context, listen: false)
+        .markAsRead(notification.id);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('${notification.title} marked as read')),
+    );
+  }
+
+  void _deleteNotification(BuildContext context, String notificationId) {
+    Provider.of<NotificationProvider>(context, listen: false)
+        .deleteNotification(notificationId);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Notification deleted')),
+    );
   }
 }
