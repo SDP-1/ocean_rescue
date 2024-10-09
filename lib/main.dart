@@ -1,6 +1,10 @@
 import 'package:firebase_core/firebase_core.dart'; // Import Firebase Core
 import 'package:firebase_messaging/firebase_messaging.dart'; // Import Firebase Messaging
 import 'package:flutter/material.dart';
+import 'package:ocean_rescue/pages/dumpReport/DumpReportHistory.dart';
+import 'package:ocean_rescue/pages/dumpReport/dump_description_edit.dart';
+import 'package:ocean_rescue/pages/welcome/signin_screen.dart';
+import 'package:ocean_rescue/widget/popup/delete_confirmation_popup.dart';
 import 'package:ocean_rescue/pages/welcome/signin_screen.dart'; // Ensure this path is correct
 import 'package:ocean_rescue/providers/notification_provider.dart';
 import 'package:provider/provider.dart';
@@ -41,11 +45,13 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Ocean Rescue',
       debugShowCheckedModeBanner: false,
-      home: const SignInScreen(),
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        // You can define other theme properties here
-      ),
+      home: SignInScreen(),
+      // home: BottomNavBar(),
+      // home: SplashScreen(),
+     // home : DumpReportHistory(),
+     //home : delete_confirmation_popup(),
+      //home : DumpDetailsScreen(),
+    
     );
   }
 }
