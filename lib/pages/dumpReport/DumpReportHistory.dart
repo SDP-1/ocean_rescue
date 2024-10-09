@@ -197,12 +197,6 @@ Widget _buildDumpList({required bool isReported}) {
             context,
             MaterialPageRoute(
               builder: (context) {
-                print('Navigating to details:');
-                print('Dump ID: ${report.rdid}');
-                print('Title: ${report.title}');
-                print('Description: ${report.description}');
-                print('Image URL: ${report.imageUrl}');
-                
                 return DumpDetailsScreen(
                   rdid: report.rdid, // Pass the unique rdid
                   title: report.title, // Pass the title
@@ -258,11 +252,20 @@ Widget _buildDumpList({required bool isReported}) {
                   ),
                 ),
                 
-                // Delete Icon Button
+                // Conditional Icon Button
                 IconButton(
-                  icon: Icon(Icons.delete, color: Colors.red),
-                  onPressed: () {
-                    // Add your delete logic here
+                  icon: Icon(
+                    isReported ? Icons.clear : Icons.delete, // Change icon based on isReported
+                    color: isReported ? Colors.lightBlue : Colors.red,
+                  ),
+                  onPressed: () async {
+                    if (isReported) {
+                      // Mark the dump as cleared
+                      await ReportDumpsFirestoreMethods().markDumpAsCleared(report.rdid);
+                    }
+                    
+                    // Refresh the reports
+                    await _fetchDumpReports(); // Refresh both reported and cleared dumps
                   },
                 ),
               ],
@@ -273,6 +276,7 @@ Widget _buildDumpList({required bool isReported}) {
     },
   );
 }
+
 
 
 

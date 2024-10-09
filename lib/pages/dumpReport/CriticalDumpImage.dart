@@ -38,8 +38,8 @@ class CriticalDumpImage extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
                   color: Colors.white, // Keeps the text white for visibility
-                  fontSize: 10,        // Reduced font size
-                  fontWeight: FontWeight.w400, // Very thin font
+                  fontSize: 12,        // Reduced font size
+                  fontWeight: FontWeight.w600, // Very thin font
                 ),
               ),
             ),
