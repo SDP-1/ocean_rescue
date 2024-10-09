@@ -15,18 +15,33 @@ class NotificationScreen extends StatefulWidget {
 
 class _NotificationScreenState extends State<NotificationScreen>
     with SingleTickerProviderStateMixin {
-  TabController? _tabController;
+  late TabController
+      _tabController; // Use late initialization for TabController
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+
+    // Start listening for notifications when the screen is initialized
+    final notificationProvider =
+        Provider.of<NotificationProvider>(context, listen: false);
+    notificationProvider
+        .startListeningForNotifications(); // Start real-time listener
   }
 
   @override
   void dispose() {
-    _tabController?.dispose();
+    _tabController.dispose();
     super.dispose();
+  }
+
+  // This function handles marking the notification as read
+  void _markNotificationAsRead(CustomNotification.Notification notification) {
+    final notificationProvider =
+        Provider.of<NotificationProvider>(context, listen: false);
+    notificationProvider.markAsRead(
+        notification.id); // Mark the notification as read in the provider
   }
 
   @override
@@ -58,11 +73,23 @@ class _NotificationScreenState extends State<NotificationScreen>
         controller: _tabController,
         children: [
           // Unread notifications tab
-          NotificationList(
-              notifications: notificationProvider.getUnreadNotifications()),
+          notificationProvider.getUnreadNotifications().isEmpty
+              ? const Center(child: Text("No unread notifications"))
+              : NotificationList(
+                  notifications: notificationProvider.getUnreadNotifications(),
+                  onNotificationTap:
+                      _markNotificationAsRead, // Pass the callback to mark as read
+                ),
+
           // Read notifications tab
-          NotificationList(
-              notifications: notificationProvider.getReadNotifications()),
+          notificationProvider.getReadNotifications().isEmpty
+              ? const Center(child: Text("No read notifications"))
+              : NotificationList(
+                  notifications: notificationProvider.getReadNotifications(),
+                  onNotificationTap: (notification) {
+                    // Optionally, this can be a no-op or handle other actions if needed
+                  }, // Required even for read notifications
+                ),
         ],
       ),
     );

@@ -2,30 +2,36 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:ocean_rescue/theme/colorTheme.dart';
+import 'package:ocean_rescue/resources/post_firestore_methods.dart';
 import 'package:ocean_rescue/widget/popup/ErrorPopup.dart';
 import 'package:ocean_rescue/widget/popup/SuccessPopup.dart';
-import 'package:ocean_rescue/resources/post_firestore_methods.dart';
-import 'package:ocean_rescue/pages/feed/feed_screen.dart'; // Import your Feed screen
+import 'package:ocean_rescue/pages/feed/feed_screen.dart';
 
-class CreatePostScreen extends StatefulWidget {
-  const CreatePostScreen({super.key});
+class UpdatePostScreen extends StatefulWidget {
+  final Map<String, dynamic> post; // The post to be updated
+
+  const UpdatePostScreen({Key? key, required this.post}) : super(key: key);
 
   @override
-  State<CreatePostScreen> createState() => _CreatePostScreenState();
+  State<UpdatePostScreen> createState() => _UpdatePostScreenState();
 }
 
-class _CreatePostScreenState extends State<CreatePostScreen> {
+class _UpdatePostScreenState extends State<UpdatePostScreen> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   XFile? _image;
   final PostFireStoreMethods _fireStoreMethods = PostFireStoreMethods();
+  bool isLoading = false;
 
-  bool isLoading = false; // Loading state to show loading indicator
+  @override
+  void initState() {
+    super.initState();
+    _titleController.text = widget.post['title'];
+    _descriptionController.text = widget.post['description'];
+  }
 
   Future<void> _pickImage(BuildContext context) async {
     final ImagePicker picker = ImagePicker();
-
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
@@ -63,17 +69,18 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     );
   }
 
-  Future<void> _createPost() async {
+  Future<void> _updatePost() async {
     setState(() {
-      isLoading = true; // Set loading to true when post creation starts
+      isLoading = true;
     });
 
-    String uid = FirebaseAuth.instance.currentUser!.uid;
     String title = _titleController.text;
     String description = _descriptionController.text;
 
+    // Check if an image is selected
     if (_image != null) {
-      String result = await _fireStoreMethods.createPost(
+      String result = await _fireStoreMethods.updatePost(
+        widget.post['postId'], // Pass the post ID
         title,
         description,
         File(_image!.path).readAsBytesSync(),
@@ -85,21 +92,34 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
             MaterialPageRoute(builder: (context) => const FeedScreen()),
             (route) => false,
           );
-          showSuccessPopup(context, 'Create New Post', 'has been completed.');
+          showSuccessPopup(context, 'Update Post', 'has been completed.');
         });
       } else {
-        showErrorPopup(context, 'Couldn\'t post', result);
+        showErrorPopup(context, 'Couldn\'t update post', result);
       }
     } else {
-      showErrorPopup(
-        context,
-        'No Image Selected',
-        'Please select an image to upload.',
+      // If no image is selected, only update title and description
+      String result = await _fireStoreMethods.updatePostWithoutImage(
+        widget.post['postId'], // Pass the post ID
+        title,
+        description,
       );
+
+      if (result == "success") {
+        Future.delayed(const Duration(seconds: 2), () {
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => const FeedScreen()),
+            (route) => false,
+          );
+          showSuccessPopup(context, 'Update Post', 'has been completed.');
+        });
+      } else {
+        showErrorPopup(context, 'Couldn\'t update post', result);
+      }
     }
 
     setState(() {
-      isLoading = false; // Set loading to false when post creation finishes
+      isLoading = false;
     });
   }
 
@@ -107,6 +127,16 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+      // appBar: AppBar(
+      //   title: const Text('Update Post'),
+      //   leading: IconButton(
+      //     icon: const Icon(Icons.arrow_back),
+      //     onPressed: () {
+      //       Navigator.pop(context);
+      //     },
+      //   ),
+      //   backgroundColor: Colors.blue,
+      // ),
       appBar: AppBar(
         title: Image.asset(
           'assets/logo/logo_without_name.png',
@@ -155,9 +185,9 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                     const Expanded(
                       child: Padding(
                         padding: const EdgeInsets.only(
-                            left: 35.0), // Set the left padding here
+                            left: 40.0), // Set the left padding here
                         child: Text(
-                          'Create New Post',
+                          'Update Post',
                           // textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 20,
@@ -171,10 +201,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 ),
               ),
               const SizedBox(height: 15),
-              const Text(
-                'Title',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
+              const Text('Title',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               TextField(
                 controller: _titleController,
@@ -182,7 +210,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                   hintText: '📝 Your creative title 🌍',
                   hintStyle: const TextStyle(color: Colors.grey),
                   filled: true,
-                  fillColor: ColorTheme.liteGreen1,
+                  fillColor: Colors.grey.shade200,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                     borderSide: BorderSide.none,
@@ -190,10 +218,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 ),
               ),
               const SizedBox(height: 16),
-              const Text(
-                'Description',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
+              const Text('Description',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               TextField(
                 controller: _descriptionController,
@@ -202,7 +228,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                   hintText: 'Post description',
                   hintStyle: const TextStyle(color: Colors.grey),
                   filled: true,
-                  fillColor: ColorTheme.liteGreen1,
+                  fillColor: Colors.grey.shade200,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                     borderSide: BorderSide.none,
@@ -210,11 +236,9 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 ),
               ),
               const SizedBox(height: 16),
-              const Text(
-                'Image Upload',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              if (_image != null)
+              const Text('Image Upload',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              if (_image != null) // If a new image is selected, show it
                 Container(
                   height: 200,
                   decoration: BoxDecoration(
@@ -225,7 +249,19 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                     ),
                   ),
                 )
-              else
+              else if (widget.post['postUrl'] !=
+                  null) // If no new image is selected, show existing image
+                Container(
+                  height: 200,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    image: DecorationImage(
+                      image: NetworkImage(widget.post['postUrl']),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                )
+              else // If no image exists or selected
                 Container(
                   height: 200,
                   decoration: BoxDecoration(
@@ -233,10 +269,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Center(
-                    child: Text(
-                      'No Image Selected',
-                      style: TextStyle(color: Colors.grey.shade500),
-                    ),
+                    child: Text('No Image Selected',
+                        style: TextStyle(color: Colors.grey.shade500)),
                   ),
                 ),
               const SizedBox(height: 16),
@@ -269,9 +303,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: ElevatedButton(
-                  onPressed: isLoading
-                      ? null
-                      : _createPost, // Disable button when loading
+                  onPressed: isLoading ? null : _updatePost,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.transparent,
                     padding: const EdgeInsets.symmetric(vertical: 10),
@@ -282,15 +314,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                   ),
                   child: isLoading
                       ? const CircularProgressIndicator(
-                          // Show loader when isLoading is true
                           valueColor:
-                              AlwaysStoppedAnimation<Color>(Colors.white),
-                        )
-                      : const Text(
-                          'Create Post',
-                          style:
-                              TextStyle(fontSize: 18, color: ColorTheme.white),
-                        ),
+                              AlwaysStoppedAnimation<Color>(Colors.white))
+                      : const Text('Update Post',
+                          style: TextStyle(fontSize: 18, color: Colors.white)),
                 ),
               ),
               const SizedBox(height: 16),
