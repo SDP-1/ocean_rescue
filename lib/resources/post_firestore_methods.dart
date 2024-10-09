@@ -85,48 +85,6 @@ class PostFireStoreMethods {
     return res;
   }
 
-  // Future<void> sendNewPostNotificationToAllUsers(
-  //     String postId, String postTitle) async {
-  //   try {
-  //     // Fetch all users
-  //     QuerySnapshot usersSnapshot = await _firestore.collection('users').get();
-  //     List<DocumentSnapshot> userDocs = usersSnapshot.docs;
-
-  //     for (var userDoc in userDocs) {
-  //       String userId = userDoc.id;
-
-  //       // Create a unique notification ID
-  //       String notificationId = const Uuid().v1();
-
-  //       // Create the notification data
-  //       Notification notification = Notification(
-  //         id: notificationId,
-  //         title: 'New Post Alert!',
-  //         message: 'Check out the new post: $postTitle',
-  //         timestamp: DateTime.now(),
-  //         userId: userId, // Use userId instead of userProfileUrl
-  //         isRead: false,
-  //         isForeground: false,
-  //         isFor: NotificationType.post, // Set isFor attribute to 'post'
-  //         postId: postId, // Add postId to the notification
-  //       );
-
-  //       // Add the notification to the notifications collection
-  //       await _firestore
-  //           .collection('notifications')
-  //           .doc(notificationId)
-  //           .set(notification.toJson());
-
-  //       // Add the notification ID to the user's notifications array
-  //       await _firestore.collection('users').doc(userId).update({
-  //         'notifications': FieldValue.arrayUnion([notificationId]),
-  //       });
-  //     }
-  //   } catch (err) {
-  //     print("Failed to send notifications: $err");
-  //   }
-  // }
-
 // Assuming this is part of your NotificationProvider class
   Future<void> sendNewPostNotificationToAllUsers(
       String postId, String postTitle) async {
@@ -170,7 +128,7 @@ class PostFireStoreMethods {
         // await notificationProvider.addNotification(notification);
 
         // Add the notification to the notifications collection
-        NotificationSender.addNotificationToDatabase( notification,userId);
+        NotificationSender.addNotificationToDatabase(notification, userId);
       }
     } catch (err) {
       print("Failed to send notifications: $err");
@@ -370,5 +328,45 @@ class PostFireStoreMethods {
       if (kDebugMode) print(e.toString());
       return null;
     }
+  }
+
+  Future<String> updatePost(
+      String postId, String title, String description, Uint8List file) async {
+    String res = "Some error occurred";
+    try {
+      // Upload new image to storage and get the new URL
+      String postUrl = await uploadImageToStorage(postId, file);
+
+      // Update the post with new data in Firestore
+      await _firestore.collection('posts').doc(postId).update({
+        'title': title,
+        'description': description,
+        'postUrl': postUrl, // Update post URL with the new image
+        'datePublished': DateTime.now(), // Optionally update the published date
+      });
+
+      res = "success";
+    } catch (err) {
+      res = err.toString();
+    }
+    return res;
+  }
+
+  Future<String> updatePostWithoutImage(
+      String postId, String title, String description) async {
+    String res = "Some error occurred";
+    try {
+      // Update the post's title and description without changing the image
+      await _firestore.collection('posts').doc(postId).update({
+        'title': title,
+        'description': description,
+        'datePublished': DateTime.now(), // Optionally update the published date
+      });
+
+      res = "success";
+    } catch (err) {
+      res = err.toString();
+    }
+    return res;
   }
 }
