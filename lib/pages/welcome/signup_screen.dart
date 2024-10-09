@@ -4,7 +4,7 @@ import 'package:icons_plus/icons_plus.dart';
 import 'package:ocean_rescue/pages/welcome/splash_screen.dart';
 import 'package:ocean_rescue/theme/colorTheme.dart';
 import 'package:ocean_rescue/widget/navbar/BottomNavBar.dart';
-import '../../widget/button/GradientButton.dart';
+import '../../widget/common/GradientButton.dart';
 import '../../widget/welcome/custom_scaffold.dart';
 import '../../resources/auth_methods.dart';
 import '../../theme/theme.dart';
@@ -164,10 +164,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             // Adding style to the text field
                             hintStyle:
                                 const TextStyle(fontSize: 14), // Hint text size
-                            labelStyle:
-                                const TextStyle(fontSize: 14), // Label text size
+                            labelStyle: const TextStyle(
+                                fontSize: 14), // Label text size
                           ),
-                          style: const TextStyle(fontSize: 14), // Input text size
+                          style:
+                              const TextStyle(fontSize: 14), // Input text size
                         ),
                       ),
                       const SizedBox(height: 15.0),
@@ -192,10 +193,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             // Adding style to the text field
                             hintStyle:
                                 const TextStyle(fontSize: 14), // Hint text size
-                            labelStyle:
-                                const TextStyle(fontSize: 14), // Label text size
+                            labelStyle: const TextStyle(
+                                fontSize: 14), // Label text size
                           ),
-                          style: const TextStyle(fontSize: 14), // Input text size
+                          style:
+                              const TextStyle(fontSize: 14), // Input text size
                         ),
                       ),
                       const SizedBox(height: 15.0),
@@ -222,10 +224,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             // Adding style to the text field
                             hintStyle:
                                 const TextStyle(fontSize: 14), // Hint text size
-                            labelStyle:
-                                const TextStyle(fontSize: 14), // Label text size
+                            labelStyle: const TextStyle(
+                                fontSize: 14), // Label text size
                           ),
-                          style: const TextStyle(fontSize: 14), // Input text size
+                          style:
+                              const TextStyle(fontSize: 14), // Input text size
                         ),
                       ),
 
@@ -307,7 +310,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             ),
                             side: const BorderSide(
                               color: ColorTheme
-                                  .liteGreen1, // Set your desired border color here
+                                  .lightGreen1, // Set your desired border color here
                               width: 2, // Set the width of the border
                             ),
                           ),

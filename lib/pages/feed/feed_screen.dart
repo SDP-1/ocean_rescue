@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:ocean_rescue/pages/post/create_post_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 import '../../theme/colorTheme.dart';
 import '../../widget/feed/FeaturedEventSection.dart';
-import '../../widget/feed/TopAppBar .dart';
+import '../../widget/navbar/TopAppBar .dart';
 import '../../widget/feed/post_card.dart';
 import '../../widget/navbar/BottomNavBar.dart';
 
@@ -15,6 +16,8 @@ class FeedScreen extends StatefulWidget {
 }
 
 class _FeedScreenState extends State<FeedScreen> {
+final PersistentTabController _controller = PersistentTabController(initialIndex: 0);
+
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   List<Map<String, dynamic>> posts = [];
   bool isLoadingMore = false; // To track loading more posts
