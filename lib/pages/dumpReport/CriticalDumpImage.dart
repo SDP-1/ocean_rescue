@@ -1,8 +1,5 @@
-
 import 'package:flutter/material.dart';
-// import 'package:ocean_rescue/pages/dumpReport/dump_description_edit.dart';
-// import '../../models/reportdump.dart';
-// import '../../resources/ReportDumpsFirestoreMethods.dart';
+
 class CriticalDumpImage extends StatelessWidget {
   final String imageUrl;
   final String title;
