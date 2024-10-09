@@ -91,20 +91,20 @@ class BottomNavBar extends StatelessWidget {
           stateManagement: true, // Default is true.
           hideNavigationBarWhenKeyboardAppears:
               false, // Optional: Keep the nav bar visible.
-          padding: const EdgeInsets.only(top: 8),
+          padding: const EdgeInsets.only(top: 5),
           backgroundColor: Colors.white,
           isVisible:
               isVisible, // Use the static ValueNotifier to control visibility
           animationSettings: const NavBarAnimationSettings(
             navBarItemAnimation: ItemAnimationSettings(
               // Navigation Bar's items animation properties.
-              duration: Duration(milliseconds: 400),
+              duration: Duration(milliseconds: 10),
               curve: Curves.ease,
             ),
             screenTransitionAnimation: ScreenTransitionAnimationSettings(
               // Screen transition animation.
               animateTabTransition: true,
-              duration: Duration(milliseconds: 200),
+              duration: Duration(milliseconds: 5),
               screenTransitionAnimationType:
                   ScreenTransitionAnimationType.fadeIn,
             ),
