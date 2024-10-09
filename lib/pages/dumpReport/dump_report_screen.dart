@@ -41,65 +41,69 @@ class _ReportDumpPageState extends State<ReportDumpPage> {
     }
   }
 
- Future<void> _submitReportDump(BuildContext context) async {
-  // Validate and save the form state before submission
-  if (_formKey.currentState?.validate() ?? false) {
-    _formKey.currentState?.save(); // Save form values (title, description, etc.)
+  Future<void> _submitReportDump(BuildContext context) async {
+    // Validate and save the form state before submission
+    if (_formKey.currentState?.validate() ?? false) {
+      _formKey.currentState
+          ?.save(); // Save form values (title, description, etc.)
 
-    if (_selectedUrgency == null) {
-      showErrorPopup(context, 'Urgency Level', 'Please select an urgency level.');
-      return;
+      if (_selectedUrgency == null) {
+        showErrorPopup(
+            context, 'Urgency Level', 'Please select an urgency level.');
+        return;
+      }
+
+      if (_image == null) {
+        showErrorPopup(context, 'Image Missing', 'Please upload an image.');
+        return;
+      }
+
+      setState(() => _isSubmitting = true); // Indicate form submission loading
+
+      try {
+        // Submit the report to Firestore
+        await _firestoreMethods.saveReportDump(
+          title: _title,
+          description: _description,
+          eventLocation: _eventLocation,
+          urgencyLevel: _selectedUrgency!,
+          imageFile: _image!,
+          isReported: true,
+        );
+
+        // Show success message after successful submission
+        showSuccessPopup(context, 'Report Submitted',
+            'Dump report has been successfully submitted.');
+
+        // Clear form fields AFTER successful submission
+        _formKey.currentState?.reset(); // Reset form fields
+
+        // Reset field variables in state AFTER the form reset
+        setState(() {
+          _title = '';
+          _description = '';
+          _eventLocation = '';
+          _selectedUrgency = null;
+          _image = null;
+        });
+
+        // Optionally, navigate to the dashboard after submission
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => DumpsDashboard()),
+        );
+      } catch (e) {
+        print("Error: $e");
+        showErrorPopup(context, 'Submission Failed',
+            'Error occurred while submitting: $e');
+      } finally {
+        setState(() => _isSubmitting = false); // End submission loading state
+      }
+    } else {
+      showErrorPopup(
+          context, 'Invalid Form', 'Please fill all fields correctly.');
     }
-
-    if (_image == null) {
-      showErrorPopup(context, 'Image Missing', 'Please upload an image.');
-      return;
-    }
-
-    setState(() => _isSubmitting = true); // Indicate form submission loading
-
-    try {
-      // Submit the report to Firestore
-      await _firestoreMethods.saveReportDump(
-        title: _title,
-        description: _description,
-        eventLocation: _eventLocation,
-        urgencyLevel: _selectedUrgency!,
-        imageFile: _image!,
-        isReported: true,
-      );
-
-      // Show success message after successful submission
-      showSuccessPopup(context, 'Report Submitted', 'Dump report has been successfully submitted.');
-
-      // Clear form fields AFTER successful submission
-      _formKey.currentState?.reset(); // Reset form fields
-
-      // Reset field variables in state AFTER the form reset
-      setState(() {
-        _title = '';
-        _description = '';
-        _eventLocation = '';
-        _selectedUrgency = null;
-        _image = null;
-      });
-
-      // Optionally, navigate to the dashboard after submission
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => DumpsDashboard()),
-      );
-    } catch (e) {
-      print("Error: $e");
-      showErrorPopup(context, 'Submission Failed', 'Error occurred while submitting: $e');
-    } finally {
-      setState(() => _isSubmitting = false); // End submission loading state
-    }
-  } else {
-    showErrorPopup(context, 'Invalid Form', 'Please fill all fields correctly.');
   }
-}
-
 
   @override
   Widget build(BuildContext context) {
@@ -127,30 +131,32 @@ class _ReportDumpPageState extends State<ReportDumpPage> {
                 const SizedBox(height: 16),
                 _buildHeader(),
                 const SizedBox(height: 16),
-               _buildLabeledTextField(
-            label: 'Title',
-            hintText: 'Enter title',
-            onSaved: (value) => _title = value ?? '', // Store title value in the state variable
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter your title';
-              }
-              return null; // Valid value
-            },
-                    ),
+                _buildLabeledTextField(
+                  label: 'Title',
+                  hintText: 'Enter title',
+                  onSaved: (value) => _title =
+                      value ?? '', // Store title value in the state variable
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your title';
+                    }
+                    return null; // Valid value
+                  },
+                ),
                 const SizedBox(height: 16),
-                    _buildLabeledTextField(
-            label: 'Description',
-            hintText: 'Enter description',
-            maxLines: 3,
-            onSaved: (value) => _description = value ?? '', // Store description value in the state variable
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter a description';
-              }
-              return null; // Valid value
-            },
-                    ),
+                _buildLabeledTextField(
+                  label: 'Description',
+                  hintText: 'Enter description',
+                  maxLines: 3,
+                  onSaved: (value) => _description = value ??
+                      '', // Store description value in the state variable
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter a description';
+                    }
+                    return null; // Valid value
+                  },
+                ),
                 const SizedBox(height: 16),
                 const Text('Urgency Level'),
                 const SizedBox(height: 8),
@@ -169,14 +175,15 @@ class _ReportDumpPageState extends State<ReportDumpPage> {
                 Container(
                   height: 200,
                   decoration: BoxDecoration(
-                    color: ColorTheme.liteGreen1,
+                    color: ColorTheme.lightGreen1,
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: const Center(child: Text('Map Placeholder')),
                 ),
                 const SizedBox(height: 16),
                 const Text('Image Upload',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                    style:
+                        TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                 _buildImagePreview(),
                 const SizedBox(height: 16),
                 Align(

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ocean_rescue/models/reportdump.dart';
 import 'package:ocean_rescue/resources/ReportDumpsFirestoreMethods.dart';
 import 'package:ocean_rescue/theme/colorTheme.dart';
-import 'package:ocean_rescue/widget/feed/TopAppBar%20.dart';
+import 'package:ocean_rescue/widget/navbar/TopAppBar%20.dart';
 import 'package:ocean_rescue/widget/dumpReport/eventCard.dart';
 import 'DumpReportHistory.dart';
 import 'dump_description_edit.dart';
@@ -54,7 +54,7 @@ class DumpsDashboard extends StatelessWidget {
                       _buildActionIcon(
                         Icons.history,
                         "Report History",
-                        ColorTheme.liteBlue1,
+                        ColorTheme.lightBlue1,
                         () {
                           Navigator.push(
                             context,
@@ -118,54 +118,62 @@ class DumpsDashboard extends StatelessWidget {
               ),
             ),
             SizedBox(
-  height: 100,
-  child: FutureBuilder<List<ReportDump>>(
-    future: ReportDumpsFirestoreMethods().fetchReportedDumpReports(),
-    builder: (context, snapshot) {
-      if (snapshot.connectionState == ConnectionState.waiting) {
-        return const Center(child: CircularProgressIndicator());
-      } else if (snapshot.hasError) {
-        return const Center(child: Text("Failed to load data."));
-      } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-        // Filter only the dumps with urgencyLevel = "Urgent"
-        final criticalDumps = snapshot.data!
-            .where((dump) => dump.urgencyLevel == "Urgent")
-            .toList();
+              height: 100,
+              child: FutureBuilder<List<ReportDump>>(
+                future:
+                    ReportDumpsFirestoreMethods().fetchReportedDumpReports(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return const Center(child: Text("Failed to load data."));
+                  } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                    // Filter only the dumps with urgencyLevel = "Urgent"
+                    final criticalDumps = snapshot.data!
+                        .where((dump) => dump.urgencyLevel == "Urgent")
+                        .toList();
 
-        // Check if there are any critical dumps
-        if (criticalDumps.isNotEmpty) {
-          return ListView(
-            scrollDirection: Axis.horizontal,
-            children: criticalDumps
-                .map((dump) => GestureDetector(  // Use GestureDetector for tap detection
-                      onTap: () {
-                        // Navigate to DumpDetailsScreen when image is tapped
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => DumpDetailsScreen(
-                              rdid: dump.rdid, // Pass the unique dump ID
-                              title: dump.title, // Pass the title of the dump
-                              description: dump.description, // Pass the description
-                              imageUrl: dump.imageUrl,// Pass the image URL
-                            ),
-                          ),
-                        );
-                      },
-                      child: CriticalDumpImage(dump.imageUrl), // Your existing widget for displaying images
-                    ))
-                .toList(),
-          );
-        } else {
-          return const Center(child: Text("No critical dumps found."));
-        }
-      } else {
-        return const Center(child: Text("No critical dumps found."));
-      }
-    },
-  ),
-),
-
+                    // Check if there are any critical dumps
+                    if (criticalDumps.isNotEmpty) {
+                      return ListView(
+                        scrollDirection: Axis.horizontal,
+                        children: criticalDumps
+                            .map((dump) => GestureDetector(
+                                  // Use GestureDetector for tap detection
+                                  onTap: () {
+                                    // Navigate to DumpDetailsScreen when image is tapped
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => DumpDetailsScreen(
+                                          rdid: dump
+                                              .rdid, // Pass the unique dump ID
+                                          title: dump
+                                              .title, // Pass the title of the dump
+                                          description: dump
+                                              .description, // Pass the description
+                                          imageUrl: dump
+                                              .imageUrl, // Pass the image URL
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  child: CriticalDumpImage(dump
+                                      .imageUrl), // Your existing widget for displaying images
+                                ))
+                            .toList(),
+                      );
+                    } else {
+                      return const Center(
+                          child: Text("No critical dumps found."));
+                    }
+                  } else {
+                    return const Center(
+                        child: Text("No critical dumps found."));
+                  }
+                },
+              ),
+            ),
 
             // All Dumps Section
             const Padding(
@@ -190,9 +198,9 @@ class DumpsDashboard extends StatelessWidget {
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
-                    foregroundColor: ColorTheme.liteBlue1,
-                    side:
-                        const BorderSide(color: ColorTheme.liteBlue1, width: 2),
+                    foregroundColor: ColorTheme.lightBlue1,
+                    side: const BorderSide(
+                        color: ColorTheme.lightBlue1, width: 2),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),

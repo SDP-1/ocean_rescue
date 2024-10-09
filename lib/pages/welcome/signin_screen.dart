@@ -8,7 +8,7 @@ import '../../widget/welcome/custom_scaffold.dart';
 import '../../resources/auth_methods.dart';
 import '../../theme/theme.dart';
 import 'signup_screen.dart';
-import '../../widget/button/GradientButton.dart';
+import '../../widget/common/GradientButton.dart';
 import 'splash_screen.dart'; // Import your GradientButton widget
 
 class SignInScreen extends StatefulWidget {
