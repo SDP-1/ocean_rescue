@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ocean_rescue/models/reportdump.dart';
 import 'package:ocean_rescue/resources/ReportDumpsFirestoreMethods.dart';
 import 'package:ocean_rescue/theme/colorTheme.dart';
-import 'package:ocean_rescue/widget/feed/TopAppBar%20.dart';
+import 'package:ocean_rescue/widget/navbar/TopAppBar%20.dart';
 import 'package:ocean_rescue/widget/dumpReport/eventCard.dart';
 import 'AllDumpsSection.dart';
 import 'DumpReportHistory.dart';
@@ -56,7 +56,7 @@ class DumpsDashboard extends StatelessWidget {
                       _buildActionIcon(
                         Icons.history,
                         "Report History",
-                        ColorTheme.liteBlue1,
+                        ColorTheme.lightBlue1,
                         () {
                           Navigator.push(
                             context,

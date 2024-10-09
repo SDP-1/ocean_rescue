@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 
 // Define your color theme class as per the uploaded palette
 import 'package:ocean_rescue/theme/colorTheme.dart';
-import '../../widget/feed/TopAppBar .dart';
+
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../models/reportdump.dart';
 import '../../resources/ReportDumpsFirestoreMethods.dart';
+import '../../widget/navbar/TopAppBar .dart';
 import '../dumpReport/dump_description_edit.dart';
 
 class DumpReportHistory extends StatefulWidget {
@@ -307,7 +308,7 @@ Widget _buildPagination() {
                 child: CircleAvatar(
                   radius: 12, // Reduced radius for a smaller circle
                   backgroundColor: index == 0 // Change to check for the first index
-                      ? ColorTheme.liteBlue1
+                      ? ColorTheme.lightBlue1
                       : ColorTheme.litegray,
                   child: Text(
                     '${index + 1}', // This will correctly show page numbers starting from 1

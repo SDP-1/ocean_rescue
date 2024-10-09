@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ocean_rescue/theme/colorTheme.dart';
 import 'package:provider/provider.dart'; // Import the provider package
 import '../../models/notification.dart'
     as CustomNotification; // Adjust the import as necessary
@@ -50,12 +51,13 @@ class _NotificationScreenState extends State<NotificationScreen>
     final notificationProvider = Provider.of<NotificationProvider>(context);
 
     return Scaffold(
+      backgroundColor: ColorTheme.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: ColorTheme.white,
         elevation: 0,
         title: const Text(
           'Notifications',
-          style: TextStyle(color: Colors.black),
+          style: TextStyle(color: ColorTheme.black),
         ),
         bottom: TabBar(
           controller: _tabController,

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:ocean_rescue/pages/chat/chat_list_screen.dart';
+import 'package:ocean_rescue/pages/notification/notification_screen.dart';
 import 'package:ocean_rescue/pages/search/search_screen.dart';
 import 'package:ocean_rescue/utils/colors.dart';
+import 'package:ocean_rescue/widget/navbar/BottomNavBar.dart';
 import '../../theme/colorTheme.dart';
 
 class TopAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -37,10 +39,25 @@ class TopAppBar extends StatelessWidget implements PreferredSizeWidget {
           _buildActionIcon(
             icon: Icons.messenger_outline,
             onPressed: () {
+              // BottomNavBar.visibility(false);
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => ChatListScreen()),
-              );
+              ).then((_) {
+                // BottomNavBar.visibility(true);
+              });
+            },
+          ),
+          _buildActionIcon(
+            icon: Icons.notifications,
+            onPressed: () {
+              // BottomNavBar.visibility(false);
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => NotificationScreen()),
+              ).then((_) {
+                // BottomNavBar.visibility(true);
+              });
             },
           ),
         ],
@@ -57,7 +74,7 @@ class TopAppBar extends StatelessWidget implements PreferredSizeWidget {
         radius: 20,
         backgroundColor: ColorTheme.liteBlue2,
         child: IconButton(
-          icon: Icon(icon, color: ColorTheme.liteBlue1),
+          icon: Icon(icon, color: ColorTheme.lightBlue1),
           onPressed: onPressed,
         ),
       ),

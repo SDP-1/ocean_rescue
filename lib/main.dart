@@ -3,7 +3,11 @@ import 'package:firebase_messaging/firebase_messaging.dart'; // Import Firebase 
 import 'package:flutter/material.dart';
 import 'package:ocean_rescue/pages/dumpReport/DumpReportHistory.dart';
 import 'package:ocean_rescue/pages/dumpReport/dump_description_edit.dart';
+import 'package:ocean_rescue/pages/event/create_event_screen1.dart';
+import 'package:ocean_rescue/pages/event/event_details_screen.dart';
+import 'package:ocean_rescue/pages/post/create_post_screen.dart';
 import 'package:ocean_rescue/pages/welcome/signin_screen.dart';
+import 'package:ocean_rescue/widget/event/EventDetailsCard.dart';
 import 'package:ocean_rescue/widget/popup/delete_confirmation_popup.dart';
 import 'package:ocean_rescue/pages/welcome/signin_screen.dart'; // Ensure this path is correct
 import 'package:ocean_rescue/providers/notification_provider.dart';
@@ -30,7 +34,9 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context) => NotificationProvider()), // Register NotificationProvider
+        ChangeNotifierProvider(
+            create: (context) =>
+                NotificationProvider()), // Register NotificationProvider
       ],
       child: const MyApp(),
     ),
@@ -46,12 +52,14 @@ class MyApp extends StatelessWidget {
       title: 'Ocean Rescue',
       debugShowCheckedModeBanner: false,
       home: SignInScreen(),
-      // home: BottomNavBar(),
+      // home: BottomAppBar(),
       // home: SplashScreen(),
-     // home : DumpReportHistory(),
-     //home : delete_confirmation_popup(),
+      // home : DumpReportHistory(),
+      //home : delete_confirmation_popup(),
       //home : DumpDetailsScreen(),
-    
+      // home: EventDetailsScreen(),
+      // home: CreateEventScreen1(),
+      // home: CreatePostScreen(),
     );
   }
 }
