@@ -34,8 +34,8 @@ class CriticalDumpImage extends StatelessWidget {
               width: 130, // Limits the width of the text container
               child: Text(
                 title,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
+                maxLines: 1, // Change to 1 to only show one line
+                overflow: TextOverflow.ellipsis, // Use ellipsis for overflow
                 style: const TextStyle(
                   color: Colors.white, // Keeps the text white for visibility
                   fontSize: 12,        // Reduced font size
