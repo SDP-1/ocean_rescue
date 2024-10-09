@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:ocean_rescue/pages/post/create_post_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
+import 'package:ocean_rescue/resources/auth_methods.dart';
+import 'package:ocean_rescue/widget/navbar/TopAppBar%20.dart';
 import '../../theme/colorTheme.dart';
 import '../../widget/feed/FeaturedEventSection.dart';
-import '../../widget/navbar/TopAppBar .dart';
 import '../../widget/feed/post_card.dart';
 import '../../widget/navbar/BottomNavBar.dart';
+import '../../models/user.dart'; // Import your user model
 
 class FeedScreen extends StatefulWidget {
   const FeedScreen({super.key});
@@ -16,8 +17,6 @@ class FeedScreen extends StatefulWidget {
 }
 
 class _FeedScreenState extends State<FeedScreen> {
-final PersistentTabController _controller = PersistentTabController(initialIndex: 0);
-
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   List<Map<String, dynamic>> posts = [];
   bool isLoadingMore = false; // To track loading more posts
@@ -25,11 +24,13 @@ final PersistentTabController _controller = PersistentTabController(initialIndex
   DocumentSnapshot? lastPost; // Track the last post for pagination
   final ScrollController _scrollController =
       ScrollController(); // Scroll controller for infinite scrolling
+  String? userProfileImage; // Store the user profile image URL
 
   @override
   void initState() {
     super.initState();
     _fetchPosts();
+    _loadUserProfile(); // Load user profile when initializing
 
     // Add listener to the scroll controller to detect when user scrolls down
     _scrollController.addListener(() {
@@ -40,6 +41,19 @@ final PersistentTabController _controller = PersistentTabController(initialIndex
         _fetchMorePosts(); // Load more posts when we reach the bottom
       }
     });
+  }
+
+  // Fetch the user details including the profile picture
+  Future<void> _loadUserProfile() async {
+    try {
+      // Use the getUserDetails method to get the user profile
+      User currentUser = await AuthMethods().getUserDetails();
+      setState(() {
+        userProfileImage = currentUser.photoUrl; // Store the profile image URL
+      });
+    } catch (e) {
+      print("Error loading user profile: $e");
+    }
   }
 
   // Fetch the first set of posts
@@ -166,8 +180,11 @@ final PersistentTabController _controller = PersistentTabController(initialIndex
                   children: [
                     CircleAvatar(
                       radius: 18,
-                      backgroundImage: AssetImage(
-                          'assets/user/profile_pic.jpg'), // Placeholder
+                      backgroundImage: userProfileImage != null
+                          ? NetworkImage(
+                              userProfileImage!) // Use the dynamic profile image
+                          : AssetImage('assets/user/profile_pic.jpg')
+                              as ImageProvider, // Fallback if no image
                     ),
                     const SizedBox(width: 10),
                     Expanded(
