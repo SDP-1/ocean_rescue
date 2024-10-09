@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:ocean_rescue/pages/event/CreateEventScreen2.dart';
 import 'package:ocean_rescue/theme/colorTheme.dart';
 import 'package:ocean_rescue/widget/common/CreateFormTopWidget.dart';
 import 'dart:io';
@@ -52,7 +53,7 @@ class _CreateEventScreen1State extends State<CreateEventScreen1> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             CreateFormTopWidget(
-              title: 'Create New Event',
+              title: 'Create New Event P1',
               imagePath: 'assets/post/createNewPost.png',
             ),
             // Top Instructional Info
@@ -165,9 +166,18 @@ class _CreateEventScreen1State extends State<CreateEventScreen1> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _buildSizeOption('2 - 5', Icons.people_outline),
-                _buildSizeOption('5 - 20', Icons.groups_outlined),
-                _buildSizeOption('20 +', Icons.people_alt_outlined),
+                // Use Expanded or Flexible to ensure all options have equal width
+                Expanded(
+                  child: _buildSizeOption('2 - 5', Icons.people_outline),
+                ),
+                const SizedBox(width: 10), // Add some space between the options
+                Expanded(
+                  child: _buildSizeOption('5 - 20', Icons.groups_outlined),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: _buildSizeOption('20 +', Icons.people_alt_outlined),
+                ),
               ],
             ),
             const SizedBox(height: 30),
@@ -176,6 +186,10 @@ class _CreateEventScreen1State extends State<CreateEventScreen1> {
               text: 'Next',
               onTap: () {
                 // Navigate or perform action
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => CreateEventScreen2()),
+                );
               },
               width: double.infinity, // Set width to take full width
               height: 50.0, // Optional: You can set a specific height if needed
