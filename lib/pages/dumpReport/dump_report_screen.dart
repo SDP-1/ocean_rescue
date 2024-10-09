@@ -42,9 +42,10 @@ class _ReportDumpPageState extends State<ReportDumpPage> {
   }
 
   Future<void> _submitReportDump(BuildContext context) async {
-    // Save form state before validation
+    // Validate and save the form state before submission
     if (_formKey.currentState?.validate() ?? false) {
-      _formKey.currentState?.save(); // Save field values
+      _formKey.currentState
+          ?.save(); // Save form values (title, description, etc.)
 
       if (_selectedUrgency == null) {
         showErrorPopup(
@@ -57,9 +58,10 @@ class _ReportDumpPageState extends State<ReportDumpPage> {
         return;
       }
 
-      setState(() => _isSubmitting = true); // Start loading
+      setState(() => _isSubmitting = true); // Indicate form submission loading
 
       try {
+        // Submit the report to Firestore
         await _firestoreMethods.saveReportDump(
           title: _title,
           description: _description,
@@ -69,14 +71,14 @@ class _ReportDumpPageState extends State<ReportDumpPage> {
           isReported: true,
         );
 
-        // Reset the form fields AFTER successful submission
+        // Show success message after successful submission
         showSuccessPopup(context, 'Report Submitted',
             'Dump report has been successfully submitted.');
 
-        // Optionally clear the form fields only after successful submission
-        _formKey.currentState?.reset();
+        // Clear form fields AFTER successful submission
+        _formKey.currentState?.reset(); // Reset form fields
 
-        // Reset field variables
+        // Reset field variables in state AFTER the form reset
         setState(() {
           _title = '';
           _description = '';
@@ -85,7 +87,7 @@ class _ReportDumpPageState extends State<ReportDumpPage> {
           _image = null;
         });
 
-        // Navigate to dashboard after resetting
+        // Optionally, navigate to the dashboard after submission
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => DumpsDashboard()),
@@ -95,7 +97,7 @@ class _ReportDumpPageState extends State<ReportDumpPage> {
         showErrorPopup(context, 'Submission Failed',
             'Error occurred while submitting: $e');
       } finally {
-        setState(() => _isSubmitting = false); // Reset loading state
+        setState(() => _isSubmitting = false); // End submission loading state
       }
     } else {
       showErrorPopup(
@@ -132,20 +134,28 @@ class _ReportDumpPageState extends State<ReportDumpPage> {
                 _buildLabeledTextField(
                   label: 'Title',
                   hintText: 'Enter title',
-                  onSaved: (value) => _title = value ?? '',
-                  validator: (value) => value == null || value.isEmpty
-                      ? 'Please enter your title'
-                      : null,
+                  onSaved: (value) => _title =
+                      value ?? '', // Store title value in the state variable
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your title';
+                    }
+                    return null; // Valid value
+                  },
                 ),
                 const SizedBox(height: 16),
                 _buildLabeledTextField(
                   label: 'Description',
                   hintText: 'Enter description',
                   maxLines: 3,
-                  onSaved: (value) => _description = value ?? '',
-                  validator: (value) => value == null || value.isEmpty
-                      ? 'Please enter a description'
-                      : null,
+                  onSaved: (value) => _description = value ??
+                      '', // Store description value in the state variable
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter a description';
+                    }
+                    return null; // Valid value
+                  },
                 ),
                 const SizedBox(height: 16),
                 const Text('Urgency Level'),
@@ -165,7 +175,7 @@ class _ReportDumpPageState extends State<ReportDumpPage> {
                 Container(
                   height: 200,
                   decoration: BoxDecoration(
-                    color: ColorTheme.liteGreen1,
+                    color: ColorTheme.lightGreen1,
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: const Center(child: Text('Map Placeholder')),

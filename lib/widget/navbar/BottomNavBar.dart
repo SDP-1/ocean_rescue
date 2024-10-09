@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ocean_rescue/pages/dumpReport/dump_dashboard_screen.dart';
+import 'package:ocean_rescue/pages/event/create_event_screen1.dart';
 import 'package:ocean_rescue/pages/event/event_screen.dart';
 import 'package:ocean_rescue/pages/menu/menu_screen.dart';
 import 'package:ocean_rescue/pages/notification/notification_screen.dart';
@@ -33,7 +34,7 @@ class BottomNavBar extends StatelessWidget {
         const FeedScreen(),
         DumpsDashboard(),
         const QrScanner(),
-        NotificationScreen(),
+        EventScreen(),
         const MenuScreen(),
       ];
     }
@@ -42,12 +43,12 @@ class BottomNavBar extends StatelessWidget {
     List<PersistentBottomNavBarItem> navBarsItems() {
       return [
         PersistentBottomNavBarItem(
-          icon: const Icon(Icons.home_rounded),
+          icon: const Icon(Icons.home_outlined),
           title: ("Home"),
         ),
         PersistentBottomNavBarItem(
-          icon: const Icon(Icons.calendar_month),
-          title: ("Event"),
+          icon: const Icon(Icons.report_gmailerrorred_rounded),
+          title: ("Report"),
         ),
         PersistentBottomNavBarItem(
           icon: Container(
@@ -62,8 +63,8 @@ class BottomNavBar extends StatelessWidget {
           activeColorPrimary: Colors.white,
         ),
         PersistentBottomNavBarItem(
-          icon: const Icon(Icons.notifications),
-          title: ("Notifications"),
+          icon: const Icon(Icons.event_outlined),
+          title: ("Event"),
         ),
         PersistentBottomNavBarItem(
           icon: const Icon(Icons.menu),
@@ -91,20 +92,20 @@ class BottomNavBar extends StatelessWidget {
           stateManagement: true, // Default is true.
           hideNavigationBarWhenKeyboardAppears:
               false, // Optional: Keep the nav bar visible.
-          padding: const EdgeInsets.only(top: 8),
+          padding: const EdgeInsets.only(top: 5),
           backgroundColor: Colors.white,
           isVisible:
               isVisible, // Use the static ValueNotifier to control visibility
           animationSettings: const NavBarAnimationSettings(
             navBarItemAnimation: ItemAnimationSettings(
               // Navigation Bar's items animation properties.
-              duration: Duration(milliseconds: 400),
+              duration: Duration(milliseconds: 10),
               curve: Curves.ease,
             ),
             screenTransitionAnimation: ScreenTransitionAnimationSettings(
               // Screen transition animation.
               animateTabTransition: true,
-              duration: Duration(milliseconds: 200),
+              duration: Duration(milliseconds: 5),
               screenTransitionAnimationType:
                   ScreenTransitionAnimationType.fadeIn,
             ),

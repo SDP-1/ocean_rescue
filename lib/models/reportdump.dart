@@ -11,6 +11,7 @@ class ReportDump {
   final DateTime timestamp;
   final bool isReported; // Add the isReported field
 
+
   ReportDump({
     required this.rdid,
     required this.uid,

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ocean_rescue/pages/event/create_event_screen.dart';
+import 'package:ocean_rescue/pages/event/create_event_screen1.dart';
 import '../../theme/colorTheme.dart';
 
 class FeaturedEventSection extends StatelessWidget {
@@ -39,7 +39,7 @@ class FeaturedEventSection extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                         builder: (context) =>
-                            const CreateEvent(), // Replace with your new screen widget
+                             CreateEventScreen1(), // Replace with your new screen widget
                       ),
                     );
                   },
@@ -60,8 +60,7 @@ class FeaturedEventSection extends StatelessWidget {
                           size: 40,
                           color: Colors.black54,
                         ),
-                        SizedBox(
-                            height: 8), // Space between icon and text
+                        SizedBox(height: 8), // Space between icon and text
                         Text(
                           'Create Event',
                           style: TextStyle(
