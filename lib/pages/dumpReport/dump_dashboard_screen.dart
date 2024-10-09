@@ -4,6 +4,7 @@ import 'package:ocean_rescue/resources/ReportDumpsFirestoreMethods.dart';
 import 'package:ocean_rescue/theme/colorTheme.dart';
 import 'package:ocean_rescue/widget/feed/TopAppBar%20.dart';
 import 'package:ocean_rescue/widget/dumpReport/eventCard.dart';
+import 'AllDumpsSection.dart';
 import 'DumpReportHistory.dart';
 import 'dump_description_edit.dart';
 import 'dump_report_screen.dart';
@@ -127,27 +128,7 @@ class DumpsDashboard extends StatelessWidget {
               ),
             ),
             // Placeholder Event Cards (Replace these with fetched data if needed)
-            EventCard(isCritical: true, imageUrl: 'assets/dump/dump1.jpeg'),
-            EventCard(isCritical: false, imageUrl: 'assets/dump/dump1.jpeg'),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Center(
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    foregroundColor: ColorTheme.liteBlue1,
-                    side: const BorderSide(color: ColorTheme.liteBlue1, width: 2),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  onPressed: () {
-                    // Load more action
-                  },
-                  child: const Text("Load More"),
-                ),
-              ),
-            ),
+            const AllDumpsSection(), 
           ],
         ),
       ),

@@ -17,7 +17,7 @@ class _DumpReportHistoryState extends State<DumpReportHistory> {
   List<ReportDump> _reportedDumps = [];
   List<ReportDump> _clearedDumps = [];
   bool _isLoading = true;
-
+  bool _isSorted = false;
   @override
   void initState() {
     super.initState();
@@ -59,6 +59,12 @@ class _DumpReportHistoryState extends State<DumpReportHistory> {
     });
   }
 }
+
+void _toggleSort() {
+    setState(() {
+      _isSorted = !_isSorted; // Toggle sorting state
+    });
+  }
 
 
   @override
@@ -124,18 +130,30 @@ class _DumpReportHistoryState extends State<DumpReportHistory> {
 
 
   Widget _buildSectionTitle(String title) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12.0),
-      child: Text(
-        title,
-        style: TextStyle(
-          fontSize: 20,
-          fontWeight: FontWeight.bold,
-          color: ColorTheme.darkBlue2,
+  return Padding(
+    padding: const EdgeInsets.symmetric(vertical: 12.0),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          title,
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: ColorTheme.darkBlue2,
+          ),
         ),
-      ),
-    );
-  }
+        IconButton(
+          icon: Icon(Icons.sort_by_alpha, color: ColorTheme.darkBlue2), // A-Z sorting icon
+          onPressed: () {
+           _toggleSort(); 
+          },
+        ),
+      ],
+    ),
+  );
+}
+
 
   Widget _buildDescriptionText(String description) {
     return Padding(
@@ -153,6 +171,11 @@ class _DumpReportHistoryState extends State<DumpReportHistory> {
 Widget _buildDumpList({required bool isReported}) {
   List<ReportDump> dumps = isReported ? _reportedDumps : _clearedDumps;
 
+  // Sort dumps if _isSorted is true
+  if (_isSorted) {
+    dumps.sort((a, b) => a.title.compareTo(b.title)); // Sort alphabetically
+  }
+
   if (dumps.isEmpty) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 16.0),
@@ -164,34 +187,31 @@ Widget _buildDumpList({required bool isReported}) {
     physics: NeverScrollableScrollPhysics(), // Prevent scrolling inside the ListView
     shrinkWrap: true, // Allow ListView to take the height of its children
     itemCount: dumps.length,
- itemBuilder: (context, index) {
-    final ReportDump report = dumps[index]; // Explicitly declare the type as ReportDump
-    return GestureDetector(
-      onTap: () {
-        // Navigate to DumpDetailsScreen when the card is tapped, passing rdid, title, and description
-        Navigator.push(
-  context,
-  MaterialPageRoute(
-    builder: (context) {
-      print('Navigating to details:');
-      print('Dump ID: ${report.rdid}');
-      print('Title: ${report.title}');
-      print('Description: ${report.description}');
-      print('Image URL: ${report.imageUrl}');
-      
-      return DumpDetailsScreen(
-        rdid: report.rdid, // Pass the unique rdid
-        title: report.title, // Pass the title
-        description: report.description, // Pass the description
-        imageUrl: report.imageUrl,  
-        uid: report.uid, 
-      );
-    },
-  ),
-);
-
-      
-
+    itemBuilder: (context, index) {
+      final ReportDump report = dumps[index]; // Explicitly declare the type as ReportDump
+      return GestureDetector(
+        onTap: () {
+          // Navigate to DumpDetailsScreen when the card is tapped, passing rdid, title, and description
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) {
+                print('Navigating to details:');
+                print('Dump ID: ${report.rdid}');
+                print('Title: ${report.title}');
+                print('Description: ${report.description}');
+                print('Image URL: ${report.imageUrl}');
+                
+                return DumpDetailsScreen(
+                  rdid: report.rdid, // Pass the unique rdid
+                  title: report.title, // Pass the title
+                  description: report.description, // Pass the description
+                  imageUrl: report.imageUrl,  
+                  uid: report.uid, 
+                );
+              },
+            ),
+          );
         },
         child: Card(
           margin: EdgeInsets.symmetric(vertical: 8.0),
@@ -242,16 +262,17 @@ Widget _buildDumpList({required bool isReported}) {
                   icon: Icon(Icons.delete, color: Colors.red),
                   onPressed: () {
                     // Add your delete logic here
-                },
-              ),
-            ],
+                  },
+                ),
+              ],
+            ),
           ),
-        ),
         ),
       );
     },
   );
 }
+
 
 
 Widget _buildPagination() {
@@ -264,14 +285,14 @@ Widget _buildPagination() {
         children: [
           // Left arrow before the first page number, positioned at the far left
           Container(
-            width: 36, // Reduced circle size
-            height: 36,
+            width: 25, // Reduced circle size
+            height: 25,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: ColorTheme.darkBlue2, // Blue background
             ),
             child: IconButton(
-              iconSize: 16, // Smaller icon size
+              iconSize: 8, // Smaller icon size
               icon: FaIcon(FontAwesomeIcons.chevronLeft, color: ColorTheme.white),
               onPressed: () {
                 // Logic for the previous page
@@ -301,14 +322,14 @@ Widget _buildPagination() {
           ),
           // Right arrow after the last page number, positioned at the far right
           Container(
-            width: 36, // Reduced circle size
-            height: 36,
+            width: 25, // Reduced circle size
+            height: 25,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: ColorTheme.darkBlue2, // Blue background
             ),
             child: IconButton(
-              iconSize: 16, // Smaller icon size
+              iconSize: 8, // Smaller icon size
               icon: FaIcon(FontAwesomeIcons.chevronRight, color: ColorTheme.white),
               onPressed: () {
                 // Logic for the next page
