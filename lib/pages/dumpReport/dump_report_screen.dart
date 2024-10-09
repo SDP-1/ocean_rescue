@@ -36,6 +36,7 @@ class _ReportDumpPageState extends State<ReportDumpPage> {
     if (pickedFile != null) {
       setState(() {
         _image = File(pickedFile.path);
+        // Keep the existing title and description intact
       });
     }
   }
