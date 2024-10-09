@@ -8,6 +8,7 @@ import '../../models/reportdump.dart';
 import '../../resources/ReportDumpsFirestoreMethods.dart';
 import '../../widget/navbar/TopAppBar .dart';
 import '../dumpReport/dump_description_edit.dart';
+import '../../resources/auth_methods.dart';
 
 class DumpReportHistory extends StatefulWidget {
   @override
@@ -19,54 +20,58 @@ class _DumpReportHistoryState extends State<DumpReportHistory> {
   List<ReportDump> _clearedDumps = [];
   bool _isLoading = true;
   bool _isSorted = false;
+  
+  // To hold the current user ID
+  String? currentUserUid; 
+
   @override
   void initState() {
     super.initState();
-    _fetchDumpReports();
+    _fetchCurrentUserUid(); // Fetch the current user's UID
   }
 
- Future<void> _fetchDumpReports() async {
-  // Fetch reported and cleared dumps from Firestore
-  try {
-    setState(() {
-      _isLoading = true; // Start loading
-    });
-
-    // Fetch reported and cleared dumps
-    List<ReportDump> reportedDumps = await ReportDumpsFirestoreMethods().fetchReportedDumpReports();
-    List<ReportDump> clearedDumps = await ReportDumpsFirestoreMethods().fetchClearedDumpReports();
-
-  // Debugging: print the fetched dumps
-   print('Fetched reported dumps: ${_reportedDumps.length}');
-    print('Fetched cleared dumps: ${_clearedDumps.length}');
-
-
-    setState(() {
-      _reportedDumps = reportedDumps; // Assign fetched reported dumps
-      _clearedDumps = clearedDumps;   // Assign fetched cleared dumps
-      _isLoading = false;              // Stop loading
-    });
-
-     // Optionally, print the updated state after setState
-    print('Dumps (Reported): $_reportedDumps');
-    print('Dumps (Cleared): $_clearedDumps');
-
-    
-  } catch (e) {
-    // Handle the error (e.g., show an error message)
-    print('Error fetching reports: $e');
-    setState(() {
-      _isLoading = false; // Stop loading
-    });
+  Future<void> _fetchCurrentUserUid() async {
+    AuthMethods authMethods = AuthMethods();
+    currentUserUid = await authMethods.getCurrentUserId(); // Ensure this method is asynchronous if it involves a Future
+    await _fetchDumpReports(); // Call fetchDumpReports after retrieving the UID
   }
-}
 
-void _toggleSort() {
+  Future<void> _fetchDumpReports() async {
+    try {
+      setState(() {
+        _isLoading = true; // Start loading
+      });
+
+      // Fetch reported and cleared dumps
+      List<ReportDump> reportedDumps = await ReportDumpsFirestoreMethods().fetchReportedDumpReports();
+      List<ReportDump> clearedDumps = await ReportDumpsFirestoreMethods().fetchClearedDumpReports();
+
+      // Filter the reports based on the current user's UID
+      _reportedDumps = reportedDumps.where((dump) => dump.uid == currentUserUid).toList();
+      _clearedDumps = clearedDumps.where((dump) => dump.uid == currentUserUid).toList();
+
+      setState(() {
+        _isLoading = false; // Stop loading
+      });
+
+      // Debugging: print the fetched dumps
+      print('Fetched reported dumps: ${_reportedDumps.length}');
+      print('Fetched cleared dumps: ${_clearedDumps.length}');
+      
+    } catch (e) {
+      // Handle the error (e.g., show an error message)
+      print('Error fetching reports: $e');
+      setState(() {
+        _isLoading = false; // Stop loading
+      });
+    }
+  }
+
+  void _toggleSort() {
     setState(() {
       _isSorted = !_isSorted; // Toggle sorting state
     });
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -80,7 +85,6 @@ void _toggleSort() {
             padding: const EdgeInsets.all(8.0),
             child: Row(
               children: [
-               
                 Text(
                   '\t\t\tDump Report History',
                   style: TextStyle(
@@ -110,10 +114,10 @@ void _toggleSort() {
                             children: [
                               _buildSectionTitle('Reported Dumps'),
                               _buildDescriptionText('These are the dump sites reported by the community for clean-up.'),
-                              _buildDumpList(isReported: true), // Update this method to use _reportedDumps
+                              _buildDumpList(isReported: true), // Pass _reportedDumps
                               _buildPagination(), // Optionally, you can modify this to support pagination
                               _buildSectionTitle('Cleared Dumps'),
-                              _buildDumpList(isReported: false), // Update this method to use _clearedDumps
+                              _buildDumpList(isReported: false), // Pass _clearedDumps
                               _buildPagination(), // Optionally, you can modify this to support pagination
                             ],
                           ),
@@ -129,32 +133,30 @@ void _toggleSort() {
 
   // Helper methods like _buildDumpList, _buildSectionTitle, and _buildDescriptionText should be defined below
 
-
   Widget _buildSectionTitle(String title) {
-  return Padding(
-    padding: const EdgeInsets.symmetric(vertical: 12.0),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          title,
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: ColorTheme.darkBlue2,
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 12.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: ColorTheme.darkBlue2,
+            ),
           ),
-        ),
-        IconButton(
-          icon: Icon(Icons.sort_by_alpha, color: ColorTheme.darkBlue2), // A-Z sorting icon
-          onPressed: () {
-           _toggleSort(); 
-          },
-        ),
-      ],
-    ),
-  );
-}
-
+          IconButton(
+            icon: Icon(Icons.sort_by_alpha, color: ColorTheme.darkBlue2), // A-Z sorting icon
+            onPressed: () {
+              _toggleSort(); 
+            },
+          ),
+        ],
+      ),
+    );
+  }
 
   Widget _buildDescriptionText(String description) {
     return Padding(
@@ -169,7 +171,7 @@ void _toggleSort() {
     );
   }
 
-Widget _buildDumpList({required bool isReported}) {
+ Widget _buildDumpList({required bool isReported}) {
   List<ReportDump> dumps = isReported ? _reportedDumps : _clearedDumps;
 
   // Sort dumps if _isSorted is true
@@ -227,7 +229,7 @@ Widget _buildDumpList({required bool isReported}) {
                   ),
                 ),
                 SizedBox(width: 12), // Spacing between image and text
-                
+
                 // Description Text
                 Expanded(
                   child: Column(
@@ -247,11 +249,13 @@ Widget _buildDumpList({required bool isReported}) {
                           fontSize: 14,
                           color: Colors.grey[600], // Optional: Set a lighter color for the description
                         ),
+                        maxLines: 2, // Limit to 2 lines
+                        overflow: TextOverflow.ellipsis, // Truncate with ellipsis
                       ),
                     ],
                   ),
                 ),
-                
+
                 // Conditional Icon Button
                 IconButton(
                   icon: Icon(
@@ -276,6 +280,7 @@ Widget _buildDumpList({required bool isReported}) {
     },
   );
 }
+
 
 
 
