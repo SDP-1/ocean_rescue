@@ -18,6 +18,30 @@ class AuthMethods {
     return model.User.fromSnap(documentSnapshot);
   }
 
+   // get user details using user ID
+  Future<model.User?> getUserDetailsById(String userId) async {
+    // String? userId = getUserId(); // Get the user ID
+
+    if (userId != null) {
+      try {
+        // Fetch user details from Firestore using the user ID
+        DocumentSnapshot documentSnapshot =
+            await _firestore.collection('users').doc(userId).get();
+
+        if (documentSnapshot.exists) {
+          // Return user details from the document snapshot
+          return model.User.fromSnap(documentSnapshot);
+        }
+      } catch (e) {
+        print('Error fetching user details: $e');
+        return null;
+      }
+    } else {
+      print('No user is currently signed in.');
+      return null;
+    }
+  }
+
   // Load asset image as Uint8List
   Future<Uint8List> loadImageAsBytes(String assetPath) async {
     final ByteData byteData = await rootBundle.load(assetPath);
