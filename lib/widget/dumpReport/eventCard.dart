@@ -6,13 +6,11 @@ class EventCard extends StatelessWidget {
   final String imageUrl;
   final String title;
   final String description;
-  final Color backgroundColor;
   final Color buttonColor;
 
   const EventCard({
     super.key,
     this.isCritical = false,
-    this.backgroundColor = const Color(0xFFE3F2FD),
     this.buttonColor = const Color(0xFF4CAF50),
     required this.imageUrl,
     required this.title,
@@ -25,8 +23,17 @@ class EventCard extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4), // Reduced margin
       padding: const EdgeInsets.all(8), // Reduced padding
       decoration: BoxDecoration(
-        color: isCritical ? ColorTheme.lightRed2 : backgroundColor,
+        color: Colors.white, // Set background to white
+        border: Border.all(color: Colors.grey, width: 2), // Gray border
         borderRadius: BorderRadius.circular(6), // Slightly smaller border radius
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5), // Shadow color with opacity
+            spreadRadius: 1, // Spread radius
+            blurRadius: 5, // Blur radius
+            offset: const Offset(0, 3), // Shadow offset
+          ),
+        ],
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -77,13 +84,24 @@ class EventCard extends StatelessWidget {
                         size: 20, // Smaller icon size
                       ),
                       onPressed: () {
-                        // Share action
+                        // Empty onPressed for share action
                       },
                     ),
+
+                    // Critical icon if the event is marked as critical
+                    if (isCritical)
+                      const Icon(
+                        Icons.warning,
+                        color: Colors.red,
+                        size: 20, // Critical icon size
+                      ),
+
+                    const SizedBox(width: 10), // Space between icons and button
+
                     // Let's Clean Up button
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: isCritical ? ColorTheme.lightRed : buttonColor,
+                        backgroundColor: buttonColor,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(16), // Reduced button corner radius
                         ),
