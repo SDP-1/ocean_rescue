@@ -18,7 +18,7 @@ class ProfileFirestoreMethods {
       String uid = _auth.currentUser!.uid;
 
       // Create a reference to the user document in the 'uers' collection
-      DocumentReference userDocRef = _firestore.collection('uers').doc(uid);
+      DocumentReference userDocRef = _firestore.collection('users').doc(uid);
 
       // Update the username and bio fields in Firestore
       await userDocRef.update({
@@ -58,5 +58,38 @@ class ProfileFirestoreMethods {
 
     return res;
   }
+
+  // Method to get user details (username and bio) by UID
+// Method to get user details (username, bio, and photoUrl) by UID
+Future<Map<String, dynamic>> getUserDetailsByUid(String uid) async {
+    Map<String, dynamic> userDetails = {
+        'username': 'No username found',
+        'bio': 'No bio found',
+        'photoUrl': 'No photo found', // Default message for photoUrl
+    };
+
+    try {
+        // Reference to the user's document in the 'users' collection
+        DocumentSnapshot documentSnapshot = await _firestore.collection('users').doc(uid).get();
+
+        // Check if the document exists and retrieve the username, bio, and photoUrl fields
+        if (documentSnapshot.exists) {
+            Map<String, dynamic> data = documentSnapshot.data() as Map<String, dynamic>;
+            userDetails['username'] = data['username'] ?? userDetails['username']; // Get username or provide a default message
+            userDetails['bio'] = data['bio'] ?? userDetails['bio']; // Get bio or provide a default message
+            userDetails['photoUrl'] = data['photoUrl'] ?? userDetails['photoUrl']; // Get photoUrl or provide a default message
+        } else {
+            userDetails['username'] = "User not found";
+            userDetails['bio'] = "User not found";
+        }
+    } catch (e) {
+        userDetails['username'] = e.toString();
+        userDetails['bio'] = e.toString();
+        userDetails['photoUrl'] = e.toString(); // Set error message for photoUrl
+    }
+
+    return userDetails;
+}
+
 
 }

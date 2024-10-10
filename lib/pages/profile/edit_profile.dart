@@ -2,10 +2,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ocean_rescue/widget/common/GradientButton.dart';
 import '../../resources/profile_firestore_methods.dart';
+import 'bio_field_widget.dart';
 import 'change_password_section.dart'; // Import ChangePasswordSection
 import 'package:ocean_rescue/resources/auth_methods.dart'; // Import your auth methods
 import 'package:ocean_rescue/models/user.dart';
-
 import 'email_display_box.dart'; // Import your User model if needed
 
 class EditProfile extends StatefulWidget {
@@ -20,13 +20,16 @@ class _EditProfileState extends State<EditProfile> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _bioController = TextEditingController(); // Add a controller for bio
   String email = ""; // Store email retrieved from Firestore
+  String photoUrl = ""; // Store photo URL retrieved from Firestore
 
   @override
   void initState() {
     super.initState();
     _fetchEmail(); // Fetch email when the widget initializes
+    _fetchUserDetails(); // Fetch username and bio when the widget initializes
   }
 
+  // Fetch email from Firestore
   Future<void> _fetchEmail() async {
     String uid = FirebaseAuth.instance.currentUser!.uid;
     print("Current User UID: $uid"); // Print the UID to see if it's loaded
@@ -39,6 +42,26 @@ class _EditProfileState extends State<EditProfile> {
     });
   }
 
+  // Fetch user details (username, bio, and photo URL) from Firestore
+  Future<void> _fetchUserDetails() async {
+    String uid = FirebaseAuth.instance.currentUser!.uid;
+    print("Current User UID: $uid"); // Print the UID to see if it's loaded
+
+    // Call the updated method to fetch username, bio, and photoUrl
+    Map<String, dynamic> fetchedDetails = await ProfileFirestoreMethods().getUserDetailsByUid(uid);
+    
+    print("Fetched Username: ${fetchedDetails['username']}"); // Print the fetched username
+    print("Fetched Bio: ${fetchedDetails['bio']}"); // Print the fetched bio
+    print("Fetched Photo URL: ${fetchedDetails['photoUrl']}"); // Print the fetched photo URL
+
+    setState(() {
+      _usernameController.text = fetchedDetails['username'] ?? ""; // Update username controller
+      _bioController.text = fetchedDetails['bio'] ?? ""; // Update bio controller
+      photoUrl = fetchedDetails['photoUrl'] ?? ""; // Store photo URL for later use
+    });
+  }
+
+  // Save the updated username and bio to Firestore
   void _saveDetails() async {
     String username = _usernameController.text;
     String bio = _bioController.text;
@@ -61,7 +84,7 @@ class _EditProfileState extends State<EditProfile> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const ProfilePictureSection(), // Profile Picture Section
+            ProfilePictureSection(photoUrl: photoUrl), // Pass photoUrl to the ProfilePictureSection
             const SizedBox(height: 20),
             UserDetailsForm(
               usernameController: _usernameController,
@@ -103,7 +126,9 @@ class _EditProfileState extends State<EditProfile> {
 }
 
 class ProfilePictureSection extends StatelessWidget {
-  const ProfilePictureSection({Key? key}) : super(key: key);
+  final String photoUrl; // Accept photoUrl as a parameter
+
+  const ProfilePictureSection({Key? key, required this.photoUrl}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -112,10 +137,12 @@ class ProfilePictureSection extends StatelessWidget {
       children: [
         Stack(
           children: [
-            // Profile picture (using a placeholder for now)
-            const CircleAvatar(
+            // Profile picture (using the fetched photoUrl or a placeholder if it's empty)
+            CircleAvatar(
               radius: 50,
-              backgroundImage: NetworkImage('https://via.placeholder.com/150'), // Placeholder image
+              backgroundImage: photoUrl.isNotEmpty 
+                  ? NetworkImage(photoUrl) 
+                  : const NetworkImage('https://via.placeholder.com/150'), // Use fetched photoUrl or placeholder image
             ),
             Positioned(
               bottom: 0,
@@ -156,16 +183,14 @@ class UserDetailsForm extends StatelessWidget {
           controller: usernameController, // Pass the controller
         ),
         const SizedBox(height: 16),
-        TextFieldWidget(
-          label: "Bio",
-          controller: bioController, // Pass the controller
-        ),
+       BioFieldWidget(controller: bioController), // Use BioFieldWidget instead
         const SizedBox(height: 16),
         EmailDisplayBox(email: email),
       ],
     );
   }
 }
+
 class TextFieldWidget extends StatelessWidget {
   final String label;
   final bool isEmailField;
@@ -195,7 +220,7 @@ class TextFieldWidget extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         // Check if it's an email field and display as plain text if so
-        isEmailField && email != null 
+        isEmailField && email != null
             ? Text(
                 email!,
                 style: const TextStyle(fontSize: 14, color: Colors.black), // Style as needed
@@ -224,4 +249,3 @@ class TextFieldWidget extends StatelessWidget {
     );
   }
 }
-
