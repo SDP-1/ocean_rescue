@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ocean_rescue/theme/colorTheme.dart';
 import 'package:ocean_rescue/widget/event/EventDetailsCard.dart';
 import 'package:ocean_rescue/widget/event/EventInfoAlert.dart';
+import 'package:ocean_rescue/widget/navbar/BottomNavBar.dart';
 import 'package:ocean_rescue/widget/navbar/TopAppBar%20.dart';
 
 class EventDetailsScreen extends StatelessWidget {
@@ -11,7 +12,7 @@ class EventDetailsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: TopAppBar(),
+      appBar: TopAppBar(selectedTabIndex: BottomNavBar.selectedTabIndex),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

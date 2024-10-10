@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ocean_rescue/models/reportdump.dart';
 import 'package:ocean_rescue/resources/ReportDumpsFirestoreMethods.dart';
 import 'package:ocean_rescue/theme/colorTheme.dart';
+import 'package:ocean_rescue/widget/navbar/BottomNavBar.dart';
 import 'package:ocean_rescue/widget/navbar/TopAppBar%20.dart';
 import 'package:ocean_rescue/widget/dumpReport/eventCard.dart';
 import 'AllDumpsSection.dart';
@@ -19,7 +20,7 @@ class DumpsDashboard extends StatelessWidget {
       backgroundColor: Colors.white,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(56.0),
-        child: TopAppBar(),
+        child: TopAppBar(selectedTabIndex: BottomNavBar.selectedTabIndex),
       ),
       body: SingleChildScrollView(
         child: Column(

@@ -177,7 +177,7 @@ class UserProfilePage extends StatelessWidget {
                                   IconButton(
                                     onPressed: () {
                                       // Navigate to ChatDetailScreen with user's name, avatar, and IDs
-                                      BottomNavBar.visibility(false);
+                                      // BottomNavBar.visibility(false);
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
@@ -196,7 +196,7 @@ class UserProfilePage extends StatelessWidget {
                                           ),
                                         ),
                                       ).then((_) {
-                                        BottomNavBar.visibility(true);
+                                        // BottomNavBar.visibility(true);
                                       });
                                     },
                                     icon: const Icon(Icons.message),
