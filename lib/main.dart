@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart'; // Import Firebase Core
 import 'package:firebase_messaging/firebase_messaging.dart'; // Import Firebase Messaging
 import 'package:flutter/material.dart';
+import 'package:ocean_rescue/pages/Achievements/achievements_page.dart';
 import 'package:ocean_rescue/pages/dumpReport/DumpReportHistory.dart';
 import 'package:ocean_rescue/pages/dumpReport/dump_description_edit.dart';
 import 'package:ocean_rescue/pages/event/create_event_screen1.dart';
