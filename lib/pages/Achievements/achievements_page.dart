@@ -111,27 +111,27 @@ class _AchievementsPageState extends State<AchievementsPage> {
                 children: [
                   achievementCard(
                     'Sea Cleaner',
-                    'assets/medals/bronze.png',
+                    'assets/achievements/1.png',
                     'Awarded for active participation in marine clean-up activities. Show your dedication to preserving our oceans!',
                   ),
                   achievementCard(
                     'High Earner',
-                    'assets/medals/bronze.png',
+                    'assets/achievements/2.png',
                     'Recognized for contributing significantly to community goals, whether through donations or high levels of participation.',
                   ),
                   achievementCard(
                     'Clean Star',
-                    'assets/medals/bronze.png',
+                    'assets/achievements/3.png',
                     'Awarded for consistently outstanding performance in clean-up events. You’re a shining star in environmental conservation.',
                   ),
                   achievementCard(
                       'Community Leader',
-                      'assets/medals/bronze.png',
+                      'assets/achievements/4.png',
                       'Awarded for organizing and leading multiple successful events.',
                   ),
                   achievementCard(
                     'Event Champion',
-                    'assets/medals/bronze.png',
+                    'assets/achievements/5.png',
                     'Awarded for attending a large number of events regularly.',
                   ),
                 ],

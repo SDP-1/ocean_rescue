@@ -113,7 +113,7 @@ class _ViewProfilePageState extends State<ViewProfilePage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Image.asset(
-                  'assets/medals/bronze.png', // Replace with actual asset path
+                  'assets/medals/bronze.png',
                   width: 50,
                   height: 50,
                 ),
