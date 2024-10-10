@@ -2,7 +2,6 @@ import 'package:firebase_core/firebase_core.dart'; // Import Firebase Core
 import 'package:flutter/material.dart';
 import 'package:ocean_rescue/pages/Achievements/achievements_page.dart';
 import 'package:ocean_rescue/pages/dumpReport/DumpReportHistory.dart';
-import 'package:ocean_rescue/pages/leaderboard/leaderboard.dart';
 import 'package:ocean_rescue/pages/membership/membership.dart';
 import 'package:ocean_rescue/pages/notification/NotificationScreen.dart';
 import 'package:ocean_rescue/pages/profile/edit_profile.dart';
@@ -35,8 +34,8 @@ class MyApp extends StatelessWidget {
      // home : DumpReportHistory(),
      //home : delete_confirmation_popup(),
      //  home: EditProfile(),
-      home: MembershipPage(),
-    // home: AchievementsPage(),
+     //  home: MembershipPage(),
+    home: AchievementsPage(),
     //   home: ViewProfilePage(),
     //   home: LeaderboardPage(),
     );

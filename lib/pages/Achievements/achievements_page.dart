@@ -73,12 +73,17 @@ class _AchievementsPageState extends State<AchievementsPage> {
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
+                image: const DecorationImage(
+                  image: AssetImage('assets/achievements/golden tropy.jpeg'), // Replace with your image path
+                  fit: BoxFit.cover,  // Adjust how the image fits the container
+                  opacity: 0.2,  // Adjust the opacity for better blending with the gradient
+                ),
               ),
-              child: Column(
+              child: const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
-                  Icon(Icons.emoji_events, size: 50, color: Colors.white),
-                  SizedBox(height: 10),
+                children: [
+                  // Icon(Icons.emoji_events, size: 50, color: Colors.white),
+                  // SizedBox(height: 10),
                   Text(
                     'Achievements',
                     style: TextStyle(
@@ -89,7 +94,7 @@ class _AchievementsPageState extends State<AchievementsPage> {
                   ),
                   SizedBox(height: 10),
                   Text(
-                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                    'Unlock rewards for your contributions to environmental conservation. Participate in activities, lead events, and engage the community to earn achievements that reflect your positive impact!',
                     style: TextStyle(
                       fontSize: 14,
                       color: Colors.white,
@@ -98,6 +103,7 @@ class _AchievementsPageState extends State<AchievementsPage> {
                 ],
               ),
             ),
+
             const SizedBox(height: 20),
             Expanded(
               child: ListView(
@@ -106,17 +112,27 @@ class _AchievementsPageState extends State<AchievementsPage> {
                   achievementCard(
                     'Sea Cleaner',
                     'assets/medals/bronze.png',
-                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                    'Awarded for active participation in marine clean-up activities. Show your dedication to preserving our oceans!',
                   ),
                   achievementCard(
                     'High Earner',
                     'assets/medals/bronze.png',
-                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                    'Recognized for contributing significantly to community goals, whether through donations or high levels of participation.',
                   ),
                   achievementCard(
-                    'CleanStar',
+                    'Clean Star',
                     'assets/medals/bronze.png',
-                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                    'Awarded for consistently outstanding performance in clean-up events. You’re a shining star in environmental conservation.',
+                  ),
+                  achievementCard(
+                      'Community Leader',
+                      'assets/medals/bronze.png',
+                      'Awarded for organizing and leading multiple successful events.',
+                  ),
+                  achievementCard(
+                    'Event Champion',
+                    'assets/medals/bronze.png',
+                    'Awarded for attending a large number of events regularly.',
                   ),
                 ],
               ),
