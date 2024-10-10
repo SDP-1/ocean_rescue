@@ -35,8 +35,8 @@ class MyApp extends StatelessWidget {
      //home : delete_confirmation_popup(),
      //  home: EditProfile(),
      //  home: MembershipPage(),
-    home: AchievementsPage(),
-    //   home: ViewProfilePage(),
+    // home: AchievementsPage(),
+      home: ViewProfilePage(),
     //   home: LeaderboardPage(),
     );
   }

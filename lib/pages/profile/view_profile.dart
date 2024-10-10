@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../widget/button/GradientButton.dart';
 
 class ViewProfilePage extends StatefulWidget {
         const ViewProfilePage({super.key});
@@ -40,39 +41,92 @@ class _ViewProfilePageState extends State<ViewProfilePage> {
           ),
         ],
       ),
-      body: Container(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              // User info section
-              Container(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  children: [
-                    const CircleAvatar(
-                      radius: 40,
-                      backgroundImage: AssetImage('assets/user/user1.jpg'), // Replace with your image
-                    ),
-                    const SizedBox(height: 10),
-                    const Text(
-                      'Sanul Kavinda',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const Text('Member'),
-                    const SizedBox(height: 10),
-                    ElevatedButton(
-                      onPressed: () {},
-                      child: Text('Sign Out'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue, // Button color
-                      ),
-                    ),
-                  ],
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            const SizedBox(height: 40),
+            // Row for profile photo and stats
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start, // Aligns to the left
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const SizedBox(width: 20),
+                // Profile photo on the left
+                CircleAvatar(
+                  radius: 50,
+                  backgroundImage: AssetImage('assets/user/user1.jpg'), // Replace with your image
                 ),
-              ),
+                const SizedBox(width: 20),
+
+                // Stats on the right
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start, // Aligns the stats to the start
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: const [
+                          Column(
+                            children: [
+                              Text('1', style: TextStyle(fontWeight: FontWeight.bold)),
+                              SizedBox(height: 5),
+                              Text('Post'),
+                            ],
+                          ),
+                          Column(
+                            children: [
+                              Text('0', style: TextStyle(fontWeight: FontWeight.bold)),
+                              SizedBox(height: 5),
+                              Text('Followers'),
+                            ],
+                          ),
+                          Column(
+                            children: [
+                              Text('0', style: TextStyle(fontWeight: FontWeight.bold)),
+                              SizedBox(height: 5),
+                              Text('Following'),
+                            ],
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 15),
+
+                      Center(
+                        child: GradientButton(
+                          text: "Sign Out",
+                          onTap: () {
+                            // Add your logic for changing password
+                          },
+                          width: 150,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 30),
+
+            // Bronze Member achievement, other sections, etc.
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset(
+                  'assets/medals/bronze.png', // Replace with actual asset path
+                  width: 50,
+                  height: 50,
+                ),
+                const SizedBox(width: 10),
+                const Text(
+                  'Member',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
               const Divider(),
               // Achievements Section
               const Padding(
@@ -105,14 +159,14 @@ class _ViewProfilePageState extends State<ViewProfilePage> {
                     Column(
                       children: [
                         Icon(Icons.cleaning_services, color: Colors.red),
-                        SizedBox(height: 5),
+                        SizedBox(height: 10),
                         Text('5 cleanup complete'),
                       ],
                     ),
                     Column(
                       children: [
                         Icon(Icons.event, color: Colors.orange),
-                        SizedBox(height: 5),
+                        SizedBox(height: 10),
                         Text('2 Event create complete'),
                       ],
                     ),
@@ -127,8 +181,8 @@ class _ViewProfilePageState extends State<ViewProfilePage> {
                   shrinkWrap: true, // Ensures the grid doesn't take up infinite height
                   crossAxisCount: 2, // 2 columns
                   crossAxisSpacing: 10.0,
-                  mainAxisSpacing: 5.0,
-                  childAspectRatio: 3 / 2.5, // Adjusted for smaller box sizes
+                  mainAxisSpacing: 8.0,
+                  childAspectRatio: 2 / 1, // Adjusted for smaller box sizes
                   physics: NeverScrollableScrollPhysics(), // Disable grid scrolling
                   children: [
                     _buildGridItem(Icons.group, 'Followers'),
@@ -165,7 +219,7 @@ class _ViewProfilePageState extends State<ViewProfilePage> {
             ],
           ),
         ),
-      ),
+
 
     );
   }
@@ -173,8 +227,9 @@ class _ViewProfilePageState extends State<ViewProfilePage> {
   // Helper method to create grid items with icon and label
   Widget _buildGridItem(IconData icon, String label) {
     return Container(
+      height: 80,
       decoration: BoxDecoration(
-        color: Color(0xFF1877F2), // Yellow background for each grid item
+        color: Color(0xFFDCF2F1), // Yellow background for each grid item
         borderRadius: BorderRadius.circular(8), // Slightly reduced corner radius
       ),
       child: Column(
