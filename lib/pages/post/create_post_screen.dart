@@ -3,10 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:ocean_rescue/theme/colorTheme.dart';
+import 'package:ocean_rescue/widget/common/CreateFormTopWidget.dart';
+import 'package:ocean_rescue/widget/event/EventInfoAlert.dart';
 import 'package:ocean_rescue/widget/popup/ErrorPopup.dart';
 import 'package:ocean_rescue/widget/popup/SuccessPopup.dart';
 import 'package:ocean_rescue/resources/post_firestore_methods.dart';
-import 'package:ocean_rescue/pages/feed/feed_screen.dart'; // Import your Feed screen
+import 'package:ocean_rescue/pages/feed/feed_screen.dart';
+
+import '../../widget/common/GradientButton.dart'; // Import your Feed screen
 
 class CreatePostScreen extends StatefulWidget {
   const CreatePostScreen({super.key});
@@ -128,45 +132,14 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 16),
-              Container(
-                height: 80,
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
-                    colors: [
-                      Color(0xFF08BDBD),
-                      Color(0xFF1877F2),
-                    ],
-                  ),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Row(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 16.0),
-                      child: Image.asset(
-                        'assets/post/createNewPost.png',
-                        height: 70,
-                        width: 70,
-                      ),
-                    ),
-                    const Expanded(
-                      child: Text(
-                        'Create New Post',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+              CreateFormTopWidget(
+                  title: 'Create New Post',
+                  imagePath: 'assets/post/createNewPost.png'),
+              EventInfoAlert(
+                alertText:
+                    "Enter the post name, creative title and a small description of the post, and upload an image for the post.",
               ),
-              const SizedBox(height: 15),
+              const SizedBox(height: 20),
               const Text(
                 'Title',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
@@ -178,7 +151,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                   hintText: '📝 Your creative title 🌍',
                   hintStyle: const TextStyle(color: Colors.grey),
                   filled: true,
-                  fillColor: ColorTheme.liteGreen1,
+                  fillColor: ColorTheme.lightGreen1,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                     borderSide: BorderSide.none,
@@ -198,7 +171,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                   hintText: 'Post description',
                   hintStyle: const TextStyle(color: Colors.grey),
                   filled: true,
-                  fillColor: ColorTheme.liteGreen1,
+                  fillColor: ColorTheme.lightGreen1,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                     borderSide: BorderSide.none,
@@ -251,43 +224,14 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 ),
               ),
               const SizedBox(height: 16),
-              Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
-                    colors: [
-                      Color(0xFF08BDBD),
-                      Color(0xFF1877F2),
-                    ],
-                  ),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: ElevatedButton(
-                  onPressed: isLoading
-                      ? null
-                      : _createPost, // Disable button when loading
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.transparent,
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    shadowColor: Colors.transparent,
-                  ),
-                  child: isLoading
-                      ? const CircularProgressIndicator(
-                          // Show loader when isLoading is true
-                          valueColor:
-                              AlwaysStoppedAnimation<Color>(Colors.white),
-                        )
-                      : const Text(
-                          'Create Post',
-                          style:
-                              TextStyle(fontSize: 18, color: ColorTheme.white),
-                        ),
-                ),
+              GradientButton(
+                text: 'Create Post',
+                onTap: () {
+                  if (!isLoading) {
+                    _createPost(); // Call the function if not loading
+                  }
+                },
+                isLoading: isLoading, // Pass the loading state to the button
               ),
               const SizedBox(height: 16),
             ],

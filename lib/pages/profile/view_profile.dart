@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../widget/button/GradientButton.dart';
+import '../../widget/common/GradientButton.dart';
 
 class ViewProfilePage extends StatefulWidget {
         const ViewProfilePage({super.key});

@@ -1,210 +1,251 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:ocean_rescue/widget/navbar/BottomNavBar.dart';
-import '../../widget/button/GradientButton.dart';
+import 'package:ocean_rescue/widget/common/GradientButton.dart';
+import '../../resources/profile_firestore_methods.dart';
+import 'bio_field_widget.dart';
+import 'change_password_section.dart'; // Import ChangePasswordSection
+import 'package:ocean_rescue/resources/auth_methods.dart'; // Import your auth methods
+import 'package:ocean_rescue/models/user.dart';
+import 'email_display_box.dart'; // Import your User model if needed
 
 class EditProfile extends StatefulWidget {
-  const EditProfile({super.key});
+  const EditProfile({Key? key}) : super(key: key);
 
   @override
-  State<EditProfile> createState() => _EditProfileState();
+  _EditProfileState createState() => _EditProfileState();
 }
 
 class _EditProfileState extends State<EditProfile> {
-  bool showPassword = false;
+  bool showChangePassword = false; // Tracks whether the password section is visible
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _bioController = TextEditingController(); // Add a controller for bio
+  String email = ""; // Store email retrieved from Firestore
+  String photoUrl = ""; // Store photo URL retrieved from Firestore
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchEmail(); // Fetch email when the widget initializes
+    _fetchUserDetails(); // Fetch username and bio when the widget initializes
+  }
+
+  // Fetch email from Firestore
+  Future<void> _fetchEmail() async {
+    String uid = FirebaseAuth.instance.currentUser!.uid;
+    print("Current User UID: $uid"); // Print the UID to see if it's loaded
+
+    String fetchedEmail = await ProfileFirestoreMethods().getEmailByUid(uid);
+    print("Fetched Email: $fetchedEmail"); // Print the fetched email
+
+    setState(() {
+      email = fetchedEmail;
+    });
+  }
+
+  // Fetch user details (username, bio, and photo URL) from Firestore
+  Future<void> _fetchUserDetails() async {
+    String uid = FirebaseAuth.instance.currentUser!.uid;
+    print("Current User UID: $uid"); // Print the UID to see if it's loaded
+
+    // Call the updated method to fetch username, bio, and photoUrl
+    Map<String, dynamic> fetchedDetails = await ProfileFirestoreMethods().getUserDetailsByUid(uid);
+    
+    print("Fetched Username: ${fetchedDetails['username']}"); // Print the fetched username
+    print("Fetched Bio: ${fetchedDetails['bio']}"); // Print the fetched bio
+    print("Fetched Photo URL: ${fetchedDetails['photoUrl']}"); // Print the fetched photo URL
+
+    setState(() {
+      _usernameController.text = fetchedDetails['username'] ?? ""; // Update username controller
+      _bioController.text = fetchedDetails['bio'] ?? ""; // Update bio controller
+      photoUrl = fetchedDetails['photoUrl'] ?? ""; // Store photo URL for later use
+    });
+  }
+
+  // Save the updated username and bio to Firestore
+  void _saveDetails() async {
+    String username = _usernameController.text;
+    String bio = _bioController.text;
+    String response = await ProfileFirestoreMethods().updateUsernameAndBio(username: username, bio: bio);
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(response))); // Show response message
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text(
-          'Edit Profile',
-          style: TextStyle(
-            fontSize: 20,
-            color: Colors.black,
-            fontWeight: FontWeight.w400,
-          ),
-        ),
-        leading: const Icon(
-          Icons.arrow_back,
-          color: Colors.black,
+        title: const Text('Edit Profile'),
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
+        elevation: 0,
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            ProfilePictureSection(photoUrl: photoUrl), // Pass photoUrl to the ProfilePictureSection
+            const SizedBox(height: 20),
+            UserDetailsForm(
+              usernameController: _usernameController,
+              bioController: _bioController,
+              email: email, // Pass email to the form
+            ),
+            const SizedBox(height: 20),
+            GradientButton(
+              text: 'Save Details',
+              onTap: _saveDetails, // Call the save details method
+              width: double.infinity, // Full-width button
+              height: 50.0,
+            ), // Save details button
+            const SizedBox(height: 20),
+
+            // Toggle to show/hide the "Change Password" section
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text("Do you want to change your password?"),
+                Switch(
+                  value: showChangePassword,
+                  onChanged: (value) {
+                    setState(() {
+                      showChangePassword = value; // Update the state when the switch is toggled
+                    });
+                  },
+                ),
+              ],
+            ),
+
+            // Conditionally render the ChangePasswordSection based on the state
+            if (showChangePassword) const ChangePasswordSection(),
+          ],
         ),
       ),
-      body: GestureDetector(
-        onTap: () {
-          FocusScope.of(context).unfocus();
-        },
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: ListView(
-            children: [
-              const SizedBox(
-                height: 20,
-              ),
-              Center(
-                child: Stack(
-                  children: [
-                    Container(
-                      width: 130,
-                      height: 130,
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                            width: 4,
-                            color: Theme
-                                .of(context)
-                                .scaffoldBackgroundColor),
-                        boxShadow: [
-                          BoxShadow(
-                            spreadRadius: 2,
-                            blurRadius: 10,
-                            color: Colors.black.withOpacity(0.1),
-                            offset: const Offset(0, 10),
-                          ),
-                        ],
-                        shape: BoxShape.circle,
-                        image: const DecorationImage(
-                          fit: BoxFit.cover,
-                          image: NetworkImage(
-                            'https://static.vecteezy.com/system/resources/previews/030/798/365/non_2x/beautiful-asian-girl-wearing-over-size-hoodie-in-casual-style-ai-generative-photo.jpg',
-                          ),
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: Container(
-                        width: 40,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                              width: 4,
-                              color: Theme
-                                  .of(context)
-                                  .scaffoldBackgroundColor),
-                          color: Color(0xFF1877F2),
-                        ),
-                        child: const Icon(
-                          Icons.edit,
-                          color: Colors.white,
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              const SizedBox(
-                height: 35,
-              ),
-              buildTextField(
-                  'Username', 'John_Doe',  false),
-              buildTextField(
-                  'Bio', 'John Doe',  false),
-              buildTextField(
-                  'Email', 'johndoe@gmail.com',  false),
-              const SizedBox(
-                height: 10,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  GradientButton(
-                    text: "SAVE",
-                    onTap: () {
-                      // Add your logic for saving
-                    },
-                    width: 250,
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 30,
-              ),
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Column(
-                  children: [
-                    const Text(
-                      'Change Password',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    buildTextField('Current Password', '********',
-                         true),
-                    buildTextField('New Password', '********',
-                         true),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    GradientButton(
-                      text: "CHANGE PASSWORD",
-                      onTap: () {
-                        // Add your logic for changing password
-                      },
-                      width: 250,
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(
-                height: 25,
-              )
-            ],
-          ),
-        ),
-      ),
-      // bottomNavigationBar: BottomNavBar(),
     );
   }
+}
 
-  Widget buildTextField(String labelText, String hintText,
-      bool isPasswordTextField) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 35.0),
-      child: TextField(
-        obscureText: isPasswordTextField ? showPassword : false,
-        decoration: InputDecoration(
-          suffixIcon: isPasswordTextField
-              ? IconButton(
-            onPressed: () {
-              setState(() {
-                showPassword = !showPassword;
-              });
-            },
-            icon: Icon(
-              showPassword ? Icons.visibility_off : Icons.visibility,
-              color: Colors.grey,
+class ProfilePictureSection extends StatelessWidget {
+  final String photoUrl; // Accept photoUrl as a parameter
+
+  const ProfilePictureSection({Key? key, required this.photoUrl}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Stack(
+          children: [
+            // Profile picture (using the fetched photoUrl or a placeholder if it's empty)
+            CircleAvatar(
+              radius: 50,
+              backgroundImage: photoUrl.isNotEmpty 
+                  ? NetworkImage(photoUrl) 
+                  : const NetworkImage('https://via.placeholder.com/150'), // Use fetched photoUrl or placeholder image
             ),
-          )
-              : null,
-          contentPadding:
-          const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-          labelText: labelText,
-          floatingLabelBehavior: FloatingLabelBehavior.always,
-          hintText: hintText,
-          hintStyle: const TextStyle(color: Colors.grey, fontSize: 15),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10.0),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10.0),
-            borderSide: const BorderSide(color: Colors.blue, width: 2.0),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10.0),
-            borderSide: const BorderSide(color: Colors.grey, width: 1.0),
-          ),
+            Positioned(
+              bottom: 0,
+              right: 0,
+              child: IconButton(
+                icon: const Icon(Icons.edit, color: Colors.blue),
+                onPressed: () {
+                  // Handle profile picture change
+                },
+              ),
+            ),
+          ],
         ),
-      ),
+      ],
+    );
+  }
+}
+
+class UserDetailsForm extends StatelessWidget {
+  final TextEditingController usernameController;
+  final TextEditingController bioController; // Add bio controller
+  final String email;
+
+  const UserDetailsForm({
+    Key? key,
+    required this.usernameController,
+    required this.bioController,
+    required this.email, // Accept email as a parameter
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        TextFieldWidget(
+          label: "Username",
+          controller: usernameController, // Pass the controller
+        ),
+        const SizedBox(height: 16),
+       BioFieldWidget(controller: bioController), // Use BioFieldWidget instead
+        const SizedBox(height: 16),
+        EmailDisplayBox(email: email),
+      ],
+    );
+  }
+}
+
+class TextFieldWidget extends StatelessWidget {
+  final String label;
+  final bool isEmailField;
+  final bool enabled;
+  final TextEditingController? controller;
+  final String? initialValue; // For setting initial value
+  final String? email; // For displaying email as plain text
+
+  const TextFieldWidget({
+    Key? key,
+    required this.label,
+    this.isEmailField = false,
+    this.enabled = true,
+    this.controller,
+    this.initialValue,
+    this.email, // Accept email as a parameter
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 8),
+        // Check if it's an email field and display as plain text if so
+        isEmailField && email != null
+            ? Text(
+                email!,
+                style: const TextStyle(fontSize: 14, color: Colors.black), // Style as needed
+              )
+            : TextField(
+                controller: controller,
+                keyboardType: isEmailField ? TextInputType.emailAddress : TextInputType.text,
+                enabled: enabled,
+                decoration: InputDecoration(
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 12.0),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: const BorderSide(color: Colors.grey),
+                  ),
+                  filled: true,
+                  fillColor: enabled ? Colors.white : Colors.grey[200],
+                ),
+                // Set initial value if provided
+                onChanged: (value) {
+                  if (initialValue != null) {
+                    controller?.text = initialValue!;
+                  }
+                },
+              ),
+      ],
     );
   }
 }

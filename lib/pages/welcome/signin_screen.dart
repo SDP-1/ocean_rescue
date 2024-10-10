@@ -8,7 +8,7 @@ import '../../widget/welcome/custom_scaffold.dart';
 import '../../resources/auth_methods.dart';
 import '../../theme/theme.dart';
 import 'signup_screen.dart';
-import '../../widget/button/GradientButton.dart';
+import '../../widget/common/GradientButton.dart';
 import 'splash_screen.dart'; // Import your GradientButton widget
 
 class SignInScreen extends StatefulWidget {
@@ -27,42 +27,41 @@ class _SignInScreenState extends State<SignInScreen> {
   final _formSignInKey = GlobalKey<FormState>();
   bool rememberPassword = true;
 
-userLogin() async {
-
-  String res = await AuthMethods().loginUser(
-    email: emailController.text,
-    password: passwordController.text,
-  );
-
-  // Navigate to BottomNavBar if login is successful
-  if (res == "success") {
-    if (context.mounted) {
-      Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(
-          builder: (context) => SplashScreen(), // Go to BottomNavBar
-        ),
-        (route) => false,
+  Future<void> userLogin() async {
+    if (_formSignInKey.currentState!.validate()) {
+      String res = await AuthMethods().loginUser(
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
       );
-    }
-  } else {
-    // Pop the splash screen and show login error if failed
-    Navigator.of(context).pop(); // Remove splash screen
 
-    // Show error message
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          res.contains('user-not-found')
-              ? "No User found with that Email"
-              : res.contains('wrong-password')
-                  ? "Wrong Password"
-                  : res,
-          style: const TextStyle(fontSize: 18.0, color: Colors.black),
-        ),
-      ),
-    );
+      // Navigate to BottomNavBar if login is successful
+      if (res == "success") {
+        if (context.mounted) {
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(
+              builder: (context) =>
+                  const BottomNavBar(), // Adjust navigation to BottomNavBar
+            ),
+            (route) => false,
+          );
+        }
+      } else {
+        // Show error message
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              res.contains('user-not-found')
+                  ? "No user found with that email."
+                  : res.contains('wrong-password')
+                      ? "Wrong password."
+                      : "Login failed: $res",
+              style: const TextStyle(fontSize: 18.0, color: Colors.black),
+            ),
+          ),
+        );
+      }
+    }
   }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -197,7 +196,8 @@ userLogin() async {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => const ForgotPassword()));
+                                      builder: (context) =>
+                                          const ForgotPassword()));
                             },
                             child: Text(
                               'Forgot password?',
@@ -217,8 +217,7 @@ userLogin() async {
                       GradientButton(
                         text: 'Sign In',
                         onTap: () {
-                          if (_formSignInKey.currentState!.validate() &&
-                              rememberPassword) {
+                          if (_formSignInKey.currentState!.validate()) {
                             setState(() {
                               email = emailController.text;
                               password = passwordController.text;

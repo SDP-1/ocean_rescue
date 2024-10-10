@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:ocean_rescue/pages/dumpReport/DumpReportHistory.dart';
+import 'package:ocean_rescue/models/reportdump.dart';
+import 'package:ocean_rescue/resources/ReportDumpsFirestoreMethods.dart';
 import 'package:ocean_rescue/theme/colorTheme.dart';
-import 'package:ocean_rescue/widget/feed/TopAppBar%20.dart';
-
-import '../../widget/dumpReport/eventCard.dart';
+import 'package:ocean_rescue/widget/navbar/BottomNavBar.dart';
+import 'package:ocean_rescue/widget/navbar/TopAppBar%20.dart';
+import 'package:ocean_rescue/widget/dumpReport/eventCard.dart';
+import 'AllDumpsSection.dart';
+import 'DumpReportHistory.dart';
+import 'dump_description_edit.dart';
 import 'dump_report_screen.dart';
+import 'CriticalDumpsSeaction.dart';
 
 class DumpsDashboard extends StatelessWidget {
   const DumpsDashboard({super.key});
@@ -15,7 +20,7 @@ class DumpsDashboard extends StatelessWidget {
       backgroundColor: Colors.white,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(56.0),
-        child: TopAppBar(),
+        child: TopAppBar(selectedTabIndex: BottomNavBar.selectedTabIndex),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -28,8 +33,7 @@ class DumpsDashboard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const Column(
-                    crossAxisAlignment:
-                        CrossAxisAlignment.start, // Aligns children to the left
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         "Dumps",
@@ -39,11 +43,11 @@ class DumpsDashboard extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        "Lorem Ipsum Event ipsum lorem",
+                        "Let's Save Our Environment",
                         style: TextStyle(
                           fontSize: 10,
                           fontWeight: FontWeight.bold,
-                          color: Colors.grey, // Set color to gray
+                          color: Colors.grey,
                         ),
                       ),
                     ],
@@ -53,18 +57,16 @@ class DumpsDashboard extends StatelessWidget {
                       _buildActionIcon(
                         Icons.history,
                         "Report History",
-                        ColorTheme.liteBlue1,
+                        ColorTheme.lightBlue1,
                         () {
-                          // Add report history action
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) =>
-                                    DumpReportHistory()), // Replace `ReportDumpPage` with your target page widget
+                                builder: (context) => DumpReportHistory()),
                           );
                         },
                       ),
-                      const SizedBox(width: 5), // Space between icons
+                      const SizedBox(width: 5),
                       _buildActionIcon(
                         Icons.report,
                         "Report Dump",
@@ -73,8 +75,7 @@ class DumpsDashboard extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) =>
-                                    ReportDumpPage()), // Replace `ReportDumpPage` with your target page widget
+                                builder: (context) => ReportDumpPage()),
                           );
                         },
                       ),
@@ -83,7 +84,7 @@ class DumpsDashboard extends StatelessWidget {
                 ],
               ),
             ),
-            // Rest of the content
+            // Map Placeholder
             const Padding(
               padding: EdgeInsets.all(16.0),
               child: Text(
@@ -95,36 +96,31 @@ class DumpsDashboard extends StatelessWidget {
               margin: const EdgeInsets.symmetric(horizontal: 16),
               height: 150,
               decoration: BoxDecoration(
-                color: ColorTheme.liteBlue2, // Background color
-                borderRadius: BorderRadius.circular(12), // Rounded corners
+                color: ColorTheme.liteBlue2,
+                borderRadius: BorderRadius.circular(12),
               ),
-              child: const Center(child: Text('Map Placeholder')),
+              child: ClipRRect(
+                // Optional: adds rounded corners to the image
+                borderRadius: BorderRadius.circular(12),
+                child: Image.asset(
+                  'assets/dump/beach.png',
+                  fit: BoxFit.cover, // Ensures the image covers the container
+                  height: 150, // Set height to match the container
+                  width: double.infinity, // Full width of the container
+                ),
+              ),
             ),
 
-            const Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Text(
-                "Critical Dumps",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-            ),
-            SizedBox(
-              height: 100,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: [
-                  CriticalDumpImage('assets/dump/dump1.jpeg'),
-                  CriticalDumpImage('assets/dump/dump2.jpeg'),
-                  CriticalDumpImage('assets/dump/dump3.jpg'),
-                ],
-              ),
-            ),
+            // Critical Dumps Section
+            const CriticalDumpSection(),  // Using the extracted CriticalDumpSection
+
+            // All Dumps Section
             const Padding(
               padding: EdgeInsets.all(16.0),
               child: Row(
                 children: [
                   Text(
-                    "All Events",
+                    "All Dumps",
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   Spacer(),
@@ -132,51 +128,8 @@ class DumpsDashboard extends StatelessWidget {
                 ],
               ),
             ),
-            // For the critical event card:
-            EventCard(
-              isCritical: true,
-              imageUrl: 'assets/dump/dump1.jpeg',
-            ),
-
-            EventCard(
-              isCritical: false,
-              imageUrl: 'assets/dump/dump1.jpeg',
-            ),
-
-            EventCard(
-              isCritical: false,
-              imageUrl: 'assets/dump/dump1.jpeg',
-            ),
-
-            EventCard(
-              isCritical: false,
-              imageUrl: 'assets/dump/dump1.jpeg',
-            ),
-
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Center(
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        Colors.white, // Background color of the button
-                    foregroundColor:
-                        ColorTheme.liteBlue1, // Text color of the button
-                    side: const BorderSide(
-                        color: ColorTheme.liteBlue1,
-                        width: 2), // Border color and width
-                    shape: RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.circular(12), // Rounded corners
-                    ),
-                  ),
-                  onPressed: () {
-                    // Load more action
-                  },
-                  child: const Text("Load More"),
-                ),
-              ),
-            )
+            // Placeholder Event Cards (Replace these with fetched data if needed)
+            const AllDumpsSection(), 
           ],
         ),
       ),
@@ -194,7 +147,7 @@ class DumpsDashboard extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
           ),
           child: IconButton(
-            icon: Icon(icon, color: Colors.white, size: 24), // Small icon size
+            icon: Icon(icon, color: Colors.white, size: 24),
             onPressed: onPressed,
           ),
         ),
@@ -203,27 +156,6 @@ class DumpsDashboard extends StatelessWidget {
           style: const TextStyle(fontSize: 9, color: Colors.black54),
         ),
       ],
-    );
-  }
-}
-
-class CriticalDumpImage extends StatelessWidget {
-  final String imagePath;
-
-  const CriticalDumpImage(this.imagePath, {super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(left: 16),
-      width: 150,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
-        image: DecorationImage(
-          image: AssetImage(imagePath),
-          fit: BoxFit.cover,
-        ),
-      ),
     );
   }
 }
