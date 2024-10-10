@@ -243,9 +243,9 @@ class _FeedScreenState extends State<FeedScreen> {
                     margin:
                         const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
                     child: PostCard(
-                      snap: posts[index], // Pass the actual post data
-                      onPostDeleted: _removePost, // Pass the delete callback
-                    ),
+                        snap: posts[index], // Pass the actual post data
+                        onPostDeleted: _removePost, // Pass the delete callback
+                        ),
                   );
                 },
               ),

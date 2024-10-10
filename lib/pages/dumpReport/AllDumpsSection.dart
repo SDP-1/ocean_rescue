@@ -12,19 +12,11 @@ class AllDumpsSection extends StatefulWidget {
 }
 
 class _AllDumpsSectionState extends State<AllDumpsSection> {
-  late Future<List<ReportDump>> futureDumps;
-
-  @override
-  void initState() {
-    super.initState();
-    // Fetch the dump reports when the widget is initialized
-    futureDumps = ReportDumpsFirestoreMethods().fetchAllDumpReports(); // Get instance of ReportDumpsFirestoreMethods
-  }
-
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<ReportDump>>(
-      future: futureDumps,
+    return StreamBuilder<List<ReportDump>>(
+      // Stream for real-time updates
+      stream: ReportDumpsFirestoreMethods().streamAllDumpReports(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           // Show a loading indicator while waiting for data
@@ -43,7 +35,7 @@ class _AllDumpsSectionState extends State<AllDumpsSection> {
         return Column(
           children: dumpReports.map((dump) {
             return EventCard(
-              //isCritical: dump.isCritical, // Pass critical status
+               // Pass critical status
               imageUrl: dump.imageUrl,
               title: dump.title,
               description: dump.description,
