@@ -5,7 +5,6 @@ import 'package:ocean_rescue/theme/colorTheme.dart';
 import 'package:ocean_rescue/widget/common/CreateFormTopWidget.dart';
 import 'dart:io';
 import 'package:ocean_rescue/widget/event/EventInfoAlert.dart';
-
 import '../../widget/common/GradientButton.dart';
 
 class CreateEventScreen1 extends StatefulWidget {
@@ -158,7 +157,6 @@ class _CreateEventScreen1State extends State<CreateEventScreen1> {
               ),
             ),
             const SizedBox(height: 20),
-
             const Text(
               'Size',
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
@@ -182,14 +180,21 @@ class _CreateEventScreen1State extends State<CreateEventScreen1> {
             GradientButton(
               text: 'Next',
               onTap: () {
-                // Navigate or perform action
+                // Navigate to CreateEventScreen2 with data
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => CreateEventScreen2()),
+                  MaterialPageRoute(
+                    builder: (context) => CreateEventScreen2(
+                      eventName: _eventNameController.text,
+                      description: _eventDescriptionController.text,
+                      imagePath: _image!.path, // Pass the image path
+                      groupSize: _selectedSize!,
+                    ),
+                  ),
                 );
               },
-              width: double.infinity, // Set width to take full width
-              height: 50.0, // Optional: You can set a specific height if needed
+              width: double.infinity,
+              height: 50.0,
             ),
           ],
         ),
@@ -197,7 +202,7 @@ class _CreateEventScreen1State extends State<CreateEventScreen1> {
     );
   }
 
-// Widget to build the size option
+  // Widget to build the size option
   Widget _groupSizeOption(String text, IconData icon) {
     bool isSelected =
         _selectedSize == text; // Check if the current option is selected
