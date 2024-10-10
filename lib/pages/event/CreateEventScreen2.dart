@@ -15,9 +15,8 @@ class _CreateEventScreen2State extends State<CreateEventScreen2> {
   DateTime? _selectedDate;
   TimeOfDay? _startTime;
   TimeOfDay? _endTime;
-  String _recurrence = 'Weekly';
-  List<bool> _selectedDays =
-      List.generate(7, (index) => false); // 7 days for the week
+  int _selectedHours = 0;
+  int _selectedMinutes = 0;
 
   Future<void> _pickDateTime() async {
     DateTime? pickedDate = await showDatePicker(
@@ -87,14 +86,12 @@ class _CreateEventScreen2State extends State<CreateEventScreen2> {
             ),
             EventInfoAlert(
               alertText:
-                  "Enter the basic details describing the location, time, date, and the recurrence of the event.",
+                  "Enter the basic details describing the location, time, date, and the duration of the event.",
             ),
             const SizedBox(height: 20),
             _buildDateTimePicker(),
             const SizedBox(height: 20),
-            _buildRecurrencePicker(),
-            const SizedBox(height: 20),
-            _buildDaySelection(),
+            _buildCustomDurationPicker(), // Add custom duration picker here
             const SizedBox(height: 20),
             _buildLocationInput(),
             const SizedBox(height: 20),
@@ -159,97 +156,80 @@ class _CreateEventScreen2State extends State<CreateEventScreen2> {
     );
   }
 
-// Recurrence Picker
-  Widget _buildRecurrencePicker() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start, // Align items to the start
-      crossAxisAlignment: CrossAxisAlignment.center, // Center align vertically
-      children: [
-        const Text(
-          'Recurrence',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-        ),
-        const SizedBox(width: 10),
-        Expanded(
-          child: Align(
-            alignment: Alignment.centerRight, // Align dropdown to the right
-            child: Container(
-              width: 120, // Set a specific width for the dropdown
-              child: DropdownButton<String>(
-                value: _recurrence,
-                onChanged: (String? newValue) {
-                  setState(() {
-                    _recurrence = newValue!;
-                  });
-                },
-                items: <String>['Daily', 'Weekly', 'Monthly']
-                    .map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-                isExpanded: true, // Ensure dropdown expands
-                underline: Container(
-                  height: 2,
-                  color: Colors.grey.shade300,
-                ),
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  // Day Selection
-  Widget _buildDaySelection() {
+  // Custom Duration Picker
+  Widget _buildCustomDurationPicker() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          'Select Days',
+          'Event Duration',
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
         ),
         const SizedBox(height: 8),
-        GridView.builder(
-          physics: const NeverScrollableScrollPhysics(),
-          shrinkWrap: true,
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 7, // 7 days in a week
-            childAspectRatio: 1.0,
-            mainAxisSpacing: 4.0,
-            crossAxisSpacing: 4.0,
-          ),
-          itemCount: 7,
-          itemBuilder: (context, index) {
-            final dayLabels = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
-            return GestureDetector(
-              onTap: () {
-                setState(() {
-                  _selectedDays[index] = !_selectedDays[index];
-                });
-              },
-              child: Container(
-                decoration: BoxDecoration(
-                  color: _selectedDays[index]
-                      ? ColorTheme.lightBlue1
-                      : Colors.grey.shade300,
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.grey.shade400),
-                ),
-                child: Center(
-                  child: Text(
-                    dayLabels[index],
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: _selectedDays[index] ? Colors.white : Colors.black,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              children: [
+                const Text("Hours",
+                    style: TextStyle(fontWeight: FontWeight.bold)),
+                Row(
+                  children: [
+                    IconButton(
+                      onPressed: _selectedHours > 0
+                          ? () {
+                              setState(() {
+                                _selectedHours--;
+                              });
+                            }
+                          : null,
+                      icon: const Icon(Icons.remove),
                     ),
-                  ),
+                    Text('$_selectedHours',
+                        style: const TextStyle(fontSize: 20)),
+                    IconButton(
+                      onPressed: () {
+                        setState(() {
+                          _selectedHours++;
+                        });
+                      },
+                      icon: const Icon(Icons.add),
+                    ),
+                  ],
                 ),
-              ),
-            );
-          },
+              ],
+            ),
+            Column(
+              children: [
+                const Text("Minutes",
+                    style: TextStyle(fontWeight: FontWeight.bold)),
+                Row(
+                  children: [
+                    IconButton(
+                      onPressed: _selectedMinutes >= 5
+                          ? () {
+                              setState(() {
+                                _selectedMinutes -= 5;
+                              });
+                            }
+                          : null,
+                      icon: const Icon(Icons.remove),
+                    ),
+                    Text('$_selectedMinutes',
+                        style: const TextStyle(fontSize: 20)),
+                    IconButton(
+                      onPressed: () {
+                        setState(() {
+                          _selectedMinutes = (_selectedMinutes + 5) % 60;
+                        });
+                      },
+                      icon: const Icon(Icons.add),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
         ),
       ],
     );
