@@ -158,6 +158,23 @@ Future<List<ReportDump>> fetchAllDumpReports() async {
 }
 
 
+Stream<List<ReportDump>> streamAllDumpReports() {
+  return _firestore.collection('report_dumps')
+    .snapshots() // This listens to real-time updates
+    .map((snapshot) => snapshot.docs
+        .map((doc) => ReportDump.fromJson(doc.data() as Map<String, dynamic>))
+        .toList());
+}
 
+
+Future<void> markDumpAsCleared(String rdid) async {
+    try {
+      await _firestore.collection('report_dumps').doc(rdid).update({
+        'isReported': false,
+      });
+    } catch (e) {
+      print('Failed to mark dump as cleared: $e');
+    }
+  }
 
 }
