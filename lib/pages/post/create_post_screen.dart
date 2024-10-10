@@ -4,6 +4,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:ocean_rescue/theme/colorTheme.dart';
 import 'package:ocean_rescue/widget/common/CreateFormTopWidget.dart';
+import 'package:ocean_rescue/widget/event/EventInfoAlert.dart';
 import 'package:ocean_rescue/widget/popup/ErrorPopup.dart';
 import 'package:ocean_rescue/widget/popup/SuccessPopup.dart';
 import 'package:ocean_rescue/resources/post_firestore_methods.dart';
@@ -134,6 +135,11 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
               CreateFormTopWidget(
                   title: 'Create New Post',
                   imagePath: 'assets/post/createNewPost.png'),
+              EventInfoAlert(
+                alertText:
+                    "Enter the post name, creative title and a small description of the post, and upload an image for the post.",
+              ),
+              const SizedBox(height: 20),
               const Text(
                 'Title',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),

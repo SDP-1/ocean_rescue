@@ -12,6 +12,7 @@ import 'like_animation.dart'; // Ensure this file exists
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../popup/DeleteConfirmationPopup.dart';
+import 'package:share_plus/share_plus.dart';
 
 class PostCard extends StatefulWidget {
   final Map<String, dynamic> snap; // Data from Firebase
@@ -93,8 +94,7 @@ class _PostCardState extends State<PostCard> {
               leading: const Icon(Icons.share),
               title: const Text('Share Post'),
               onTap: () {
-                Navigator.pop(context);
-                // Implement share functionality here
+                _sharePost();
               },
             ),
 
@@ -154,6 +154,19 @@ class _PostCardState extends State<PostCard> {
           ],
         );
       },
+    );
+  }
+
+  void _sharePost() {
+    final postUrl =
+        widget.snap['postUrl']; // Get the post URL from the post data
+    final postTitle = widget.snap['title']; // Get the post title
+    final postDescription =
+        widget.snap['description']; // Get the post description
+
+    Share.share(
+      'Check out this post: $postTitle\n\n$postDescription\n$postUrl', // The message to share
+      subject: 'Check out this post on Ocean Rescue!', // The subject or title
     );
   }
 
@@ -279,7 +292,7 @@ class _PostCardState extends State<PostCard> {
               IconButton(
                 icon: const Icon(Icons.send),
                 onPressed: () {
-                  // Implement share functionality
+                  _sharePost();
                 },
               ),
               Expanded(
