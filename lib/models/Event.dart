@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class Event {
+   String eventId;
+   String uid;
   String eventName;
   String description;
   String? location;
@@ -16,6 +18,8 @@ class Event {
 
   // Constructor
   Event({
+    required this.uid,
+    required this.eventId,
     required this.eventName,
     required this.description,
     this.location,

@@ -1,4 +1,7 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:ocean_rescue/pages/event/event_screen.dart';
 import 'package:ocean_rescue/resources/event_firestor_methods.dart';
 import 'package:ocean_rescue/theme/colorTheme.dart';
@@ -12,13 +15,13 @@ import 'package:ocean_rescue/widget/popup/SuccessPopup.dart';
 class CreateEventScreen2 extends StatefulWidget {
   final String eventName;
   final String description;
-  final String imagePath;
+  final XFile image;
   final String groupSize;
 
   CreateEventScreen2({
     required this.eventName,
     required this.description,
-    required this.imagePath,
+    required this.image,
     required this.groupSize,
   });
 
@@ -178,7 +181,7 @@ class _CreateEventScreen2State extends State<CreateEventScreen2> {
         startTime: startTime,
         endTime: endTime,
         groupSize: widget.groupSize,
-        imageUrl: widget.imagePath,
+        imageUrl: widget.image,
         duration: _selectedHours * 60 + _selectedMinutes,
       );
 

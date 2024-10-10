@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:ocean_rescue/pages/event/CreateEventScreen2.dart';
+import 'package:ocean_rescue/pages/event/create_event_screen2.dart';
 import 'package:ocean_rescue/theme/colorTheme.dart';
 import 'package:ocean_rescue/widget/common/CreateFormTopWidget.dart';
 import 'dart:io';
@@ -49,7 +49,7 @@ class _CreateEventScreen1State extends State<CreateEventScreen1> {
           builder: (context) => CreateEventScreen2(
             eventName: _eventNameController.text,
             description: _eventDescriptionController.text,
-            imagePath: _image!.path, // Pass the image path
+            image: _image!, // Pass the image path
             groupSize: _selectedSize!,
           ),
         ),
