@@ -267,7 +267,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                             trailing: const Icon(Icons.check_circle,
                                 color: Colors.grey),
                             onTap: () {
-                              BottomNavBar.visibility(false);
+                              // BottomNavBar.visibility(false);
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -281,7 +281,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                                   ),
                                 ),
                               ).then((_) {
-                                BottomNavBar.visibility(true);
+                                // BottomNavBar.visibility(true);
                               });
                             },
                           );

@@ -162,7 +162,7 @@ class _FeedScreenState extends State<FeedScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: ColorTheme.white,
-      appBar: TopAppBar(),
+      appBar: TopAppBar(selectedTabIndex: BottomNavBar.selectedTabIndex),
       body: RefreshIndicator(
         onRefresh: () async {
           await _fetchPosts(); // Refresh the posts

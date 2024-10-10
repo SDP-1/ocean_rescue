@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:ocean_rescue/theme/colorTheme.dart';
 
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:ocean_rescue/widget/navbar/BottomNavBar.dart';
 import '../../models/reportdump.dart';
 import '../../resources/ReportDumpsFirestoreMethods.dart';
 import '../../widget/navbar/TopAppBar .dart';
@@ -72,7 +73,7 @@ void _toggleSort() {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: ColorTheme.white,
-      appBar: TopAppBar(),
+      appBar: TopAppBar(selectedTabIndex: BottomNavBar.selectedTabIndex),
       body: Column(
         children: [
           // Add the back arrow and title
