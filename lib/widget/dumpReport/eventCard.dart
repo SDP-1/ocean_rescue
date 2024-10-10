@@ -28,94 +28,82 @@ class EventCard extends StatelessWidget {
         color: isCritical ? ColorTheme.lightRed2 : backgroundColor,
         borderRadius: BorderRadius.circular(6), // Slightly smaller border radius
       ),
-      child: Column(
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Image with reduced size
-              ClipRRect(
-                borderRadius: BorderRadius.circular(6.0),
-                child: Image.network(
-                  imageUrl,
-                  width: 110, // Reduced image width
-                  height: 65, // Reduced image height
-                  fit: BoxFit.cover,
+          // Image fills the left side
+          ClipRRect(
+            borderRadius: BorderRadius.circular(6.0),
+            child: Image.network(
+              imageUrl,
+              width: 160, // Adjust width to fit the card
+              height: 100, // Adjust height to fit the card
+              fit: BoxFit.cover,
+            ),
+          ),
+          const SizedBox(width: 30), // Space between image and text column
+
+          // Right side containing title, description, and buttons
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Title
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 13, // Reduced title size
+                    fontWeight: FontWeight.bold,
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
-              ),
-              const SizedBox(width: 8), // Reduced space between image and text
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                const SizedBox(height: 2), // Smaller gap
+                // Description
+                Text(
+                  description,
+                  style: const TextStyle(fontSize: 11), // Reduced description size
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2,
+                ),
+                const SizedBox(height: 6), // Gap before the button row
+
+                // Icons and button row
+                Row(
                   children: [
-                    Text(
-                      title,
-                      style: const TextStyle(
-                        fontSize: 13, // Reduced title size
-                        fontWeight: FontWeight.bold,
+                    // Share icon
+                    IconButton(
+                      icon: const Icon(
+                        Icons.share,
+                        size: 20, // Smaller icon size
                       ),
-                      overflow: TextOverflow.ellipsis,
+                      onPressed: () {
+                        // Share action
+                      },
                     ),
-                    const SizedBox(height: 2), // Smaller gap
-                    Text(
-                      description,
-                      style: const TextStyle(fontSize: 11), // Reduced description size
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 2,
+                    // Let's Clean Up button
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: isCritical ? ColorTheme.lightRed : buttonColor,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16), // Reduced button corner radius
+                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6), // Reduced padding
+                      ),
+                      onPressed: () {
+                        // Clean Up action
+                      },
+                      child: const Text(
+                        "Let's Clean Up",
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: ColorTheme.black, // Smaller button text
+                        ),
+                      ),
                     ),
                   ],
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 6), // Reduced gap before buttons
-
-          // Icons and button row
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              // Share and Warning icons
-              Row(
-                children: [
-                  IconButton(
-                    icon: const Icon(
-                      Icons.share,
-                      size: 20, // Smaller icon size
-                    ),
-                    onPressed: () {
-                      // Share action
-                    },
-                  ),
-                  if (isCritical)
-                    const Icon(
-                      Icons.warning,
-                      color: Colors.red,
-                      size: 20, // Smaller warning icon
-                    ),
-                ],
-              ),
-              // Let's Clean Up button
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: isCritical ? ColorTheme.lightRed : buttonColor,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16), // Reduced button corner radius
-                  ),
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6), // Reduced padding
-                ),
-                onPressed: () {
-                  // Clean Up action
-                },
-                child: const Text(
-                  "Let's Clean Up",
-                  style: TextStyle(
-                    fontSize: 11,
-                    color: ColorTheme.black, // Smaller button text
-                  ),
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ],
       ),

@@ -5,6 +5,7 @@ import 'package:ocean_rescue/pages/event/create_event_screen1.dart';
 import 'package:ocean_rescue/pages/event/event_screen.dart';
 import 'package:ocean_rescue/pages/menu/menu_screen.dart';
 import 'package:ocean_rescue/pages/notification/notification_screen.dart';
+import 'package:ocean_rescue/pages/profile/edit_profile.dart';
 import 'package:ocean_rescue/pages/qr/qr_scanner_screen.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 
@@ -61,7 +62,7 @@ class BottomNavBar extends StatelessWidget {
       DumpsDashboard(),
       const QrScanner(),
       EventScreen(),
-      const MenuScreen(),
+      const EditProfile(),
     ];
   }
 
