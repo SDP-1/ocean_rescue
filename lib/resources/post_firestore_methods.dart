@@ -289,9 +289,9 @@ class PostFireStoreMethods {
         'text': doc['text'],
         'datePublished': doc['datePublished'],
         'uid': doc['uid'],
-        'profilePic':
-            userSnapshot['photoUrl'] ?? 'https://via.placeholder.com/150',
-        'name': userSnapshot['username'] ?? 'Unknown',
+        // 'profilePic':
+        //     userSnapshot['photoUrl'] ?? 'https://via.placeholder.com/150',
+        // 'name': userSnapshot['username'] ?? 'Unknown',
       });
     }
 
