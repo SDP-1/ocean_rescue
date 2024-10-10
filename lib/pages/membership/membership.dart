@@ -70,10 +70,10 @@ class _MembershipPageState extends State<MembershipPage> {
                 child: ListView(
                   padding: const EdgeInsets.all(16),
                   children: [
-                    membershipCard('Platinum', 'assets/medals/platinum.png', 'gfgngnLorem ipsum dolor sit amet consectetur, adipisicing elit. Voluptates unde vitae eos perferendis voluptate quod harum reiciendis nostrum maxime pariatur placeat magnam blanditiis laborum iste minus est excepturi, nihil a?'),
-                    membershipCard('Gold', 'assets/medals/gold.png', 'gfgngnLorem ipsum dolor sit amet consectetur, adipisicing elit. Voluptates unde vitae eos perferendis voluptate quod harum reiciendis nostrum maxime pariatur placeat magnam blanditiis laborum iste minus est excepturi, nihil a?'),
-                    membershipCard('Silver', 'assets/medals/silver.png', 'gfgngnLorem ipsum dolor sit amet consectetur, adipisicing elit. Voluptates unde vitae eos perferendis voluptate quod harum reiciendis nostrum maxime pariatur placeat magnam blanditiis laborum iste minus est excepturi, nihil a?'),
-                    membershipCard('Bronze', 'assets/medals/bronze.png', 'gfgngnLorem ipsum dolor sit amet consectetur, adipisicing elit. Voluptates unde vitae eos perferendis voluptate quod harum reiciendis nostrum maxime pariatur placeat magnam blanditiis laborum iste minus est excepturi, nihil a?'),
+                    membershipCard('Platinum', 'assets/medals/platinum.png', 'Exclusive access to all premium features, priority support, and additional rewards. Unlock the ultimate benefits with our highest tier membership.'),
+                    membershipCard('Gold', 'assets/medals/gold.png', 'Enhanced access to premium features and priority customer support. Stay ahead with extra perks and rewards.'),
+                    membershipCard('Silver', 'assets/medals/silver.png', 'Enjoy access to several premium features and faster support to enhance your experience.'),
+                    membershipCard('Bronze', 'assets/medals/bronze.png', 'Basic membership that offers entry-level access to the platform’s features and community support.'),
                   ],
                 ),
               ),

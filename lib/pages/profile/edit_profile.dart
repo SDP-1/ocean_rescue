@@ -99,7 +99,7 @@ class _EditProfileState extends State<EditProfile> {
               buildTextField(
                   'Username', 'John_Doe',  false),
               buildTextField(
-                  'Full Name', 'John Doe',  false),
+                  'Bio', 'John Doe',  false),
               buildTextField(
                   'Email', 'johndoe@gmail.com',  false),
               const SizedBox(
