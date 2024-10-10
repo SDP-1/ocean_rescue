@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:ocean_rescue/pages/event/create_event_screen1.dart';
 import 'package:ocean_rescue/theme/colorTheme.dart';
+import 'package:ocean_rescue/widget/navbar/BottomNavBar.dart';
 import 'package:ocean_rescue/widget/navbar/TopAppBar%20.dart';
 
 class EventScreen extends StatelessWidget {
@@ -9,7 +11,7 @@ class EventScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: TopAppBar(),
+      appBar: TopAppBar(selectedTabIndex: BottomNavBar.selectedTabIndex),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -45,11 +47,11 @@ class EventScreen extends StatelessWidget {
                     "Create Event",
                     ColorTheme.lightBlue1,
                     () {
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(
-                      // builder: (context) => DumpReportHistory()),
-                      // );
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => CreateEventScreen1()),
+                      );
                     },
                   ),
                 ],

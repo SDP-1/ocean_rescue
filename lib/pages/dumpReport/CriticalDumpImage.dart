@@ -4,7 +4,8 @@ class CriticalDumpImage extends StatelessWidget {
   final String imageUrl;
   final String title;
 
-  const CriticalDumpImage({super.key, required this.imageUrl, required this.title});
+  const CriticalDumpImage(
+      {super.key, required this.imageUrl, required this.title});
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +39,7 @@ class CriticalDumpImage extends StatelessWidget {
                 overflow: TextOverflow.ellipsis, // Use ellipsis for overflow
                 style: const TextStyle(
                   color: Colors.white, // Keeps the text white for visibility
-                  fontSize: 12,        // Reduced font size
+                  fontSize: 12, // Reduced font size
                   fontWeight: FontWeight.w600, // Very thin font
                 ),
               ),

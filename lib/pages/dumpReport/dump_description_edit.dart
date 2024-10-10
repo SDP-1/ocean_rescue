@@ -44,6 +44,7 @@ class _DumpDetailsScreenState extends State<DumpDetailsScreen> {
     // Get the current user's ID
     AuthMethods authMethods = AuthMethods();
     currentUserUid = authMethods.getCurrentUserId();
+  
 
     rdid = widget.rdid;
     title = widget.title;

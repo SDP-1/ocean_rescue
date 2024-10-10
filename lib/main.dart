@@ -7,6 +7,7 @@ import 'package:ocean_rescue/pages/event/create_event_screen1.dart';
 import 'package:ocean_rescue/pages/event/event_details_screen.dart';
 import 'package:ocean_rescue/pages/post/create_post_screen.dart';
 import 'package:ocean_rescue/pages/profile/edit_profile.dart';
+import 'package:ocean_rescue/pages/profile/edit_profile_screen.dart';
 import 'package:ocean_rescue/pages/welcome/signin_screen.dart';
 import 'package:ocean_rescue/widget/event/EventDetailsCard.dart';
 import 'package:ocean_rescue/widget/popup/delete_confirmation_popup.dart';
@@ -62,6 +63,7 @@ class MyApp extends StatelessWidget {
       // home: EventDetailsScreen(),
       // home: CreateEventScreen1(),
       // home: CreatePostScreen(),
+      // home: EditProfile(),
     );
   }
 }
