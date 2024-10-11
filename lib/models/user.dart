@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class User {
@@ -8,6 +9,7 @@ class User {
   final String bio;
   final List followers;
   final List following;
+  int exp; // Change exp to int
   List<String> chats; // Property to hold chat IDs
   List<String> notifications; // Property to hold notification IDs
 
@@ -19,8 +21,9 @@ class User {
     required this.bio,
     required this.followers,
     required this.following,
-    this.chats = const [], 
-    this.notifications = const [], 
+    this.exp = 0, // Default value as an int
+    this.chats = const [],
+    this.notifications = const [],
   });
 
   // Factory method to create User from Firestore snapshot
@@ -35,6 +38,7 @@ class User {
       bio: snapshot["bio"],
       followers: snapshot["followers"],
       following: snapshot["following"],
+      exp: snapshot["exp"] ?? 0, // Ensure default value for exp if null
       chats: List<String>.from(snapshot["chats"] ?? []), // Initialize chats
       notifications: List<String>.from(snapshot["notifications"] ?? []), // Initialize notifications
     );
@@ -42,16 +46,17 @@ class User {
 
   // Convert User to JSON format for Firestore
   Map<String, dynamic> toJson() => {
-        "username": username,
-        "uid": uid,
-        "email": email,
-        "photoUrl": photoUrl,
-        "bio": bio,
-        "followers": followers,
-        "following": following,
-        "chats": chats,
-        "notifications": notifications, // Include notifications in Firestore
-      };
+    "username": username,
+    "uid": uid,
+    "email": email,
+    "photoUrl": photoUrl,
+    "bio": bio,
+    "followers": followers,
+    "following": following,
+    "exp": exp, // Store exp as int
+    "chats": chats,
+    "notifications": notifications, // Include notifications in Firestore
+  };
 
   // Add a chat ID to the user's chats list
   void addChat(String chatId) {

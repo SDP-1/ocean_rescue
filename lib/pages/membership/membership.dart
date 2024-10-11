@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../profile/view_profile.dart';
+
 class MembershipPage extends StatefulWidget {
   const MembershipPage({super.key});
 
@@ -46,7 +48,14 @@ class _MembershipPageState extends State<MembershipPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Row(
+              GestureDetector(
+              onTap: () {
+        Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const ViewProfilePage()),
+        );
+        },
+              child: const Row(
                 children: [
                   Icon(
                     Icons.arrow_back,
@@ -62,6 +71,7 @@ class _MembershipPageState extends State<MembershipPage> {
                     ),
                   ),
                 ],
+              ),
               ),
               const SizedBox(
                 height: 20,

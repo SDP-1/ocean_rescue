@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../profile/view_profile.dart';
+
 class AchievementsPage extends StatefulWidget {
   const AchievementsPage({super.key});
 
@@ -45,7 +47,14 @@ class _AchievementsPageState extends State<AchievementsPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Row(
+            GestureDetector(
+            onTap: () {
+      Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const ViewProfilePage()),
+      );
+      },
+            child: const Row(
               children: [
                 Icon(
                   Icons.arrow_back,
@@ -61,6 +70,7 @@ class _AchievementsPageState extends State<AchievementsPage> {
                   ),
                 ),
               ],
+            ),
             ),
             const SizedBox(height: 20),
             Container(

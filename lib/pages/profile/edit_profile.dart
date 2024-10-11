@@ -33,7 +33,6 @@ class _EditProfileState extends State<EditProfile> {
   Future<void> _fetchEmail() async {
     String uid = FirebaseAuth.instance.currentUser!.uid;
     print("Current User UID: $uid"); // Print the UID to see if it's loaded
-
     String fetchedEmail = await ProfileFirestoreMethods().getEmailByUid(uid);
     print("Fetched Email: $fetchedEmail"); // Print the fetched email
 
