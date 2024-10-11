@@ -36,7 +36,7 @@ void showQrCodePopup(BuildContext context, Map<String, dynamic> eventData) {
                   size: 240, // Size of the QR code
                   gapless: false,
                   // embeddedImage: const AssetImage(
-                  //     'assets/logo/logo_without_name.png'), // Make sure the asset path is correct
+                  //     'assets/logo/logo_without_name.png'), 
                   embeddedImageStyle: QrEmbeddedImageStyle(
                     size: const Size(80, 80),
                   ),
