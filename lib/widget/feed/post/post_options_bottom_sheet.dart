@@ -9,14 +9,14 @@ class PostOptionsBottomSheet extends StatelessWidget {
   final String postOwnerId;     // ID of the post owner
 
   const PostOptionsBottomSheet({
-    Key? key,
+    super.key,
     required this.onShare,
     required this.onBookmark,
     this.onEdit,
     this.onDelete,
     required this.currentUserId,
     required this.postOwnerId,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

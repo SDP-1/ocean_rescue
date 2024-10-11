@@ -47,7 +47,7 @@ class _LeaderboardPageState extends State<LeaderboardPage> {
             ),
           ),
         ),
-        Positioned(
+        const Positioned(
           top: 70,
             right: 150,
             child: Text("Leaderboard",

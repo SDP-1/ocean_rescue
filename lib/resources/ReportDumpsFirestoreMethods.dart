@@ -162,7 +162,7 @@ Stream<List<ReportDump>> streamAllDumpReports() {
   return _firestore.collection('report_dumps')
     .snapshots() // This listens to real-time updates
     .map((snapshot) => snapshot.docs
-        .map((doc) => ReportDump.fromJson(doc.data() as Map<String, dynamic>))
+        .map((doc) => ReportDump.fromJson(doc.data()))
         .toList());
 }
 

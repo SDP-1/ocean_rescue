@@ -40,6 +40,7 @@ class AuthMethods {
       print('No user is currently signed in.');
       return null;
     }
+    return null;
   }
 
   // Load asset image as Uint8List

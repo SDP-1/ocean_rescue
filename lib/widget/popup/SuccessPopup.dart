@@ -17,26 +17,26 @@ void showSuccessPopup(BuildContext context, String title, String message) {
             // Title
             Text(
               title,
-              style: TextStyle(
+              style: const TextStyle(
                 color: ColorTheme.black, // black text color
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             // Message
             Text(
               message,
-              style: TextStyle(
+              style: const TextStyle(
                 color: ColorTheme.black, // black text color
               ),
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             // Success Icon/Image
             Image.asset('assets/popup/Success.png', width: 80, height: 80),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             // Button
             SizedBox(
               width: 200, // Fixed width for button
@@ -45,7 +45,7 @@ void showSuccessPopup(BuildContext context, String title, String message) {
                   Navigator.of(context).pop(); // Close popup
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(
+                  backgroundColor: const Color(
                       0xFF00C3A9), // Button color similar to "Cancel" in DeleteConfirmationPopup
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10), // Rounded corners

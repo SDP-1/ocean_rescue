@@ -1,7 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import '../../resources/auth_methods.dart';
-import '../models/user.dart';
 
 class ProfileFirestoreMethods {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;

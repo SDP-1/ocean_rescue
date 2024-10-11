@@ -10,13 +10,13 @@ class PostImage extends StatelessWidget {
   final VoidCallback onAnimationEnd;
 
   const PostImage({
-    Key? key,
+    super.key,
     required this.imageUrl,
     required this.isLikeAnimating,
     required this.isLiked,
     required this.onDoubleTap,
     required this.onAnimationEnd,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

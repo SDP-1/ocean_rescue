@@ -6,6 +6,8 @@ import '../../models/user.dart' as AppUsers;
 import 'end_userprofile_screen.dart' as end_user;
 
 class UserSearchPage extends StatefulWidget {
+  const UserSearchPage({super.key});
+
   @override
   _UserSearchPageState createState() => _UserSearchPageState();
 }

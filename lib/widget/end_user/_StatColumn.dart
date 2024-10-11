@@ -6,7 +6,7 @@ class StatColumn extends StatelessWidget {
   final String label;
   final String count;
 
-  const StatColumn({Key? key, required this.label, required this.count}) : super(key: key);
+  const StatColumn({super.key, required this.label, required this.count});
 
   @override
   Widget build(BuildContext context) {

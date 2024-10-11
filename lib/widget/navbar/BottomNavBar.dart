@@ -59,9 +59,9 @@ class BottomNavBar extends StatelessWidget {
   List<Widget> _buildScreens() {
     return [
       const FeedScreen(),
-      DumpsDashboard(),
+      const DumpsDashboard(),
       const QrScanner(),
-      EventScreen(),
+      const EventScreen(),
       const EditProfile(),
     ];
   }

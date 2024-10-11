@@ -16,8 +16,8 @@ class UserProfilePage extends StatelessWidget {
 
   // Get the current user UID
   String getCurrentUserId() {
-    final _auth = auth.FirebaseAuth.instance; // Initialize Firebase Auth
-    return _auth.currentUser!.uid; // Return current user's ID
+    final auth = auth.FirebaseAuth.instance; // Initialize Firebase Auth
+    return auth.currentUser!.uid; // Return current user's ID
   }
 
   // Fetch user details from Firestore using the userId

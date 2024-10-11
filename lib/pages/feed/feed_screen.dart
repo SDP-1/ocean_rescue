@@ -183,7 +183,7 @@ class _FeedScreenState extends State<FeedScreen> {
                       backgroundImage: userProfileImage != null
                           ? NetworkImage(
                               userProfileImage!) // Use the dynamic profile image
-                          : AssetImage('assets/user/profile_pic.jpg')
+                          : const AssetImage('assets/user/profile_pic.jpg')
                               as ImageProvider, // Fallback if no image
                     ),
                     const SizedBox(width: 10),
@@ -236,7 +236,7 @@ class _FeedScreenState extends State<FeedScreen> {
                   if (index == posts.length) {
                     // Show loading indicator at the bottom if more posts are loading
                     return isLoadingMore
-                        ? Center(child: CircularProgressIndicator())
+                        ? const Center(child: CircularProgressIndicator())
                         : Container();
                   }
                   return Container(

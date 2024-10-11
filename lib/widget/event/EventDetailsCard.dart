@@ -8,13 +8,13 @@ class EventDetails extends StatelessWidget {
   final String date;
 
   const EventDetails({
-    Key? key,
+    super.key,
     required this.volunteerRange,
     required this.eventDays,
     required this.timeRange,
     required this.location,
     required this.date,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

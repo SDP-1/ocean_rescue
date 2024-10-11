@@ -175,7 +175,7 @@ class NotificationProvider with ChangeNotifier {
     DateTime now = DateTime.now();
     return _notifications
         .where(
-            (notif) => notif.timestamp.isAfter(now.subtract(Duration(days: 1))))
+            (notif) => notif.timestamp.isAfter(now.subtract(const Duration(days: 1))))
         .toList();
   }
 
@@ -184,7 +184,7 @@ class NotificationProvider with ChangeNotifier {
     DateTime now = DateTime.now();
     return _notifications
         .where((notif) =>
-            notif.timestamp.isBefore(now.subtract(Duration(days: 1))))
+            notif.timestamp.isBefore(now.subtract(const Duration(days: 1))))
         .toList();
   }
 

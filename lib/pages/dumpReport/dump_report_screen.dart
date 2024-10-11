@@ -90,7 +90,7 @@ class _ReportDumpPageState extends State<ReportDumpPage> {
         // Optionally, navigate to the dashboard after submission
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => DumpsDashboard()),
+          MaterialPageRoute(builder: (context) => const DumpsDashboard()),
         );
       } catch (e) {
         print("Error: $e");

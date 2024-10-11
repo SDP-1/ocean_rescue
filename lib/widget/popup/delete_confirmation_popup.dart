@@ -14,18 +14,18 @@ void showDeleteConfirmationPopup(BuildContext context) {
           mainAxisSize: MainAxisSize.min, // Ensure the pop-up size fits the content
           children: [
             // Main title text
-            Text(
+            const Text(
               'Are you sure that you want to',
-              style: const TextStyle(
+              style: TextStyle(
                 color: Colors.white,
                 fontSize: 16,
               ),
               textAlign: TextAlign.center,
             ),
             // DELETE text with emphasis
-            Text(
+            const Text(
               'DELETE',
-              style: const TextStyle(
+              style: TextStyle(
                 color: Colors.white,
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -33,9 +33,9 @@ void showDeleteConfirmationPopup(BuildContext context) {
               textAlign: TextAlign.center,
             ),
             // Subtitle text
-            Text(
+            const Text(
               'the reported dump?',
-              style: const TextStyle(
+              style: TextStyle(
                 color: Colors.white,
                 fontSize: 16,
               ),
@@ -46,7 +46,7 @@ void showDeleteConfirmationPopup(BuildContext context) {
             Container(
               width: 70,
               height: 70,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 shape: BoxShape.circle,
                 color: ColorTheme.liteGray, // Background for the icon circle
               ),
@@ -69,11 +69,11 @@ void showDeleteConfirmationPopup(BuildContext context) {
                     // Add your delete action logic here
                     Navigator.of(context).pop(); // Close the pop-up
                   },
-                  icon: Icon(Icons.delete, color: ColorTheme.white), // Delete icon
+                  icon: const Icon(Icons.delete, color: ColorTheme.white), // Delete icon
                   label: const Text('Confirm'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: ColorTheme.red, // Red color for confirm button
-                    minimumSize: Size(100, 40), // Button size
+                    minimumSize: const Size(100, 40), // Button size
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -85,14 +85,14 @@ void showDeleteConfirmationPopup(BuildContext context) {
                   onPressed: () {
                     Navigator.of(context).pop(); // Close the pop-up
                   },
-                  child: const Text('Cancel'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: ColorTheme.cyan, // Cyan color for cancel button
-                    minimumSize: Size(100, 40), // Button size
+                    minimumSize: const Size(100, 40), // Button size
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
+                  child: const Text('Cancel'),
                 ),
               ],
             ),

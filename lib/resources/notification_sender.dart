@@ -1,9 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import '../models/notification.dart' as CustomNotification;
-import '../models/user.dart';
 
 class NotificationSender {
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;

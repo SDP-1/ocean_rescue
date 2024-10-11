@@ -4,9 +4,9 @@ class EventInfoAlert extends StatelessWidget {
   final String alertText; // Add a field for the alert text
 
   const EventInfoAlert({
-    Key? key,
+    super.key,
     required this.alertText, // Constructor to receive the alert text
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

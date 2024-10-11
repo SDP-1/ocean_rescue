@@ -1,7 +1,6 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
-import 'package:ocean_rescue/pages/feed/feed_screen.dart'; // Make sure this import is correct
+// Make sure this import is correct
 import 'package:ocean_rescue/pages/welcome/forgotPassword.dart';
 import 'package:ocean_rescue/widget/navbar/BottomNavBar.dart';
 import '../../widget/welcome/custom_scaffold.dart';
@@ -9,7 +8,7 @@ import '../../resources/auth_methods.dart';
 import '../../theme/theme.dart';
 import 'signup_screen.dart';
 import '../../widget/common/GradientButton.dart';
-import 'splash_screen.dart'; // Import your GradientButton widget
+// Import your GradientButton widget
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});

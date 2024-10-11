@@ -75,7 +75,7 @@ class DumpsDashboard extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => ReportDumpPage()),
+                                builder: (context) => const ReportDumpPage()),
                           );
                         },
                       ),

@@ -6,24 +6,24 @@ import 'package:ocean_rescue/widget/common/CreateFormTopWidget.dart';
 import 'dart:io';
 import 'package:ocean_rescue/widget/event/EventInfoAlert.dart';
 import '../../widget/common/GradientButton.dart';
-import '../../widget/popup/ErrorPopup.dart'; // Import the popup function
+import '../../widget/popup/ErrorPopup.dart'; 
 
 class CreateEventScreen1 extends StatefulWidget {
+  const CreateEventScreen1({super.key});
+
   @override
   _CreateEventScreen1State createState() => _CreateEventScreen1State();
 }
 
 class _CreateEventScreen1State extends State<CreateEventScreen1> {
   final TextEditingController _eventNameController = TextEditingController();
-  final TextEditingController _eventDescriptionController =
-      TextEditingController();
+  final TextEditingController _eventDescriptionController = TextEditingController();
   XFile? _image;
   final ImagePicker _picker = ImagePicker();
   String? _selectedSize; // Track the selected size
 
   Future<void> _pickImage() async {
-    final XFile? selectedImage =
-        await _picker.pickImage(source: ImageSource.gallery);
+    final XFile? selectedImage = await _picker.pickImage(source: ImageSource.gallery);
     setState(() {
       _image = selectedImage;
     });
@@ -42,6 +42,9 @@ class _CreateEventScreen1State extends State<CreateEventScreen1> {
         'Please fill in all the required fields before proceeding.',
       );
     } else {
+      // Parse group size to an integer
+      int groupSize = int.parse(_selectedSize!.split(' ').first);
+
       // Navigate to CreateEventScreen2 with data
       Navigator.push(
         context,
@@ -49,8 +52,8 @@ class _CreateEventScreen1State extends State<CreateEventScreen1> {
           builder: (context) => CreateEventScreen2(
             eventName: _eventNameController.text,
             description: _eventDescriptionController.text,
-            image: _image!, // Pass the image path
-            groupSize: _selectedSize!,
+            image: _image!.path, // Pass the image path as a String
+            groupSize: groupSize, // Pass the parsed integer group size
           ),
         ),
       );
@@ -81,12 +84,12 @@ class _CreateEventScreen1State extends State<CreateEventScreen1> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            CreateFormTopWidget(
+            const CreateFormTopWidget(
               title: 'Create New Event P1',
               imagePath: 'assets/post/createNewPost.png',
             ),
             // Top Instructional Info
-            EventInfoAlert(
+            const EventInfoAlert(
               alertText:
                   "Enter the event name, a small description of the event, and upload an image for the cover.",
             ),
@@ -153,12 +156,11 @@ class _CreateEventScreen1State extends State<CreateEventScreen1> {
                       : null,
                 ),
                 child: _image == null
-                    ? Center(
+                    ? const Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
-                            Icon(Icons.upload_file,
-                                size: 50, color: Colors.grey),
+                          children: [
+                            Icon(Icons.upload_file, size: 50, color: Colors.grey),
                             SizedBox(height: 8),
                             Text(
                               'Upload Image',
@@ -220,12 +222,10 @@ class _CreateEventScreen1State extends State<CreateEventScreen1> {
 
   // Widget to build the size option
   Widget _groupSizeOption(String text, IconData icon) {
-    bool isSelected =
-        _selectedSize == text; // Check if the current option is selected
+    bool isSelected = _selectedSize == text; // Check if the current option is selected
 
     return GestureDetector(
-      onTap: () =>
-          setState(() => _selectedSize = text), // Update the selected size
+      onTap: () => setState(() => _selectedSize = text), // Update the selected size
       child: Container(
         height: 80,
         width: 100,

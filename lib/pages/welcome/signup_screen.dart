@@ -48,7 +48,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           if (context.mounted) {
             Navigator.of(context).pushReplacement(
               MaterialPageRoute(
-                builder: (context) => SplashScreen(),
+                builder: (context) => const SplashScreen(),
               ),
             );
           }
