@@ -1,10 +1,13 @@
 import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:ocean_rescue/resources/auth_methods.dart';
 import 'package:ocean_rescue/resources/storage_methods.dart';
 import 'package:uuid/uuid.dart';
+
+import '../models/participant.dart';
 
 class EventFirestoreMethods {
   final AuthMethods _auth = AuthMethods();
@@ -68,20 +71,6 @@ class EventFirestoreMethods {
       Uint8List imageBytes = await imageUrl.readAsBytes();
       String eventUrl = await uploadImageToStorage(eventId, imageBytes);
 
-      // await _firestore.collection('events').add({
-      //   'uid': uid,
-      //   'eventId': eventId,
-      //   'event_name': eventName,
-      //   'description': description,
-      //   'location': location,
-      //   'date': date.toIso8601String(), // Store date as string
-      //   'start_time': startTime,
-      //   'end_time': endTime,
-      //   'group_size': groupSize,
-      //   'image_url': eventUrl,
-      //   'duration': duration,
-      // });
-
 // Create a map from the provided parameters
       Map<String, dynamic> data = {
         'uid': uid,
@@ -142,6 +131,25 @@ class EventFirestoreMethods {
     } catch (e) {
       print('Error retrieving event by ID: $e');
       throw Exception('Failed to retrieve event by ID: $e');
+    }
+  }
+
+  /// Method to add a participant to an event.
+  Future<void> addParticipant(
+      BuildContext context, String eventId, Participant participant) async {
+    try {
+      // Get a reference to the event document
+      DocumentReference eventDoc = _firestore.collection('events').doc(eventId);
+
+      // Update the event document by adding the new participant to the participants array
+      await eventDoc.update({
+        'participants': FieldValue.arrayUnion([participant.toJson()]),
+      });
+
+      print('Participant added successfully to event: $eventId');
+    } catch (e) {
+      print('Error adding participant: $e');
+      throw Exception('Failed to add participant: $e');
     }
   }
 }
