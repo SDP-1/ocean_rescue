@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class EventDetails extends StatelessWidget {
+class EventDetailsCard extends StatelessWidget {
   final String volunteerRange;
   final String eventDays;
   final String timeRange;
   final String location;
   final String date;
 
-  const EventDetails({
+  const EventDetailsCard({
     Key? key,
     required this.volunteerRange,
     required this.eventDays,

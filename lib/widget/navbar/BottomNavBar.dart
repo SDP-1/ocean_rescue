@@ -6,7 +6,7 @@ import 'package:ocean_rescue/pages/event/event_screen.dart';
 import 'package:ocean_rescue/pages/menu/menu_screen.dart';
 import 'package:ocean_rescue/pages/notification/notification_screen.dart';
 import 'package:ocean_rescue/pages/profile/edit_profile.dart';
-import 'package:ocean_rescue/pages/qr/qr_scanner_screen.dart';
+import 'package:ocean_rescue/pages/qr/qr_scanner.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 
 import '../../pages/feed/feed_screen.dart';
@@ -14,7 +14,8 @@ import '../../theme/colorTheme.dart';
 
 class BottomNavBar extends StatelessWidget {
   static final ValueNotifier<bool> isNavBarVisible = ValueNotifier(true);
-  static final ValueNotifier<int> selectedTabIndex = ValueNotifier(0); // To track selected tab index
+  static final ValueNotifier<int> selectedTabIndex =
+      ValueNotifier(0); // To track selected tab index
 
   const BottomNavBar({super.key});
 
@@ -30,7 +31,8 @@ class BottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    PersistentTabController controller = PersistentTabController(initialIndex: 0);
+    PersistentTabController controller =
+        PersistentTabController(initialIndex: 0);
 
     return ValueListenableBuilder<bool>(
       valueListenable: isNavBarVisible,
@@ -60,7 +62,7 @@ class BottomNavBar extends StatelessWidget {
     return [
       const FeedScreen(),
       DumpsDashboard(),
-      const QrScanner(),
+      QRScanner(),
       EventScreen(),
       const EditProfile(),
     ];
