@@ -39,7 +39,8 @@ class _SignInScreenState extends State<SignInScreen> {
         if (context.mounted) {
           Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute(
-              builder: (context) => const BottomNavBar(),
+              builder: (context) =>
+              const BottomNavBar(), // Adjust navigation to BottomNavBar
             ),
                 (route) => false,
           );
@@ -105,6 +106,7 @@ class _SignInScreenState extends State<SignInScreen> {
                           color: Colors.black,
                         ),
                       ),
+
                       const SizedBox(height: 10.0),
                       // Email Text Field
                       SizedBox(
@@ -124,13 +126,17 @@ class _SignInScreenState extends State<SignInScreen> {
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
+                            // Adding style to the text field
                             hintStyle: const TextStyle(fontSize: 14),
                             labelStyle: const TextStyle(fontSize: 14),
                           ),
-                          style: const TextStyle(fontSize: 14),
+                          style:
+                          const TextStyle(fontSize: 14), // Input text size
                         ),
                       ),
+
                       const SizedBox(height: 15.0),
+
                       // Password Text Field
                       SizedBox(
                         width: double.infinity,
@@ -151,13 +157,17 @@ class _SignInScreenState extends State<SignInScreen> {
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
+                            // Adding style to the text field
                             hintStyle: const TextStyle(fontSize: 14),
                             labelStyle: const TextStyle(fontSize: 14),
                           ),
-                          style: const TextStyle(fontSize: 14),
+                          style:
+                          const TextStyle(fontSize: 14), // Input text size
                         ),
                       ),
+
                       const SizedBox(height: 15.0),
+
                       // Remember me and Forgot Password
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -182,13 +192,12 @@ class _SignInScreenState extends State<SignInScreen> {
                           ),
                           GestureDetector(
                             onTap: () {
+                              // Uncomment and implement forgot password functionality if needed
                               Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                  const ForgotPassword(),
-                                ),
-                              );
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                      const ForgotPassword()));
                             },
                             child: Text(
                               'Forgot password?',
@@ -201,8 +210,10 @@ class _SignInScreenState extends State<SignInScreen> {
                           ),
                         ],
                       ),
+
                       const SizedBox(height: 15.0),
-                      // Sign-in button
+
+                      // Sign-in button styled like Sign-Up button
                       GradientButton(
                         text: 'Sign In',
                         onTap: () {
@@ -217,6 +228,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                 content: Text('Processing Data'),
                               ),
                             );
+
                             userLogin();
                           } else if (!rememberPassword) {
                             ScaffoldMessenger.of(context).showSnackBar(
@@ -236,7 +248,9 @@ class _SignInScreenState extends State<SignInScreen> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
+
                       const SizedBox(height: 20.0),
+
                       // Divider for "Sign in with"
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -265,8 +279,10 @@ class _SignInScreenState extends State<SignInScreen> {
                           ),
                         ],
                       ),
+
                       const SizedBox(height: 15.0),
-                      // Sign in with Google button
+
+                      // Sign in with Google styled like Sign-Up page
                       SizedBox(
                         width: double.infinity,
                         height: 50,
@@ -282,45 +298,61 @@ class _SignInScreenState extends State<SignInScreen> {
                               borderRadius: BorderRadius.circular(10),
                             ),
                             side: BorderSide(
-                              color: lightColorScheme.primary,
+                              color: lightColorScheme.primary, // Custom color
                               width: 2,
                             ),
                           ),
                         ),
                       ),
+
                       const SizedBox(height: 15.0),
+
                       // Redirect to Sign Up
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const SignUpScreen(),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text(
+                            'Don\'t have an account?',
+                            style: TextStyle(
+                              color: Colors.black45,
+                              fontSize: 12, // Adjust font size
                             ),
-                          );
-                        },
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Text(
-                              'Don\'t have an account?',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.black45,
+                          ),
+                          const SizedBox(
+                              height: 15.0), // Space between text and button
+                          SizedBox(
+                            width: double.infinity,
+                            height: 50, // Same height as the 'Sign In' button
+                            child: OutlinedButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                    const SignUpScreen(), // Navigate to SignUpScreen
+                                  ),
+                                );
+                              },
+                              style: OutlinedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 15), // Button padding
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      10), // Rounded corners
+                                ),
+                              ),
+                              child: const Text(
+                                'Sign Up', // Button text
+                                style: TextStyle(
+                                  color: Color(0xFF1D225C), // Text color
+                                ),
                               ),
                             ),
-                            const SizedBox(width: 5),
-                            Text(
-                              'Create account',
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                                color: lightColorScheme.primary,
-                              ),
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
+
+                      const SizedBox(height: 10.0),
                     ],
                   ),
                 ),

@@ -3,8 +3,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:ocean_rescue/pages/Achievements/achievements_page.dart';
 import '../../widget/common/GradientButton.dart';
+import '../chat/chat_list_screen.dart';
 import '../leaderboard/leaderboard.dart';
 import '../membership/membership.dart';
+import '../notification/notification_screen.dart';
 import '../welcome/signin_screen.dart';
 import 'edit_profile.dart';
 
@@ -95,12 +97,22 @@ class _ViewProfilePageState extends State<ViewProfilePage> {
           IconButton(
             icon: const Icon(Icons.message, color: Color(0xFF1877F2)),
             tooltip: 'Message',
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ChatListScreen()),
+              );
+            },
           ),
           IconButton(
             icon: const Icon(Icons.notifications, color: Color(0xFF1877F2)),
             tooltip: 'Notifications',
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => NotificationScreen()),
+              );
+            },
           ),
         ],
       ),
@@ -252,28 +264,28 @@ class _ViewProfilePageState extends State<ViewProfilePage> {
                         ),
                       ],
                     ),
-                    Text('See All', style: TextStyle(color: Colors.blue)),
                   ],
                 ),
               ),
-              const Padding(
+               Padding(
                 padding: EdgeInsets.all(10.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Column(
-                      children: [
-                        Icon(Icons.cleaning_services, color: Colors.red),
-                        SizedBox(height: 10),
-                        Text('5 cleanup complete'),
-                      ],
+                    Image.asset(
+                      'assets/achievements/1.png', // Replace with your actual image path
+                      width: 50,
+                      height: 50,
                     ),
-                    Column(
-                      children: [
-                        Icon(Icons.event, color: Colors.orange),
-                        SizedBox(height: 10),
-                        Text('2 Event create complete'),
-                      ],
+                    Image.asset(
+                      'assets/achievements/4.png', // Replace with your actual image path
+                      width: 50,
+                      height: 50,
+                    ),
+                    Image.asset(
+                      'assets/achievements/5.png', // Replace with your actual image path
+                      width: 50,
+                      height: 50,
                     ),
                   ],
                 ),
@@ -293,7 +305,7 @@ class _ViewProfilePageState extends State<ViewProfilePage> {
                     _buildGridItem(Icons.group, 'Followers', () {}),
                     _buildGridItem(Icons.group_add, 'Following', () {}),
                     _buildGridItem(Icons.history, 'Event History', () {}),
-                    _buildGridItem(Icons.leaderboard, 'Leader board', () {
+                    _buildGridItem(Icons.leaderboard, 'Leaderboard', () {
                       // Add your leaderboard page navigation here
                       Navigator.push(
                         context,
@@ -321,7 +333,7 @@ class _ViewProfilePageState extends State<ViewProfilePage> {
               // Rest of the options
               const ListTile(
                 leading: Icon(Icons.settings),
-                title: Text('Settings & Privacy'),
+                title: Text('Settings'),
               ),
               const ListTile(
                 leading: Icon(Icons.help),

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../chat/chat_list_screen.dart';
+import '../notification/notification_screen.dart';
 import '../profile/view_profile.dart';
 
 class AchievementsPage extends StatefulWidget {
@@ -24,21 +26,33 @@ class _AchievementsPageState extends State<AchievementsPage> {
           ),
         ),
         actions: <Widget>[
+          // IconButton(
+          //   icon: const Icon(
+          //     Icons.search,
+          //     color: Color(0xFF1877F2),
+          //   ),
+          //   tooltip: 'Search',
+          //   onPressed: () {},
+          // ),
           IconButton(
-            icon: const Icon(
-              Icons.search,
-              color: Color(0xFF1877F2),
-            ),
-            tooltip: 'Search',
-            onPressed: () {},
+            icon: const Icon(Icons.message, color: Color(0xFF1877F2)),
+            tooltip: 'Message',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ChatListScreen()),
+              );
+            },
           ),
           IconButton(
-            icon: const Icon(
-              Icons.message,
-              color: Color(0xFF1877F2),
-            ),
-            tooltip: 'Message',
-            onPressed: () {},
+            icon: const Icon(Icons.notifications, color: Color(0xFF1877F2)),
+            tooltip: 'Notifications',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => NotificationScreen()),
+              );
+            },
           ),
         ],
       ),

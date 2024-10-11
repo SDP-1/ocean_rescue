@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:ocean_rescue/widget/common/GradientButton.dart';
 import '../../resources/profile_firestore_methods.dart';
@@ -7,6 +10,8 @@ import 'change_password_section.dart'; // Import ChangePasswordSection
 import 'package:ocean_rescue/resources/auth_methods.dart'; // Import your auth methods
 import 'package:ocean_rescue/models/user.dart';
 import 'email_display_box.dart'; // Import your User model if needed
+import '../../resources/profile_firestore_methods.dart';
+import 'profile_picture.dart';
 
 class EditProfile extends StatefulWidget {
   const EditProfile({Key? key}) : super(key: key);
@@ -21,6 +26,7 @@ class _EditProfileState extends State<EditProfile> {
   final TextEditingController _bioController = TextEditingController(); // Add a controller for bio
   String email = ""; // Store email retrieved from Firestore
   String photoUrl = ""; // Store photo URL retrieved from Firestore
+  File? _selectedImage; // To hold the selected image file
 
   @override
   void initState() {
@@ -60,12 +66,33 @@ class _EditProfileState extends State<EditProfile> {
     });
   }
 
-  // Save the updated username and bio to Firestore
-  void _saveDetails() async {
+  // Save the updated username, bio, and photo URL
+  Future<void> _saveDetails() async {
     String username = _usernameController.text;
     String bio = _bioController.text;
-    String response = await ProfileFirestoreMethods().updateUsernameAndBio(username: username, bio: bio);
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(response))); // Show response message
+
+    String updatedPhotoUrl = photoUrl; // By default, use the existing photo URL
+    if (_selectedImage != null) {
+      updatedPhotoUrl = await _uploadImageToFirebase(_selectedImage!); // Upload new image and get URL
+    }
+
+    String response = await ProfileFirestoreMethods().updateUsernameBioAndPhoto(
+      username: username,
+      bio: bio,
+      photoUrl: updatedPhotoUrl, // Save the updated photo URL
+    );
+
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(response)));
+  }
+
+  // Function to upload image to Firebase Storage
+  Future<String> _uploadImageToFirebase(File image) async {
+    String uid = FirebaseAuth.instance.currentUser!.uid;
+    Reference storageRef = FirebaseStorage.instance.ref().child('profilePics').child(uid);
+
+    UploadTask uploadTask = storageRef.putFile(image);
+    TaskSnapshot snapshot = await uploadTask;
+    return await snapshot.ref.getDownloadURL(); // Get the download URL after upload
   }
 
   @override
@@ -83,7 +110,15 @@ class _EditProfileState extends State<EditProfile> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            ProfilePictureSection(photoUrl: photoUrl), // Pass photoUrl to the ProfilePictureSection
+            ProfilePictureSection(
+              photoUrl: photoUrl,
+              // onImageSelected: (File image) {
+              //   setState(() {
+              //     _selectedImage = image; // Store the selected image
+              //   });
+              // },
+            ), // Pass photoUrl and onImageSelected to the ProfilePictureSection
+            // Pass photoUrl to the ProfilePictureSection
             const SizedBox(height: 20),
             UserDetailsForm(
               usernameController: _usernameController,
