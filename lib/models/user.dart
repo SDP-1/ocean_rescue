@@ -8,7 +8,7 @@ class User {
   final String bio;
   final List followers;
   final List following;
-  double? exp;
+  int exp;
   List<String> chats; // Property to hold chat IDs
   List<String> notifications; // Property to hold notification IDs
 

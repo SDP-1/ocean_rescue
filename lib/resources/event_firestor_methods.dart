@@ -68,7 +68,22 @@ class EventFirestoreMethods {
       Uint8List imageBytes = await imageUrl.readAsBytes();
       String eventUrl = await uploadImageToStorage(eventId, imageBytes);
 
-      await _firestore.collection('events').add({
+      // await _firestore.collection('events').add({
+      //   'uid': uid,
+      //   'eventId': eventId,
+      //   'event_name': eventName,
+      //   'description': description,
+      //   'location': location,
+      //   'date': date.toIso8601String(), // Store date as string
+      //   'start_time': startTime,
+      //   'end_time': endTime,
+      //   'group_size': groupSize,
+      //   'image_url': eventUrl,
+      //   'duration': duration,
+      // });
+
+// Create a map from the provided parameters
+      Map<String, dynamic> data = {
         'uid': uid,
         'eventId': eventId,
         'event_name': eventName,
@@ -80,7 +95,10 @@ class EventFirestoreMethods {
         'group_size': groupSize,
         'image_url': eventUrl,
         'duration': duration,
-      });
+      };
+
+      // Save the report to Firestore
+      await _firestore.collection('events').doc(eventId).set(data);
       print('Event created successfully');
     } catch (e) {
       print('Error creating event: $e');
@@ -106,6 +124,24 @@ class EventFirestoreMethods {
     } catch (e) {
       print('Error retrieving events: $e');
       throw Exception('Failed to retrieve events: $e');
+    }
+  }
+
+  /// Method to retrieve an event by its ID from Firestore.
+  Future<Map<String, dynamic>?> getEventById(String eventId) async {
+    try {
+      DocumentSnapshot eventDoc =
+          await _firestore.collection('events').doc(eventId).get();
+
+      if (eventDoc.exists) {
+        return eventDoc.data() as Map<String, dynamic>;
+      } else {
+        print('No event found for ID: $eventId');
+        return null; // No event found for the given ID
+      }
+    } catch (e) {
+      print('Error retrieving event by ID: $e');
+      throw Exception('Failed to retrieve event by ID: $e');
     }
   }
 }

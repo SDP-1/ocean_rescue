@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:ocean_rescue/pages/event/event_creater_event_screen.dart';
+import 'package:ocean_rescue/resources/auth_methods.dart';
 import 'package:ocean_rescue/resources/event_firestor_methods.dart';
 import 'package:ocean_rescue/theme/colorTheme.dart';
+import 'package:ocean_rescue/pages/event/event_details_screen.dart'; // Page for creators
+import 'package:ocean_rescue/pages/event/create_event_screen2.dart'; // Page for non-creators
 
 class AllEventsSection extends StatefulWidget {
   const AllEventsSection({Key? key}) : super(key: key);
@@ -10,6 +14,11 @@ class AllEventsSection extends StatefulWidget {
 }
 
 class _AllEventsSectionState extends State<AllEventsSection> {
+  String getCurrentUserId() {
+    AuthMethods _auth = AuthMethods();
+    return _auth.getCurrentUserId() ?? 'defaultUserId';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -46,16 +55,44 @@ class _AllEventsSectionState extends State<AllEventsSection> {
             final events = snapshot.data!;
             return Column(
               children: events.map((event) {
-                return _buildEventCard(
-                  imageUrl:
-                      event['image_url'] ?? 'https://via.placeholder.com/150',
-                  title: event['event_name'] ?? 'Untitled Event',
-                  date: event['date'] ?? 'Date not available',
-                  time:
-                      "${event['start_time'] ?? 'Start time'} - ${event['end_time'] ?? 'End time'}",
-                  location: event['location'] ?? 'Location not specified',
-                  volunteers: event['group_size'] ?? 'Unknown group size',
-                  status: event['status'] ?? 'Status unknown',
+                return GestureDetector(
+                  onTap: () {
+                    // Navigate to different pages based on event creator
+                    String currentUserId = getCurrentUserId();
+                    String eventCreatorId = event['uid'];
+                    String eventId = event['eventId'];
+
+                    if (eventCreatorId == currentUserId) {
+                      // Navigate to PageA if the current user created the event
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => EventCreaterDetailsScreen(
+                            eventId: eventId,
+                          ), 
+                        ),
+                      );
+                    } else {
+                      // Navigate to PageB if the current user did not create the event
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const EventDetailsScreen(),
+                        ),
+                      );
+                    }
+                  },
+                  child: _buildEventCard(
+                    imageUrl:
+                        event['image_url'] ?? 'https://via.placeholder.com/150',
+                    title: event['event_name'] ?? 'Untitled Event',
+                    date: event['date'] ?? 'Date not available',
+                    time:
+                        "${event['start_time'] ?? 'Start time'} - ${event['end_time'] ?? 'End time'}",
+                    location: event['location'] ?? 'Location not specified',
+                    volunteers: event['group_size'] ?? 'Unknown group size',
+                    status: event['status'] ?? 'Status unknown',
+                  ),
                 );
               }).toList(),
             );
@@ -98,11 +135,9 @@ class _AllEventsSectionState extends State<AllEventsSection> {
           child: Padding(
             padding: const EdgeInsets.all(10),
             child: Stack(
-              // Stack used to position the status at the bottom-right
               children: [
                 Row(
-                  crossAxisAlignment:
-                      CrossAxisAlignment.start, // Aligns to the top
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Event image
                     Container(
@@ -116,7 +151,7 @@ class _AllEventsSectionState extends State<AllEventsSection> {
                         ),
                       ),
                     ),
-                    const SizedBox(width: 16), // Space between image and text
+                    const SizedBox(width: 16),
 
                     // Expanded column for event details
                     Expanded(
@@ -130,9 +165,8 @@ class _AllEventsSectionState extends State<AllEventsSection> {
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
-                            overflow:
-                                TextOverflow.ellipsis, // Ellipsis for long text
-                            maxLines: 1, // Single line for the title
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
                           ),
                           const SizedBox(height: 8),
 
@@ -147,8 +181,7 @@ class _AllEventsSectionState extends State<AllEventsSection> {
                                   '$date | $time',
                                   style: const TextStyle(
                                       fontSize: 14, color: Colors.grey),
-                                  overflow: TextOverflow
-                                      .ellipsis, // Ellipsis for long text
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
                             ],
@@ -166,8 +199,7 @@ class _AllEventsSectionState extends State<AllEventsSection> {
                                   '$volunteers Volunteers',
                                   style: const TextStyle(
                                       fontSize: 14, color: Colors.grey),
-                                  overflow: TextOverflow
-                                      .ellipsis, // Ellipsis for long text
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
                             ],
@@ -185,8 +217,7 @@ class _AllEventsSectionState extends State<AllEventsSection> {
                                   location,
                                   style: const TextStyle(
                                       fontSize: 14, color: Colors.grey),
-                                  overflow: TextOverflow
-                                      .ellipsis, // Ellipsis for long text
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
                             ],
@@ -197,7 +228,7 @@ class _AllEventsSectionState extends State<AllEventsSection> {
                   ],
                 ),
 
-                // Status indicator placed at the bottom-right
+                // Status indicator
                 Positioned(
                   right: 0,
                   bottom: 0,
@@ -206,16 +237,11 @@ class _AllEventsSectionState extends State<AllEventsSection> {
                       color: getStatusColor(status),
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 6,
-                      vertical: 2,
-                    ),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                     child: Text(
                       status,
-                      style: const TextStyle(
-                        fontSize: 8, // Smaller font size for status
-                        color: Colors.white,
-                      ),
+                      style: const TextStyle(fontSize: 8, color: Colors.white),
                     ),
                   ),
                 ),
