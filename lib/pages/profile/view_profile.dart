@@ -21,6 +21,8 @@ class _ViewProfilePageState extends State<ViewProfilePage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance; // Initialize Firestore
   String username = ''; // Variable to store username
   int exp = 0; // Variable to store experience points
+  int followersCount = 0; // Variable to store followers count
+  int followingCount = 0; // Variable to store following count
   bool isLoading = true; // Variable to track loading state
   String errorMessage = ''; // Variable to store error messages
 
@@ -45,6 +47,8 @@ class _ViewProfilePageState extends State<ViewProfilePage> {
           setState(() {
             username = data['username'] ?? 'Unknown'; // Set the username
             exp = data['exp'] ?? 0; // Set the exp
+            followersCount = (data['followers'] as List).length; // Get followers count
+            followingCount = (data['following'] as List).length;
             isLoading = false; // Set loading to false once data is fetched
           });
         } else {
@@ -167,7 +171,7 @@ class _ViewProfilePageState extends State<ViewProfilePage> {
                       crossAxisAlignment: CrossAxisAlignment.start, // Aligns the stats to the start
                       children: [
                         const SizedBox(height: 10), // Space for the top
-                        const Row(
+                        Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             Column(
@@ -179,14 +183,14 @@ class _ViewProfilePageState extends State<ViewProfilePage> {
                             ),
                             Column(
                               children: [
-                                Text('0', style: TextStyle(fontWeight: FontWeight.bold)),
+                                Text('$followersCount', style: TextStyle(fontWeight: FontWeight.bold)),
                                 SizedBox(height: 5),
                                 Text('Followers'),
                               ],
                             ),
                             Column(
                               children: [
-                                Text('0', style: TextStyle(fontWeight: FontWeight.bold)),
+                                Text('$followingCount', style: TextStyle(fontWeight: FontWeight.bold)),
                                 SizedBox(height: 5),
                                 Text('Following'),
                               ],
