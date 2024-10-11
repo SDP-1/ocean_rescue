@@ -85,6 +85,9 @@ flutter:
     - assets/medals/
     - assets/dump/
     - assets/welcome/
+    - assets/achievements/
+    - assets/medals/
+    - assets/leaderboard/
     # - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 
