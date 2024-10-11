@@ -12,7 +12,7 @@ class PostDescription extends StatelessWidget {
   final VoidCallback onToggleDescription;
 
   const PostDescription({
-    Key? key,
+    super.key,
     required this.username,
     required this.title,
     required this.description,
@@ -20,7 +20,7 @@ class PostDescription extends StatelessWidget {
     required this.likeCount,
     required this.commentLen,
     required this.onToggleDescription,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

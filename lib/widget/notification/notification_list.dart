@@ -7,7 +7,7 @@ import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore for f
 class NotificationList extends StatelessWidget {
   final List<CustomNotification.Notification> notifications;
 
-  NotificationList({required this.notifications, required void Function(CustomNotification.Notification notification) onNotificationTap});
+  const NotificationList({super.key, required this.notifications, required void Function(CustomNotification.Notification notification) onNotificationTap});
 
   @override
   Widget build(BuildContext context) {
@@ -59,9 +59,9 @@ class NotificationList extends StatelessWidget {
             ? null
             : (photoUrl != null && photoUrl.isNotEmpty
                 ? NetworkImage(photoUrl)
-                : AssetImage('assets/images/default_user.png')
+                : const AssetImage('assets/images/default_user.png')
                     as ImageProvider),
-        child: isLoading ? CircularProgressIndicator() : null,
+        child: isLoading ? const CircularProgressIndicator() : null,
       ),
       title: Text(
         notification.title,
@@ -128,7 +128,7 @@ class NotificationList extends StatelessWidget {
                   ),
                   ElevatedButton(
                     style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(Colors.red),
+                      backgroundColor: WidgetStateProperty.all(Colors.red),
                     ),
                     onPressed: () {
                       _deleteNotification(context, notification.id);
@@ -170,7 +170,7 @@ class NotificationList extends StatelessWidget {
     Provider.of<NotificationProvider>(context, listen: false)
         .deleteNotification(notificationId);
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Notification deleted')),
+      const SnackBar(content: Text('Notification deleted')),
     );
   }
 }

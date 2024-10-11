@@ -132,10 +132,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              CreateFormTopWidget(
+              const CreateFormTopWidget(
                   title: 'Create New Post',
                   imagePath: 'assets/post/createNewPost.png'),
-              EventInfoAlert(
+              const EventInfoAlert(
                 alertText:
                     "Enter the post name, creative title and a small description of the post, and upload an image for the post.",
               ),

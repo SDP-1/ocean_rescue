@@ -12,6 +12,8 @@ import '../dumpReport/dump_description_edit.dart';
 import '../../resources/auth_methods.dart';
 
 class DumpReportHistory extends StatefulWidget {
+  const DumpReportHistory({super.key});
+
   @override
   _DumpReportHistoryState createState() => _DumpReportHistoryState();
 }
@@ -33,7 +35,7 @@ class _DumpReportHistoryState extends State<DumpReportHistory> {
 
   Future<void> _fetchCurrentUserUid() async {
     AuthMethods authMethods = AuthMethods();
-    currentUserUid = await authMethods
+    currentUserUid = authMethods
         .getCurrentUserId(); // Ensure this method is asynchronous if it involves a Future
     await _fetchDumpReports(); // Call fetchDumpReports after retrieving the UID
   }
@@ -86,8 +88,8 @@ class _DumpReportHistoryState extends State<DumpReportHistory> {
       body: Column(
         children: [
           // Add the back arrow and title
-          Padding(
-            padding: const EdgeInsets.all(8.0),
+          const Padding(
+            padding: EdgeInsets.all(8.0),
             child: Row(
               children: [
                 Text(
@@ -103,7 +105,7 @@ class _DumpReportHistoryState extends State<DumpReportHistory> {
           ),
           Expanded(
             child: _isLoading
-                ? Center(child: CircularProgressIndicator())
+                ? const Center(child: CircularProgressIndicator())
                 : SingleChildScrollView(
                     child: Column(
                       children: [
@@ -149,14 +151,14 @@ class _DumpReportHistoryState extends State<DumpReportHistory> {
         children: [
           Text(
             title,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
               color: ColorTheme.darkBlue2,
             ),
           ),
           IconButton(
-            icon: Icon(Icons.sort_by_alpha,
+            icon: const Icon(Icons.sort_by_alpha,
                 color: ColorTheme.darkBlue2), // A-Z sorting icon
             onPressed: () {
               _toggleSort();
@@ -172,7 +174,7 @@ class _DumpReportHistoryState extends State<DumpReportHistory> {
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Text(
         description,
-        style: TextStyle(
+        style: const TextStyle(
           fontSize: 16,
           color: ColorTheme.black,
         ),
@@ -198,7 +200,7 @@ class _DumpReportHistoryState extends State<DumpReportHistory> {
 
     return ListView.builder(
       physics:
-          NeverScrollableScrollPhysics(), // Prevent scrolling inside the ListView
+          const NeverScrollableScrollPhysics(), // Prevent scrolling inside the ListView
       shrinkWrap: true, // Allow ListView to take the height of its children
       itemCount: dumps.length,
       itemBuilder: (context, index) {
@@ -223,7 +225,7 @@ class _DumpReportHistoryState extends State<DumpReportHistory> {
             );
           },
           child: Card(
-            margin: EdgeInsets.symmetric(vertical: 8.0),
+            margin: const EdgeInsets.symmetric(vertical: 8.0),
             child: Padding(
               padding:
                   const EdgeInsets.all(8.0), // Add padding for better spacing
@@ -241,7 +243,7 @@ class _DumpReportHistoryState extends State<DumpReportHistory> {
                       ),
                     ),
                   ),
-                  SizedBox(width: 12), // Spacing between image and text
+                  const SizedBox(width: 12), // Spacing between image and text
 
                   // Description Text
                   Expanded(
@@ -250,12 +252,12 @@ class _DumpReportHistoryState extends State<DumpReportHistory> {
                       children: [
                         Text(
                           report.title,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                             height: 4), // Spacing between title and description
                         Text(
                           report.description,
@@ -316,13 +318,13 @@ class _DumpReportHistoryState extends State<DumpReportHistory> {
             Container(
               width: 25, // Reduced circle size
               height: 25,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 shape: BoxShape.circle,
                 color: ColorTheme.darkBlue2, // Blue background
               ),
               child: IconButton(
                 iconSize: 8, // Smaller icon size
-                icon: FaIcon(FontAwesomeIcons.chevronLeft,
+                icon: const FaIcon(FontAwesomeIcons.chevronLeft,
                     color: ColorTheme.white),
                 onPressed: () {
                   // Logic for the previous page
@@ -355,13 +357,13 @@ class _DumpReportHistoryState extends State<DumpReportHistory> {
             Container(
               width: 25, // Reduced circle size
               height: 25,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 shape: BoxShape.circle,
                 color: ColorTheme.darkBlue2, // Blue background
               ),
               child: IconButton(
                 iconSize: 8, // Smaller icon size
-                icon: FaIcon(FontAwesomeIcons.chevronRight,
+                icon: const FaIcon(FontAwesomeIcons.chevronRight,
                     color: ColorTheme.white),
                 onPressed: () {
                   // Logic for the next page

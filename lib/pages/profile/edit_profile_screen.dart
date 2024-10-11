@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ocean_rescue/widget/common/GradientButton.dart';
 
 class EditProfile extends StatefulWidget {
-  const EditProfile({Key? key}) : super(key: key);
+  const EditProfile({super.key});
 
   @override
   _EditProfileState createState() => _EditProfileState();
@@ -68,7 +68,7 @@ class _EditProfileState extends State<EditProfile> {
 }
 
 class ProfilePictureSection extends StatelessWidget {
-  const ProfilePictureSection({Key? key}) : super(key: key);
+  const ProfilePictureSection({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -101,18 +101,18 @@ class ProfilePictureSection extends StatelessWidget {
 }
 
 class UserDetailsForm extends StatelessWidget {
-  const UserDetailsForm({Key? key}) : super(key: key);
+  const UserDetailsForm({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return const Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const TextFieldWidget(label: "Username"),
-        const SizedBox(height: 16),
-        const TextFieldWidget(label: "Full name"),
-        const SizedBox(height: 16),
-        const TextFieldWidget(
+        TextFieldWidget(label: "Username"),
+        SizedBox(height: 16),
+        TextFieldWidget(label: "Full name"),
+        SizedBox(height: 16),
+        TextFieldWidget(
           label: "Email",
           isEmailField: true,
           enabled: false, // Disabling email field as shown in the design
@@ -128,11 +128,11 @@ class TextFieldWidget extends StatelessWidget {
   final bool enabled;
 
   const TextFieldWidget({
-    Key? key,
+    super.key,
     required this.label,
     this.isEmailField = false,
     this.enabled = true,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -164,7 +164,7 @@ class TextFieldWidget extends StatelessWidget {
 }
 
 class ChangePasswordSection extends StatelessWidget {
-  const ChangePasswordSection({Key? key}) : super(key: key);
+  const ChangePasswordSection({super.key});
 
   @override
   Widget build(BuildContext context) {

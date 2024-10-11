@@ -3,7 +3,7 @@ import 'package:ocean_rescue/resources/event_firestor_methods.dart';
 import 'package:ocean_rescue/theme/colorTheme.dart';
 
 class AllEventsSection extends StatefulWidget {
-  const AllEventsSection({Key? key}) : super(key: key);
+  const AllEventsSection({super.key});
 
   @override
   _AllEventsSectionState createState() => _AllEventsSectionState();

@@ -52,7 +52,7 @@ class _ViewProfilePageState extends State<ViewProfilePage> {
               children: [
                 const SizedBox(width: 20),
                 // Profile photo on the left
-                CircleAvatar(
+                const CircleAvatar(
                   radius: 50,
                   backgroundImage: AssetImage('assets/user/user1.jpg'), // Replace with your image
                 ),
@@ -63,9 +63,9 @@ class _ViewProfilePageState extends State<ViewProfilePage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start, // Aligns the stats to the start
                     children: [
-                      Row(
+                      const Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: const [
+                        children: [
                           Column(
                             children: [
                               Text('1', style: TextStyle(fontWeight: FontWeight.bold)),
@@ -183,7 +183,7 @@ class _ViewProfilePageState extends State<ViewProfilePage> {
                   crossAxisSpacing: 10.0,
                   mainAxisSpacing: 8.0,
                   childAspectRatio: 2 / 1, // Adjusted for smaller box sizes
-                  physics: NeverScrollableScrollPhysics(), // Disable grid scrolling
+                  physics: const NeverScrollableScrollPhysics(), // Disable grid scrolling
                   children: [
                     _buildGridItem(Icons.group, 'Followers'),
                     _buildGridItem(Icons.group_add, 'Following'),
@@ -229,7 +229,7 @@ class _ViewProfilePageState extends State<ViewProfilePage> {
     return Container(
       height: 80,
       decoration: BoxDecoration(
-        color: Color(0xFFDCF2F1), // Yellow background for each grid item
+        color: const Color(0xFFDCF2F1), // Yellow background for each grid item
         borderRadius: BorderRadius.circular(8), // Slightly reduced corner radius
       ),
       child: Column(

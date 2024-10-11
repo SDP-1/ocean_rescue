@@ -94,9 +94,9 @@ class EventDetailsScreen extends StatelessWidget {
               ),
             ),
 
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0),
-              child: const EventInfoAlert(
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20.0),
+              child: EventInfoAlert(
                 alertText:
                     "Scan the QR Code to join the event. Once you are done helping out, please scan the QR Code again to earn XP and unlock new achievements.", // Pass the text here
               ),

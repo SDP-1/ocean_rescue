@@ -5,10 +5,10 @@ class CreateFormTopWidget extends StatelessWidget {
   final String imagePath; // Image asset path
 
   const CreateFormTopWidget({
-    Key? key,
+    super.key,
     required this.title,
     required this.imagePath,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

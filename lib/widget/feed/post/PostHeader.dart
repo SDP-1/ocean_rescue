@@ -7,11 +7,11 @@ class PostHeader extends StatelessWidget {
   final VoidCallback onOptionsPressed;
 
   const PostHeader({
-    Key? key,
+    super.key,
     required this.profileImageUrl,
     required this.username,
     required this.onOptionsPressed,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

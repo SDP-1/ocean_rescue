@@ -4,9 +4,9 @@ class EmailDisplayBox extends StatelessWidget {
   final String email;
 
   const EmailDisplayBox({
-    Key? key,
+    super.key,
     required this.email,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -3,7 +3,7 @@ import 'package:ocean_rescue/pages/event/event_details_screen.dart';
 import 'package:ocean_rescue/resources/event_firestor_methods.dart';
 
 class FeaturedEventsSection extends StatefulWidget {
-  const FeaturedEventsSection({Key? key}) : super(key: key);
+  const FeaturedEventsSection({super.key});
 
   @override
   _FeaturedEventsSectionState createState() => _FeaturedEventsSectionState();

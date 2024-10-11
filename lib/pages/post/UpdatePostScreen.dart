@@ -10,7 +10,7 @@ import 'package:ocean_rescue/pages/feed/feed_screen.dart';
 class UpdatePostScreen extends StatefulWidget {
   final Map<String, dynamic> post; // The post to be updated
 
-  const UpdatePostScreen({Key? key, required this.post}) : super(key: key);
+  const UpdatePostScreen({super.key, required this.post});
 
   @override
   State<UpdatePostScreen> createState() => _UpdatePostScreenState();
@@ -184,7 +184,7 @@ class _UpdatePostScreenState extends State<UpdatePostScreen> {
                     ),
                     const Expanded(
                       child: Padding(
-                        padding: const EdgeInsets.only(
+                        padding: EdgeInsets.only(
                             left: 40.0), // Set the left padding here
                         child: Text(
                           'Update Post',

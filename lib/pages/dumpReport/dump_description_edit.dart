@@ -11,7 +11,7 @@ class DumpDetailsScreen extends StatefulWidget {
   final String imageUrl; // Image URL
   final String uid; // User ID associated with the dump
 
-  DumpDetailsScreen({
+  const DumpDetailsScreen({super.key, 
     required this.rdid,
     required this.title,
     required this.description,
@@ -69,14 +69,14 @@ class _DumpDetailsScreenState extends State<DumpDetailsScreen> {
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.black),
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
         title: Text(
           title,
-          style: TextStyle(
+          style: const TextStyle(
             color: Colors.black,
             fontSize: 20,
             fontWeight: FontWeight.bold,
@@ -102,25 +102,25 @@ class _DumpDetailsScreenState extends State<DumpDetailsScreen> {
                       color: Colors.grey[200],
                       height: 200,
                       width: double.infinity,
-                      child: Center(
+                      child: const Center(
                         child: Icon(Icons.broken_image, color: Colors.grey),
                       ),
                     );
                   },
                 ),
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               _buildEditableSection(),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               if (isEditing)
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     ElevatedButton(
                       onPressed: _updateDetails,
-                      child: Text('Save'),
+                      child: const Text('Save'),
                     ),
-                    SizedBox(width: 16),
+                    const SizedBox(width: 16),
                     ElevatedButton(
                       onPressed: () {
                         setState(() {
@@ -131,10 +131,10 @@ class _DumpDetailsScreenState extends State<DumpDetailsScreen> {
                           isEditing = false; // Exit edit mode
                         });
                       },
-                      child: Text('Cancel'),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.grey,
                       ),
+                      child: Text('Cancel'),
                     ),
                   ],
                 ),
@@ -149,7 +149,7 @@ class _DumpDetailsScreenState extends State<DumpDetailsScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           'Title',
           style: TextStyle(
             fontSize: 18,
@@ -157,11 +157,11 @@ class _DumpDetailsScreenState extends State<DumpDetailsScreen> {
             color: Colors.black,
           ),
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         isEditing
             ? TextField(
                 controller: titleController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   hintText: 'Edit Title',
                   border: OutlineInputBorder(),
                 ),
@@ -186,7 +186,7 @@ class _DumpDetailsScreenState extends State<DumpDetailsScreen> {
                   // Conditionally render the IconButton based on user ID
                   if (currentUserUid == widget.uid)
                     IconButton(
-                      icon: Icon(Icons.edit, color: Colors.indigo),
+                      icon: const Icon(Icons.edit, color: Colors.indigo),
                       onPressed: () {
                         setState(() {
                           isEditing = true; // Enter edit mode
@@ -195,8 +195,8 @@ class _DumpDetailsScreenState extends State<DumpDetailsScreen> {
                     ),
                 ],
               ),
-        SizedBox(height: 16),
-        Text(
+        const SizedBox(height: 16),
+        const Text(
           'Description',
           style: TextStyle(
             fontSize: 18,
@@ -204,12 +204,12 @@ class _DumpDetailsScreenState extends State<DumpDetailsScreen> {
             color: Colors.black,
           ),
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         isEditing
             ? TextField(
                 controller: descriptionController,
                 maxLines: 3,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   hintText: 'Edit Description',
                   border: OutlineInputBorder(),
                 ),
@@ -240,7 +240,7 @@ class _DumpDetailsScreenState extends State<DumpDetailsScreen> {
   Future<void> _updateDetails() async {
     if (rdid.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Document ID is empty!')),
+        const SnackBar(content: Text('Document ID is empty!')),
       );
       return; // Exit if ID is empty
     }

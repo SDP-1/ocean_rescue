@@ -15,7 +15,7 @@ void DeleteConfirmationPopup(
           mainAxisSize: MainAxisSize.min,
           children: [
             // Title text
-            Text(
+            const Text(
               'Are you sure that you want to',
               style: TextStyle(
                 color: ColorTheme.black,
@@ -24,9 +24,9 @@ void DeleteConfirmationPopup(
               ),
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: 5),
+            const SizedBox(height: 5),
             // Emphasized DELETE text
-            Text(
+            const Text(
               'DELETE',
               style: TextStyle(
                 color: ColorTheme.black,
@@ -35,20 +35,20 @@ void DeleteConfirmationPopup(
               ),
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: 5),
+            const SizedBox(height: 5),
             // Main message text
             Text(
               message,
-              style: TextStyle(
+              style: const TextStyle(
                 color: ColorTheme.black,
                 fontSize: 16,
               ),
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             // Icon (custom asset or default Flutter icon)
             Image.asset('assets/popup/info.png', width: 80, height: 80),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             // Button Column for Confirm and Cancel
             Column(
               children: [
@@ -59,14 +59,14 @@ void DeleteConfirmationPopup(
                       Navigator.of(context).pop(); // Close the dialog
                       onConfirm(); // Call the deletion logic
                     },
-                    icon: Icon(Icons.delete, color: Colors.white),
-                    label: Text('Confirm',
+                    icon: const Icon(Icons.delete, color: Colors.white),
+                    label: const Text('Confirm',
                         style: TextStyle(
                             color: Colors.white)), // Set text color to white
                     style: ElevatedButton.styleFrom(
                       backgroundColor:
                           Colors.red, // Red color for delete action
-                      padding: EdgeInsets.symmetric(
+                      padding: const EdgeInsets.symmetric(
                           vertical: 10), // Adjust padding if needed
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
@@ -74,25 +74,25 @@ void DeleteConfirmationPopup(
                     ),
                   ),
                 ),
-                SizedBox(height: 10), // Space between buttons
+                const SizedBox(height: 10), // Space between buttons
                 SizedBox(
                   width: double.infinity, // Make button full width
                   child: ElevatedButton(
                     onPressed: () {
                       Navigator.of(context).pop(); // Close the dialog
-                    },
-                    child: Text('Cancel',
-                        style: TextStyle(
-                            color: ColorTheme
-                                .black)), // Set text color to dark blue
+                    }, // Set text color to dark blue
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFF00C3A9),
-                      padding: EdgeInsets.symmetric(
+                      backgroundColor: const Color(0xFF00C3A9),
+                      padding: const EdgeInsets.symmetric(
                           vertical: 10), // Adjust padding if needed
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
+                    child: Text('Cancel',
+                        style: TextStyle(
+                            color: ColorTheme
+                                .black)),
                   ),
                 ),
               ],

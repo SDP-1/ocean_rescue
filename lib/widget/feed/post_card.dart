@@ -18,10 +18,10 @@ class PostCard extends StatefulWidget {
   final Function(String postId) onPostDeleted;
 
   const PostCard({
-    Key? key,
+    super.key,
     required this.snap,
     required this.onPostDeleted,
-  }) : super(key: key);
+  });
 
   @override
   _PostCardState createState() => _PostCardState();

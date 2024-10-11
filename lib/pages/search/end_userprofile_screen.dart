@@ -8,7 +8,6 @@ import 'package:ocean_rescue/widget/end_user/_MedalSection.dart';
 import '../../models/user.dart';
 import '../../resources/auth_methods.dart';
 import '../chat/chat_detail_screen.dart';
-import '';
 
 class UserProfilePage extends StatefulWidget {
   final String userId;

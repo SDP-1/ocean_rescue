@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 
 class MedalSection extends StatelessWidget {
-  const MedalSection({Key? key}) : super(key: key);
+  const MedalSection({super.key});
 
   @override
   Widget build(BuildContext context) {

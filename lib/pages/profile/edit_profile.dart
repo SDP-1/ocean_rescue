@@ -9,7 +9,7 @@ import 'package:ocean_rescue/models/user.dart';
 import 'email_display_box.dart'; // Import your User model if needed
 
 class EditProfile extends StatefulWidget {
-  const EditProfile({Key? key}) : super(key: key);
+  const EditProfile({super.key});
 
   @override
   _EditProfileState createState() => _EditProfileState();
@@ -128,7 +128,7 @@ class _EditProfileState extends State<EditProfile> {
 class ProfilePictureSection extends StatelessWidget {
   final String photoUrl; // Accept photoUrl as a parameter
 
-  const ProfilePictureSection({Key? key, required this.photoUrl}) : super(key: key);
+  const ProfilePictureSection({super.key, required this.photoUrl});
 
   @override
   Widget build(BuildContext context) {
@@ -167,11 +167,11 @@ class UserDetailsForm extends StatelessWidget {
   final String email;
 
   const UserDetailsForm({
-    Key? key,
+    super.key,
     required this.usernameController,
     required this.bioController,
     required this.email, // Accept email as a parameter
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -200,14 +200,14 @@ class TextFieldWidget extends StatelessWidget {
   final String? email; // For displaying email as plain text
 
   const TextFieldWidget({
-    Key? key,
+    super.key,
     required this.label,
     this.isEmailField = false,
     this.enabled = true,
     this.controller,
     this.initialValue,
     this.email, // Accept email as a parameter
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

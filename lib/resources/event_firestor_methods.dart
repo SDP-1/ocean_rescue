@@ -32,8 +32,7 @@ class EventFirestoreMethods {
       quality: 80, // Adjust quality, lower quality for smaller size
     );
 
-    if (compressedImage != null &&
-        compressedImage.lengthInBytes <= 1 * 1024 * 1024) {
+    if (compressedImage.lengthInBytes <= 1 * 1024 * 1024) {
       return compressedImage;
     }
     // If compression doesn't reduce the size enough, return the original image

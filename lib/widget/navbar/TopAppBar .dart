@@ -59,7 +59,7 @@ class TopAppBar extends StatelessWidget implements PreferredSizeWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => NotificationScreen()),
+                  MaterialPageRoute(builder: (context) => const NotificationScreen()),
                 );
               }),
         ];
@@ -89,7 +89,7 @@ class TopAppBar extends StatelessWidget implements PreferredSizeWidget {
             BottomNavBar.visibility(false);
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => ChatListScreen()),
+              MaterialPageRoute(builder: (context) => const ChatListScreen()),
             ).then((_) {
               BottomNavBar.visibility(true);
             });

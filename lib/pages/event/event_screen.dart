@@ -24,9 +24,9 @@ class EventScreen extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Column(
+                  const Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
+                    children: [
                       Text(
                         "Events",
                         style: TextStyle(
@@ -60,7 +60,7 @@ class EventScreen extends StatelessWidget {
               ),
             ),
 
-            FeaturedEventsSection(),
+            const FeaturedEventsSection(),
 
             // Nearby Events (Map) Section
             const Padding(
@@ -129,7 +129,7 @@ class EventScreen extends StatelessWidget {
             //   volunteers: "15-30 Volunteers",
             // ),
 
-            AllEventsSection(),
+            const AllEventsSection(),
 
             // Load More Button
             Padding(
@@ -168,7 +168,7 @@ class EventScreen extends StatelessWidget {
       ),
       actions: [
         IconButton(
-          icon: Icon(Icons.add, color: Colors.blue),
+          icon: const Icon(Icons.add, color: Colors.blue),
           onPressed: () {
             // Create event action
           },

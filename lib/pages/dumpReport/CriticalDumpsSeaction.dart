@@ -5,7 +5,7 @@ import '../../resources/ReportDumpsFirestoreMethods.dart';
 import 'CriticalDumpImage.dart';
 
 class CriticalDumpSection extends StatefulWidget {
-  const CriticalDumpSection({Key? key}) : super(key: key);
+  const CriticalDumpSection({super.key});
 
   @override
   _CriticalDumpSectionState createState() => _CriticalDumpSectionState();

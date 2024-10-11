@@ -10,13 +10,13 @@ class PostActions extends StatelessWidget {
   final VoidCallback onBookmarkPressed;
 
   const PostActions({
-    Key? key,
+    super.key,
     required this.isLiked,
     required this.onLikePressed,
     required this.onCommentPressed,
     required this.onSharePressed,
     required this.onBookmarkPressed,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

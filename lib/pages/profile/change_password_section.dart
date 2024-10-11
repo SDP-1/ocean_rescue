@@ -3,7 +3,7 @@ import 'package:ocean_rescue/widget/common/GradientButton.dart';
 import 'edit_profile.dart'; // Import the file where TextFieldWidget is defined
 
 class ChangePasswordSection extends StatelessWidget {
-  const ChangePasswordSection({Key? key}) : super(key: key);
+  const ChangePasswordSection({super.key});
 
   @override
   Widget build(BuildContext context) {
