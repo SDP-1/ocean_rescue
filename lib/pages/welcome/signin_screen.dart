@@ -42,7 +42,7 @@ class _SignInScreenState extends State<SignInScreen> {
               builder: (context) =>
                   const SplashScreen(), // Adjust navigation to BottomNavBar
             ),
-            (route) => false,
+                (route) => false,
           );
         }
       } else {
@@ -53,8 +53,8 @@ class _SignInScreenState extends State<SignInScreen> {
               res.contains('user-not-found')
                   ? "No user found with that email."
                   : res.contains('wrong-password')
-                      ? "Wrong password."
-                      : "Login failed: $res",
+                  ? "Wrong password."
+                  : "Login failed: $res",
               style: const TextStyle(fontSize: 18.0, color: Colors.black),
             ),
           ),
@@ -131,7 +131,7 @@ class _SignInScreenState extends State<SignInScreen> {
                             labelStyle: const TextStyle(fontSize: 14),
                           ),
                           style:
-                              const TextStyle(fontSize: 14), // Input text size
+                          const TextStyle(fontSize: 14), // Input text size
                         ),
                       ),
 
@@ -162,7 +162,7 @@ class _SignInScreenState extends State<SignInScreen> {
                             labelStyle: const TextStyle(fontSize: 14),
                           ),
                           style:
-                              const TextStyle(fontSize: 14), // Input text size
+                          const TextStyle(fontSize: 14), // Input text size
                         ),
                       ),
 
@@ -197,7 +197,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) =>
-                                          const ForgotPassword()));
+                                      const ForgotPassword()));
                             },
                             child: Text(
                               'Forgot password?',
@@ -329,7 +329,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) =>
-                                        const SignUpScreen(), // Navigate to SignUpScreen
+                                    const SignUpScreen(), // Navigate to SignUpScreen
                                   ),
                                 );
                               },
