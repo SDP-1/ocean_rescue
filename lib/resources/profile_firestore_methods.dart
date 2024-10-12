@@ -7,24 +7,33 @@ class ProfileFirestoreMethods {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  // Method to update username and bio for a user
-  Future<String> updateUsernameAndBio({
+  // Method to update username, bio, and profile picture for a user
+  Future<String> updateUsernameBioAndPhoto({
     required String username,
     required String bio,
+    String? photoUrl, // Optional parameter for profile picture URL
   }) async {
     String res = "Some error occurred";
     try {
       // Get the current user's UID
       String uid = _auth.currentUser!.uid;
 
-      // Create a reference to the user document in the 'uers' collection
+      // Create a reference to the user document in the 'users' collection
       DocumentReference userDocRef = _firestore.collection('users').doc(uid);
 
-      // Update the username and bio fields in Firestore
-      await userDocRef.update({
+      // Prepare the update map
+      Map<String, dynamic> updateData = {
         'username': username,
         'bio': bio,
-      });
+      };
+
+      // If a photo URL is provided, include it in the update
+      if (photoUrl != null && photoUrl.isNotEmpty) {
+        updateData['photoUrl'] = photoUrl;
+      }
+
+      // Update the Firestore document with the new data
+      await userDocRef.update(updateData);
 
       res = "Profile updated successfully";
     } on FirebaseException catch (e) {
@@ -35,6 +44,7 @@ class ProfileFirestoreMethods {
 
     return res;
   }
+
 
 
   // Method to retrieve the email using the user's UID

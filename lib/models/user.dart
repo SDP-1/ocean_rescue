@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class User {
@@ -8,6 +9,7 @@ class User {
   final String bio;
   final List followers;
   final List following;
+  int exp;
   List<String> chats; // Property to hold chat IDs
   List<String> notifications; // Property to hold notification IDs
 
@@ -19,8 +21,9 @@ class User {
     required this.bio,
     required this.followers,
     required this.following,
-    this.chats = const [], 
-    this.notifications = const [], 
+    this.exp = 0,
+    this.chats = const [],
+    this.notifications = const [],
   });
 
   // Factory method to create User from Firestore snapshot
@@ -35,8 +38,10 @@ class User {
       bio: snapshot["bio"],
       followers: snapshot["followers"],
       following: snapshot["following"],
+      exp: snapshot["exp"],
       chats: List<String>.from(snapshot["chats"] ?? []), // Initialize chats
-      notifications: List<String>.from(snapshot["notifications"] ?? []), // Initialize notifications
+      notifications: List<String>.from(
+          snapshot["notifications"] ?? []), // Initialize notifications
     );
   }
 
@@ -50,7 +55,8 @@ class User {
         "followers": followers,
         "following": following,
         "chats": chats,
-        "notifications": notifications, // Include notifications in Firestore
+        "notifications": notifications,
+        "exp": exp, // Include notifications in Firestore
       };
 
   // Add a chat ID to the user's chats list

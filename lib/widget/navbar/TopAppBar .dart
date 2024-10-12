@@ -74,7 +74,9 @@ class TopAppBar extends StatelessWidget implements PreferredSizeWidget {
           ..._defaultIcions(context),
         ];
       case 4: // Menu Screen
-        return [];
+        return [
+          ..._defaultIcions(context),
+        ];
       default:
         return [];
     }

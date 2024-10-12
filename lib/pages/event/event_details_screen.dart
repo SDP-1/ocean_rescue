@@ -52,7 +52,7 @@ class EventDetailsScreen extends StatelessWidget {
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
             ),
-            const EventDetails(
+            const EventDetailsCard(
               volunteerRange:
                   "25 - 50 Volunteers", // Passing the volunteer range
               eventDays: "Every Thursday", // Passing the event days

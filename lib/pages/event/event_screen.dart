@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:ocean_rescue/pages/event/AllEventSection.dart';
+import 'package:ocean_rescue/pages/event/FeaturedEvent.dart';
 import 'package:ocean_rescue/pages/event/create_event_screen1.dart';
 import 'package:ocean_rescue/theme/colorTheme.dart';
 import 'package:ocean_rescue/widget/navbar/BottomNavBar.dart';
@@ -57,28 +59,8 @@ class EventScreen extends StatelessWidget {
                 ],
               ),
             ),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.0),
-              child: Text(
-                "Featured Events",
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            SizedBox(
-              height: 120,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: [
-                  _buildFeaturedEventCard('assets/event/event01.png'),
-                  _buildFeaturedEventCard('assets/event/event02.png'),
-                  _buildFeaturedEventCard('assets/event/event01.png'),
-                  _buildFeaturedEventCard('assets/event/event02.png'),
-                ],
-              ),
-            ),
+
+            FeaturedEventsSection(),
 
             // Nearby Events (Map) Section
             const Padding(
@@ -105,47 +87,8 @@ class EventScreen extends StatelessWidget {
                 ),
               ),
             ),
-
-            // All Events Section
-            const Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Row(
-                children: [
-                  Text(
-                    "All Events",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  Spacer(),
-                  Icon(Icons.filter_list),
-                ],
-              ),
-            ),
-
-            // Event Cards (Placeholder)
-            _buildEventCard(
-              imageUrl: 'assets/event/event01.png',
-              title: "SLIIT Beach Clean Up",
-              date: "25 Sep 2024",
-              time: "9:00 AM - 3:00 PM",
-              location: "Galle Face Beach",
-              volunteers: "25-50 Volunteers",
-            ),
-            _buildEventCard(
-              imageUrl: 'assets/event/event02.png',
-              title: "Marine Life Protection",
-              date: "10 Oct 2024",
-              time: "8:00 AM - 2:00 PM",
-              location: "Mount Lavinia Beach",
-              volunteers: "10-20 Volunteers",
-            ),
-            _buildEventCard(
-              imageUrl: 'assets/event/event01.png',
-              title: "Riverbank Clean Up",
-              date: "15 Oct 2024",
-              time: "7:00 AM - 12:00 PM",
-              location: "Kelani Riverbank",
-              volunteers: "15-30 Volunteers",
-            ),
+            
+            AllEventsSection(),
 
             // Load More Button
             Padding(
