@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 
+import '../chat/chat_list_screen.dart';
+import '../notification/notification_screen.dart';
+import '../profile/view_profile.dart';
+
 class AchievementsPage extends StatefulWidget {
   const AchievementsPage({super.key});
 
@@ -11,7 +15,9 @@ class _AchievementsPageState extends State<AchievementsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.white,
         leading: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Image.asset(
@@ -22,21 +28,33 @@ class _AchievementsPageState extends State<AchievementsPage> {
           ),
         ),
         actions: <Widget>[
+          // IconButton(
+          //   icon: const Icon(
+          //     Icons.search,
+          //     color: Color(0xFF1877F2),
+          //   ),
+          //   tooltip: 'Search',
+          //   onPressed: () {},
+          // ),
           IconButton(
-            icon: const Icon(
-              Icons.search,
-              color: Color(0xFF1877F2),
-            ),
-            tooltip: 'Search',
-            onPressed: () {},
+            icon: const Icon(Icons.message, color: Color(0xFF1877F2)),
+            tooltip: 'Message',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ChatListScreen()),
+              );
+            },
           ),
           IconButton(
-            icon: const Icon(
-              Icons.message,
-              color: Color(0xFF1877F2),
-            ),
-            tooltip: 'Message',
-            onPressed: () {},
+            icon: const Icon(Icons.notifications, color: Color(0xFF1877F2)),
+            tooltip: 'Notifications',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => NotificationScreen()),
+              );
+            },
           ),
         ],
       ),
@@ -45,7 +63,14 @@ class _AchievementsPageState extends State<AchievementsPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Row(
+            GestureDetector(
+            onTap: () {
+      Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const ViewProfilePage()),
+      );
+      },
+            child: const Row(
               children: [
                 Icon(
                   Icons.arrow_back,
@@ -61,6 +86,7 @@ class _AchievementsPageState extends State<AchievementsPage> {
                   ),
                 ),
               ],
+            ),
             ),
             const SizedBox(height: 20),
             Container(
