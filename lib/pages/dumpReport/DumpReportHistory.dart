@@ -4,7 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:ocean_rescue/theme/colorTheme.dart';
 
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:ocean_rescue/widget/event/EventInfoAlert.dart';
 import 'package:ocean_rescue/widget/navbar/BottomNavBar.dart';
+import 'package:ocean_rescue/widget/popup/DeleteConfirmationPopup.dart';
+import 'package:ocean_rescue/widget/popup/ErrorPopup.dart';
 import '../../models/reportdump.dart';
 import '../../resources/ReportDumpsFirestoreMethods.dart';
 import '../../widget/navbar/TopAppBar .dart';
@@ -108,7 +111,7 @@ class _DumpReportHistoryState extends State<DumpReportHistory> {
                     child: Column(
                       children: [
                         Image.asset(
-                          'assets/dump/dump1.jpeg', // Replace with your image path
+                          'assets/dump/plastics.png', // Replace with your image path
                           width: double.infinity,
                           fit: BoxFit.cover,
                         ),
@@ -117,9 +120,22 @@ class _DumpReportHistoryState extends State<DumpReportHistory> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              _buildSectionTitle('Reported Dumps'),
-                              _buildDescriptionText(
-                                  'These are the dump sites reported by the community for clean-up.'),
+                              _buildSectionTitle('\t\tReported Dumps'),
+                              // Add EventInfoAlert below the description text
+                              EventInfoAlert(
+                                alertText:
+                                    'Note: Please report any unlisted dump sites to save our Environment.', // Example text
+                              ),
+                              SizedBox(height: 10),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    left:
+                                        16.0), // Adjust left padding value as needed
+                                child: _buildDescriptionText(
+                                  'These are the dump sites reported by you for clean-up.',
+                                ),
+                              ),
+
                               _buildDumpList(
                                   isReported: true), // Pass _reportedDumps
                               _buildPagination(), // Optionally, you can modify this to support pagination
@@ -281,20 +297,41 @@ class _DumpReportHistoryState extends State<DumpReportHistory> {
                       color: isReported ? Colors.lightBlue : Colors.red,
                     ),
                     onPressed: () async {
-                      if (isReported) {
-                        // Mark the dump as cleared
-                        await ReportDumpsFirestoreMethods()
-                            .markDumpAsCleared(report.rdid);
-                      } else {
-                        // Delete the cleared dump from Firestore
-                        await ReportDumpsFirestoreMethods()
-                            .deleteReportDump(report.rdid);
+                      try {
+                        if (isReported) {
+                          // Show the delete confirmation before clearing the report
+                          DeleteConfirmationPopup(
+                            context,
+                            'Report will be marked as cleared.',
+                            () async {
+                              // Mark the dump as cleared
+                              await ReportDumpsFirestoreMethods()
+                                  .markDumpAsCleared(report.rdid);
+                              // Refresh the reports
+                              await _fetchDumpReports();
+                            },
+                          );
+                        } else {
+                          // Show the delete confirmation popup before deletion
+                          DeleteConfirmationPopup(
+                            context,
+                            'Report will be deleted permanently.',
+                            () async {
+                              // Delete the cleared dump from Firestore
+                              await ReportDumpsFirestoreMethods()
+                                  .deleteReportDump(report.rdid);
+                              // Refresh the reports
+                              await _fetchDumpReports();
+                            },
+                          );
+                        }
+                      } catch (e) {
+                        // If any error occurs, show an error popup
+                        showErrorPopup(context, 'Operation Failed',
+                            'Unable to complete the action.');
                       }
-
-                      // Refresh the reports
-                      await _fetchDumpReports(); // Refresh both reported and cleared dumps
                     },
-                  ),
+                  )
                 ],
               ),
             ),

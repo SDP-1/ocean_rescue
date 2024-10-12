@@ -22,115 +22,121 @@ class DumpsDashboard extends StatelessWidget {
         preferredSize: const Size.fromHeight(56.0),
         child: TopAppBar(selectedTabIndex: BottomNavBar.selectedTabIndex),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Title and Actions that will scroll with the content
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Dumps",
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
+      body: RefreshIndicator(
+        onRefresh: () async {
+          // await _fetchPosts(); // Refresh the posts
+         await CriticalDumpSection();
+        },
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Title and Actions that will scroll with the content
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Dumps",
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                      Text(
-                        "Let's Save Our Environment",
-                        style: TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey,
+                        Text(
+                          "Let's Save Our Environment",
+                          style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.grey,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      _buildActionIcon(
-                        Icons.history,
-                        "Report History",
-                        ColorTheme.lightBlue1,
-                        () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => DumpReportHistory()),
-                          );
-                        },
-                      ),
-                      const SizedBox(width: 5),
-                      _buildActionIcon(
-                        Icons.report,
-                        "Report Dump",
-                        Colors.red,
-                        () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ReportDumpPage()),
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            // Map Placeholder
-            const Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Text(
-                "Nearby Dump",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-            ),
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 16),
-              height: 150,
-              decoration: BoxDecoration(
-                color: ColorTheme.liteBlue2,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: ClipRRect(
-                // Optional: adds rounded corners to the image
-                borderRadius: BorderRadius.circular(12),
-                child: Image.asset(
-                  'assets/dump/beach.png',
-                  fit: BoxFit.cover, // Ensures the image covers the container
-                  height: 150, // Set height to match the container
-                  width: double.infinity, // Full width of the container
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        _buildActionIcon(
+                          Icons.history,
+                          "Report History",
+                          ColorTheme.lightBlue1,
+                          () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => DumpReportHistory()),
+                            );
+                          },
+                        ),
+                        const SizedBox(width: 5),
+                        _buildActionIcon(
+                          Icons.report,
+                          "Report Dump",
+                          Colors.red,
+                          () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ReportDumpPage()),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
-            ),
-
-            // Critical Dumps Section
-            const CriticalDumpSection(),  // Using the extracted CriticalDumpSection
-
-            // All Dumps Section
-            const Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Row(
-                children: [
-                  Text(
-                    "All Dumps",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  Spacer(),
-                  Icon(Icons.filter_list),
-                ],
+              // Map Placeholder
+              const Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Text(
+                  "Nearby Dump",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
               ),
-            ),
-            // Placeholder Event Cards (Replace these with fetched data if needed)
-            const AllDumpsSection(), 
-          ],
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 16),
+                height: 150,
+                decoration: BoxDecoration(
+                  color: ColorTheme.liteBlue2,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: ClipRRect(
+                  // Optional: adds rounded corners to the image
+                  borderRadius: BorderRadius.circular(12),
+                  child: Image.asset(
+                    'assets/dump/beach.png',
+                    fit: BoxFit.cover, // Ensures the image covers the container
+                    height: 150, // Set height to match the container
+                    width: double.infinity, // Full width of the container
+                  ),
+                ),
+              ),
+        
+              // Critical Dumps Section
+              const CriticalDumpSection(),  // Using the extracted CriticalDumpSection
+        
+              // All Dumps Section
+              const Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Row(
+                  children: [
+                    Text(
+                      "All Dumps",
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    Spacer(),
+                    Icon(Icons.filter_list),
+                  ],
+                ),
+              ),
+              // Placeholder Event Cards (Replace these with fetched data if needed)
+              const AllDumpsSection(), 
+            ],
+          ),
         ),
       ),
     );

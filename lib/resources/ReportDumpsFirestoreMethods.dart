@@ -103,28 +103,42 @@ Future<List<ReportDump>> fetchClearedDumpReports() async {
   }
 }
 
- Future<void> updateDumpDetails(String rdid, String newTitle, String newDescription) async {
+ Future<void> updateDumpDetails(
+  String rdid,
+  String newTitle,
+  String newDescription,
+  String? newImageUrl, // Optional image URL for updating
+) async {
   try {
     if (rdid.isEmpty) {
-      print('Document ID is empty222222!');
+      print('Document ID is empty!');
       return; // Return early if the document ID is empty
     }
-    
-    //DocumentReference dumpDoc = _firestore.collection('report_dumps').doc(rdid);
-    DocumentReference dumpDoc = FirebaseFirestore.instance.collection('report_dumps').doc(rdid);
-    print('Document Path: ${dumpDoc.path}'); // Add this line for debugging
 
- 
-    await dumpDoc.update({
+    // Create a map for updating the fields
+    Map<String, dynamic> updatedData = {
       'title': newTitle,
       'description': newDescription,
-    });
+    };
+
+    // If a new image URL is provided, add it to the update map
+    if (newImageUrl != null) {
+      updatedData['imageUrl'] = newImageUrl;
+    }
+
+    // Update the document with the new data
+    DocumentReference dumpDoc = FirebaseFirestore.instance.collection('report_dumps').doc(rdid);
+    await dumpDoc.update(updatedData);
 
     print('Dump details updated successfully for ID: $rdid');
   } catch (e) {
     print('Error updating document: $e'); // This is where your error message is printed
   }
 }
+
+
+//part of update
+
 
 
 Future<void> deleteReportDump(String rdid) async {

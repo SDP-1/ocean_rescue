@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ocean_rescue/widget/popup/SuccessPopup.dart';
+import 'package:image_picker/image_picker.dart'; // Import for image picking
+import 'dart:io'; // For file handling
 import '../../resources/ReportDumpsFirestoreMethods.dart'; // Import your Firestore methods file
 import '../../resources/auth_methods.dart';
+import '../../resources/storage_methods.dart'; // Import storage methods
 
 class DumpDetailsScreen extends StatefulWidget {
   final String rdid; // Unique dump ID
@@ -24,8 +27,8 @@ class DumpDetailsScreen extends StatefulWidget {
 }
 
 class _DumpDetailsScreenState extends State<DumpDetailsScreen> {
-  final ReportDumpsFirestoreMethods _firestoreMethods =
-      ReportDumpsFirestoreMethods();
+  final ReportDumpsFirestoreMethods _firestoreMethods = ReportDumpsFirestoreMethods();
+  final ImagePicker _picker = ImagePicker();
 
   late TextEditingController titleController;
   late TextEditingController descriptionController;
@@ -33,22 +36,24 @@ class _DumpDetailsScreenState extends State<DumpDetailsScreen> {
   late String rdid;
   late String title;
   late String description;
+  late String imageUrl;
 
+  File? _imageFile; // To store the selected image file
   bool isEditing = false; // To track whether we're in edit mode or not
   String? currentUserUid; // To hold the current user ID
 
   @override
   void initState() {
     super.initState();
-    
+
     // Get the current user's ID
     AuthMethods authMethods = AuthMethods();
     currentUserUid = authMethods.getCurrentUserId();
-  
 
     rdid = widget.rdid;
     title = widget.title;
     description = widget.description;
+    imageUrl = widget.imageUrl;
 
     titleController = TextEditingController(text: title);
     descriptionController = TextEditingController(text: description);
@@ -59,6 +64,22 @@ class _DumpDetailsScreenState extends State<DumpDetailsScreen> {
     titleController.dispose();
     descriptionController.dispose();
     super.dispose();
+  }
+
+  // Function to select an image from the gallery
+  Future<void> _selectImage() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        _imageFile = File(pickedFile.path);
+      });
+    }
+  }
+
+  Future<String> uploadImageToStorage(String rdid, File imageFile) async {
+    // Replace this with your image upload logic
+    String imageUrl = await _firestoreMethods.uploadImageToStorage(rdid, imageFile);
+    return imageUrl; // Return the new image URL
   }
 
   @override
@@ -92,23 +113,37 @@ class _DumpDetailsScreenState extends State<DumpDetailsScreen> {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(10.0),
-                child: Image.network(
-                  widget.imageUrl,
-                  width: double.infinity,
-                  height: 200,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      color: Colors.grey[200],
-                      height: 200,
-                      width: double.infinity,
-                      child: Center(
-                        child: Icon(Icons.broken_image, color: Colors.grey),
+                child: _imageFile == null
+                    ? Image.network(
+                        widget.imageUrl,
+                        width: double.infinity,
+                        height: 200,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            color: Colors.grey[200],
+                            height: 200,
+                            width: double.infinity,
+                            child: Center(
+                              child: Icon(Icons.broken_image, color: Colors.grey),
+                            ),
+                          );
+                        },
+                      )
+                    : Image.file(
+                        _imageFile!,
+                        width: double.infinity,
+                        height: 200,
+                        fit: BoxFit.cover,
                       ),
-                    );
-                  },
-                ),
               ),
+              SizedBox(height: 16),
+              if (isEditing) // Only show the button to select a new image in edit mode
+                TextButton.icon(
+                  icon: Icon(Icons.image,color: Colors.lightBlue),
+                  label: Text("Select New Image", style: TextStyle(color: Colors.lightBlue)),
+                  onPressed: _selectImage,
+                ),
               SizedBox(height: 16),
               _buildEditableSection(),
               SizedBox(height: 16),
@@ -128,6 +163,7 @@ class _DumpDetailsScreenState extends State<DumpDetailsScreen> {
                           descriptionController.text = widget.description;
                           title = widget.title;
                           description = widget.description;
+                          imageUrl = widget.imageUrl;
                           isEditing = false; // Exit edit mode
                         });
                       },
@@ -183,7 +219,6 @@ class _DumpDetailsScreenState extends State<DumpDetailsScreen> {
                       ),
                     ),
                   ),
-                  // Conditionally render the IconButton based on user ID
                   if (currentUserUid == widget.uid)
                     IconButton(
                       icon: Icon(Icons.edit, color: Colors.indigo),
@@ -245,11 +280,18 @@ class _DumpDetailsScreenState extends State<DumpDetailsScreen> {
       return; // Exit if ID is empty
     }
 
+    String? newImageUrl = widget.imageUrl;
+    if (_imageFile != null) {
+      // Upload the selected image and get the URL
+      newImageUrl = await uploadImageToStorage(rdid, _imageFile!);
+    }
+
     // Save the updated values to Firestore
     await _firestoreMethods.updateDumpDetails(
       rdid,
       title,
       description,
+      newImageUrl, // Save the new image URL
     );
 
     showSuccessPopup(context, title, 'Dump details updated successfully');
@@ -261,6 +303,7 @@ class _DumpDetailsScreenState extends State<DumpDetailsScreen> {
     Navigator.pop(context, {
       'title': title,
       'description': description,
+      'imageUrl': newImageUrl, // Return the new image URL to previous screen
     });
   }
 }
