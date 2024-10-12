@@ -40,7 +40,7 @@ class _SignInScreenState extends State<SignInScreen> {
           Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute(
               builder: (context) =>
-                  const BottomNavBar(), // Adjust navigation to BottomNavBar
+                  const SplashScreen(), // Adjust navigation to BottomNavBar
             ),
             (route) => false,
           );
