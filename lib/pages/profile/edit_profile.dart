@@ -12,6 +12,8 @@ import 'package:ocean_rescue/models/user.dart';
 import 'email_display_box.dart'; // Import your User model if needed
 import '../../resources/profile_firestore_methods.dart';
 import 'profile_picture.dart';
+import 'package:image_picker/image_picker.dart';
+
 
 class EditProfile extends StatefulWidget {
   const EditProfile({Key? key}) : super(key: key);
@@ -112,13 +114,12 @@ class _EditProfileState extends State<EditProfile> {
           children: [
             ProfilePictureSection(
               photoUrl: photoUrl,
-              // onImageSelected: (File image) {
-              //   setState(() {
-              //     _selectedImage = image; // Store the selected image
-              //   });
-              // },
+              onImageSelected: (File image) {
+                setState(() {
+                  _selectedImage = image; // Store the selected image
+                });
+              },
             ), // Pass photoUrl and onImageSelected to the ProfilePictureSection
-            // Pass photoUrl to the ProfilePictureSection
             const SizedBox(height: 20),
             UserDetailsForm(
               usernameController: _usernameController,
@@ -162,7 +163,7 @@ class _EditProfileState extends State<EditProfile> {
 class ProfilePictureSection extends StatelessWidget {
   final String photoUrl; // Accept photoUrl as a parameter
 
-  const ProfilePictureSection({Key? key, required this.photoUrl}) : super(key: key);
+  const ProfilePictureSection({Key? key, required this.photoUrl, required Null Function(File image) onImageSelected}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

@@ -21,7 +21,9 @@ class _LeaderboardPageState extends State<LeaderboardPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.white,
         leading: _isSearching
             ? IconButton(
           icon: const Icon(Icons.arrow_back),
@@ -154,7 +156,6 @@ class _LeaderboardPageState extends State<LeaderboardPage> {
                 // Rankings list
                 Expanded(
                   child: ListView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
                     itemCount: users.length,
                     itemBuilder: (context, index) {
                       var user = users[index].data() as Map<String, dynamic>;
@@ -162,26 +163,11 @@ class _LeaderboardPageState extends State<LeaderboardPage> {
                       int exp = user['exp'] ?? 0;
                       String? image = user['imageUrl']; // If user image is provided
 
-                      // Determine background color and highlight for the current user
-                      Color backgroundColor;
-                      if (index == 0) {
-                        backgroundColor = Colors.blue.shade100;
-                      } else if (index == 1) {
-                        backgroundColor = Colors.blue.shade200;
-                      } else if (index == 2) {
-                        backgroundColor = Colors.blue.shade300;
-                      } else if (username == "You") {
-                        backgroundColor = Colors.blue.shade400;
-                      } else {
-                        backgroundColor = Colors.grey.shade200;
-                      }
-
                       return rankTile(
                         rank: index + 1,
                         name: username,
                         points: "$exp XP",
                         image: image,
-                        backgroundColor: backgroundColor,
                         highlight: username == "You",
                       );
                     },
@@ -200,84 +186,123 @@ class _LeaderboardPageState extends State<LeaderboardPage> {
     required String name,
     required String points,
     String? image,
-    required Color backgroundColor,
     bool highlight = false,
   }) {
+    // Define different colors for the top 3 ranks
+    Color backgroundColor;
+    if (rank == 1) {
+      backgroundColor = Colors.blue.shade400; // Gold for rank 1
+    } else if (rank == 2) {
+      backgroundColor = Colors.blue.shade300; // Silver for rank 2
+    } else if (rank == 3) {
+      backgroundColor = Colors.blue.shade200; // Bronze for rank 3
+    } else {
+      backgroundColor = Colors.grey.shade100; // Default for other ranks
+    }
+
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8.0),
       padding: const EdgeInsets.all(12.0),
       decoration: BoxDecoration(
-        color: backgroundColor,
-        borderRadius: BorderRadius.circular(12),
+        color: backgroundColor, // Use the updated background color
+        borderRadius: BorderRadius.circular(8), // Rounded corners for the container
         boxShadow: highlight
             ? [
           BoxShadow(
             color: Colors.blue.shade100,
             blurRadius: 10,
-            offset: Offset(0, 5),
+            offset: const Offset(0, 5),
           ),
         ]
             : [],
       ),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          // Rank display
-          Text(
-            rank.toString(),
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 18,
-              color: Colors.black,
-            ),
-          ),
-          const SizedBox(width: 16),
-          // Avatar only for top 3 ranks (1st, 2nd, and 3rd place)
-          if (rank <= 3 && image != null)
-            CircleAvatar(
-              radius: 20,
-              backgroundImage: NetworkImage(image),
-            ),
-          if (rank <= 3 && image != null) const SizedBox(width: 16),
-          // Name and points
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  name,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
+          Row(
+            children: [
+              // Rank display
+              Text(
+                rank.toString(),
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                  color: Colors.black,
+                ),
+              ),
+              const SizedBox(width: 10),
+              // Circular Avatar placeholder
+              CircleAvatar(
+                radius: 20,
+                backgroundColor: Colors.purple.shade100, // Set background color to match the screenshot
+                child: image != null && image.isNotEmpty
+                    ? ClipOval(
+                  child: Image.network(
+                    image,
+                    width: 40,
+                    height: 40,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      // Display default image if there's an error loading the network image
+                      return ClipOval(
+                        child: Image.asset(
+                          'assets/user/default.png', // Path to your default image
+                          width: 40,
+                          height: 40,
+                          fit: BoxFit.cover,
+                        ),
+                      );
+                    },
+                  ),
+                )
+                    : ClipOval(
+                  child: Image.asset(
+                    'assets/user/default.png', // Path to your default image
+                    width: 40,
+                    height: 40,
+                    fit: BoxFit.cover,
                   ),
                 ),
+              ),
+              const SizedBox(width: 10),
+              // Name and XP
+              Text(
+                name,
+                style: const TextStyle(
+                  fontWeight: FontWeight.w500,
+                  fontSize: 16,
+                ),
+              ),
+            ],
+          ),
+          // XP badge with an icon
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade200,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.handshake, // Use a hand icon similar to the screenshot
+                  color: Colors.amber,
+                  size: 20,
+                ),
+                const SizedBox(width: 4),
                 Text(
                   points,
-                  style: const TextStyle(color: Colors.grey),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                    color: Colors.black,
+                  ),
                 ),
               ],
             ),
           ),
-          // Highlight badge for top 3 ranks
-          if (rank <= 3)
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: Colors.amber,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Text(
-                "#$rank",
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
         ],
       ),
     );
   }
-
-
 }
-

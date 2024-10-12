@@ -9,6 +9,7 @@ import '../membership/membership.dart';
 import '../notification/notification_screen.dart';
 import '../welcome/signin_screen.dart';
 import 'edit_profile.dart';
+import '../../models/post.dart';
 
 class ViewProfilePage extends StatefulWidget {
   const ViewProfilePage({super.key});
@@ -23,6 +24,8 @@ class _ViewProfilePageState extends State<ViewProfilePage> {
   int exp = 0; // Variable to store experience points
   int followersCount = 0; // Variable to store followers count
   int followingCount = 0; // Variable to store following count
+  int postCount = 0;
+  String photoUrl = '';
   bool isLoading = true; // Variable to track loading state
   String errorMessage = ''; // Variable to store error messages
 
@@ -49,12 +52,22 @@ class _ViewProfilePageState extends State<ViewProfilePage> {
             exp = data['exp'] ?? 0; // Set the exp
             followersCount = (data['followers'] as List).length; // Get followers count
             followingCount = (data['following'] as List).length;
-            isLoading = false; // Set loading to false once data is fetched
+            photoUrl = data['photoUrl'] ?? '';
           });
-        } else {
+
+            // Fetch post count for the user
+            QuerySnapshot postSnapshot = await _firestore
+                .collection('posts')
+                .where('uid', isEqualTo: uid) // Query posts by user ID
+                .get();
+            setState(() {
+              postCount = postSnapshot.docs.length; // Set post count
+              isLoading = false;
+            });
+          } else {
           setState(() {
-            errorMessage = 'User not found';
-            isLoading = false; // Set loading to false if user document does not exist
+          errorMessage = 'User not found';
+          isLoading = false;
           });
         }
       } catch (e) {
@@ -104,7 +117,7 @@ class _ViewProfilePageState extends State<ViewProfilePage> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => ChatListScreen()),
+                MaterialPageRoute(builder: (context) => const ChatListScreen()),
               );
             },
           ),
@@ -114,14 +127,14 @@ class _ViewProfilePageState extends State<ViewProfilePage> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => NotificationScreen()),
+                MaterialPageRoute(builder: (context) => const NotificationScreen()),
               );
             },
           ),
         ],
       ),
       body: isLoading
-          ? Center(child: CircularProgressIndicator()) // Show loading indicator
+          ? const Center(child: CircularProgressIndicator()) // Show loading indicator
           : errorMessage.isNotEmpty
           ? Center(child: Text(errorMessage)) // Show error message
           : Container(
@@ -141,9 +154,11 @@ class _ViewProfilePageState extends State<ViewProfilePage> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      const CircleAvatar(
+                      CircleAvatar(
                         radius: 50,
-                        backgroundImage: AssetImage('assets/user/user1.jpg'), // Replace with your image
+                        backgroundImage: photoUrl.isNotEmpty
+                            ? NetworkImage(photoUrl) // Use the photoUrl from Firestore
+                            : const AssetImage('assets/user/default.png') as ImageProvider, // Fallback to default image if no photoUrl
                       ),
                       const SizedBox(height: 10), // Space between image and username
                       Text(
@@ -174,25 +189,25 @@ class _ViewProfilePageState extends State<ViewProfilePage> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            Column(
+                             Column(
                               children: [
-                                Text('1', style: TextStyle(fontWeight: FontWeight.bold)),
+                                Text('$postCount', style: TextStyle(fontWeight: FontWeight.bold)),
                                 SizedBox(height: 5),
                                 Text('Post'),
                               ],
                             ),
                             Column(
                               children: [
-                                Text('$followersCount', style: TextStyle(fontWeight: FontWeight.bold)),
-                                SizedBox(height: 5),
-                                Text('Followers'),
+                                Text('$followersCount', style: const TextStyle(fontWeight: FontWeight.bold)),
+                                const SizedBox(height: 5),
+                                const Text('Followers'),
                               ],
                             ),
                             Column(
                               children: [
-                                Text('$followingCount', style: TextStyle(fontWeight: FontWeight.bold)),
-                                SizedBox(height: 5),
-                                Text('Following'),
+                                Text('$followingCount', style: const TextStyle(fontWeight: FontWeight.bold)),
+                                const SizedBox(height: 5),
+                                const Text('Following'),
                               ],
                             ),
                           ],

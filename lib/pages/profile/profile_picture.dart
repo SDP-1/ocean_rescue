@@ -1,11 +1,11 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:image_picker/image_picker.dart'; // Import image_picker
 
 class ProfilePictureSection extends StatelessWidget {
-  final String photoUrl; // Accept photoUrl as a parameter
-  final Function(File) onImageSelected; // Accept onImageSelected as a parameter
+  final String photoUrl;
+  final Function(File) onImageSelected;
 
   const ProfilePictureSection({
     Key? key,
@@ -24,7 +24,7 @@ class ProfilePictureSection extends StatelessWidget {
               radius: 50,
               backgroundImage: photoUrl.isNotEmpty
                   ? NetworkImage(photoUrl)
-                  : const NetworkImage('https://via.placeholder.com/150'), // Placeholder
+                  : const NetworkImage('https://via.placeholder.com/150'),
             ),
             Positioned(
               bottom: 0,
@@ -32,9 +32,9 @@ class ProfilePictureSection extends StatelessWidget {
               child: IconButton(
                 icon: const Icon(Icons.edit, color: Colors.blue),
                 onPressed: () async {
-                  File? selectedImage = await _selectImage();
-                  if (selectedImage != null) {
-                    onImageSelected(selectedImage); // Notify the parent widget
+                  final File? image = await _selectImage();
+                  if (image != null) {
+                    onImageSelected(image);
                   }
                 },
               ),
@@ -46,8 +46,8 @@ class ProfilePictureSection extends StatelessWidget {
   }
 
   Future<File?> _selectImage() async {
-    final ImagePicker picker = ImagePicker();
-    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-    return image != null ? File(image.path) : null;
+    final ImagePicker _picker = ImagePicker();
+    final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    return pickedFile != null ? File(pickedFile.path) : null;
   }
 }
