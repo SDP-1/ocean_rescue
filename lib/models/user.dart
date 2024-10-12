@@ -9,7 +9,7 @@ class User {
   final String bio;
   final List followers;
   final List following;
-  int exp; // Change exp to int
+  int exp;
   List<String> chats; // Property to hold chat IDs
   List<String> notifications; // Property to hold notification IDs
 
@@ -21,7 +21,7 @@ class User {
     required this.bio,
     required this.followers,
     required this.following,
-    this.exp = 0, // Default value as an int
+    this.exp = 0,
     this.chats = const [],
     this.notifications = const [],
   });
@@ -38,25 +38,26 @@ class User {
       bio: snapshot["bio"],
       followers: snapshot["followers"],
       following: snapshot["following"],
-      exp: snapshot["exp"] ?? 0, // Ensure default value for exp if null
+      exp: snapshot["exp"],
       chats: List<String>.from(snapshot["chats"] ?? []), // Initialize chats
-      notifications: List<String>.from(snapshot["notifications"] ?? []), // Initialize notifications
+      notifications: List<String>.from(
+          snapshot["notifications"] ?? []), // Initialize notifications
     );
   }
 
   // Convert User to JSON format for Firestore
   Map<String, dynamic> toJson() => {
-    "username": username,
-    "uid": uid,
-    "email": email,
-    "photoUrl": photoUrl,
-    "bio": bio,
-    "followers": followers,
-    "following": following,
-    "exp": exp, // Store exp as int
-    "chats": chats,
-    "notifications": notifications, // Include notifications in Firestore
-  };
+        "username": username,
+        "uid": uid,
+        "email": email,
+        "photoUrl": photoUrl,
+        "bio": bio,
+        "followers": followers,
+        "following": following,
+        "chats": chats,
+        "notifications": notifications,
+        "exp": exp, // Include notifications in Firestore
+      };
 
   // Add a chat ID to the user's chats list
   void addChat(String chatId) {

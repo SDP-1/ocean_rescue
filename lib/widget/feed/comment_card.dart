@@ -34,7 +34,6 @@ class CommentCard extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Padding(
             padding: EdgeInsets.all(16.0),
-            child: CircularProgressIndicator(),
           );
         } else if (snapshot.hasError || !snapshot.hasData) {
           return const SizedBox(); // Or handle the error case

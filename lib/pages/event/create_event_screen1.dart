@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:ocean_rescue/pages/event/CreateEventScreen2.dart';
+import 'package:ocean_rescue/pages/event/create_event_screen2.dart';
 import 'package:ocean_rescue/theme/colorTheme.dart';
 import 'package:ocean_rescue/widget/common/CreateFormTopWidget.dart';
 import 'dart:io';
 import 'package:ocean_rescue/widget/event/EventInfoAlert.dart';
-
 import '../../widget/common/GradientButton.dart';
+import '../../widget/popup/ErrorPopup.dart'; // Import the popup function
 
 class CreateEventScreen1 extends StatefulWidget {
   @override
@@ -27,6 +27,34 @@ class _CreateEventScreen1State extends State<CreateEventScreen1> {
     setState(() {
       _image = selectedImage;
     });
+  }
+
+  void _validateAndNavigate() {
+    // Check for empty fields
+    if (_eventNameController.text.isEmpty ||
+        _eventDescriptionController.text.isEmpty ||
+        _selectedSize == null ||
+        _image == null) {
+      // Show error popup if any required field is missing
+      showErrorPopup(
+        context,
+        'Incomplete Details',
+        'Please fill in all the required fields before proceeding.',
+      );
+    } else {
+      // Navigate to CreateEventScreen2 with data
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => CreateEventScreen2(
+            eventName: _eventNameController.text,
+            description: _eventDescriptionController.text,
+            image: _image!, // Pass the image path
+            groupSize: _selectedSize!,
+          ),
+        ),
+      );
+    }
   }
 
   @override
@@ -158,7 +186,6 @@ class _CreateEventScreen1State extends State<CreateEventScreen1> {
               ),
             ),
             const SizedBox(height: 20),
-
             const Text(
               'Size',
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
@@ -181,15 +208,9 @@ class _CreateEventScreen1State extends State<CreateEventScreen1> {
             // Next Button
             GradientButton(
               text: 'Next',
-              onTap: () {
-                // Navigate or perform action
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => CreateEventScreen2()),
-                );
-              },
-              width: double.infinity, // Set width to take full width
-              height: 50.0, // Optional: You can set a specific height if needed
+              onTap: _validateAndNavigate, // Updated to use validation method
+              width: double.infinity,
+              height: 50.0,
             ),
           ],
         ),
@@ -197,7 +218,7 @@ class _CreateEventScreen1State extends State<CreateEventScreen1> {
     );
   }
 
-// Widget to build the size option
+  // Widget to build the size option
   Widget _groupSizeOption(String text, IconData icon) {
     bool isSelected =
         _selectedSize == text; // Check if the current option is selected
