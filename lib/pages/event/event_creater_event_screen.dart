@@ -141,32 +141,6 @@ class EventCreaterDetailsScreen extends StatelessWidget {
                         ],
                       ),
                     ),
-
-                    // child: ElevatedButton(
-                    //   onPressed: () {
-                    //     // Pass the eventData to the QR code popup
-                    //     showQrCodePopup(context, eventData);
-                    //   },
-                    //   style: ElevatedButton.styleFrom(
-                    //     backgroundColor: ColorTheme.lightBlue1,
-                    //     padding: const EdgeInsets.symmetric(
-                    //         horizontal: 32, vertical: 16),
-                    //     shape: RoundedRectangleBorder(
-                    //       borderRadius: BorderRadius.circular(12),
-                    //     ),
-                    //   ),
-                    //   child: Row(
-                    //     mainAxisSize: MainAxisSize.min,
-                    //     children: const [
-                    //       Icon(Icons.qr_code, color: Colors.white),
-                    //       SizedBox(width: 8),
-                    //       Text(
-                    //         "View Event QR Code",
-                    //         style: TextStyle(color: Colors.white),
-                    //       ),
-                    //     ],
-                    //   ),
-                    // ),
                   ),
                   const SizedBox(height: 16),
 
