@@ -6,7 +6,7 @@ import 'package:ocean_rescue/resources/event_firestor_methods.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:ocean_rescue/models/participant.dart';
 import 'package:permission_handler/permission_handler.dart';
-import '../event/ParticipationConfirmationPopup.dart'; // Import your popup dialog
+import 'ParticipationConfirmationPopup.dart'; // Import your popup dialog
 
 class QRScanner extends StatefulWidget {
   const QRScanner({Key? key}) : super(key: key);
@@ -67,11 +67,11 @@ class _QRScannerState extends State<QRScanner> {
                         ElevatedButton(
                           onPressed: () => _showConfirmationDialog(
                               result!.code!), // Show confirmation dialog
-                          child: const Text('Add Participant'),
+                          child: const Text('Participate'),
                         ),
                       ],
                     )
-                  : const Text('Scan a code to add participant'),
+                  : const Text('Scan a code to participate event'),
             ),
           ),
           if (isLoading) // Show loading indicator while adding participant
