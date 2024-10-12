@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ocean_rescue/pages/event/create_event_screen1.dart';
 import 'package:ocean_rescue/theme/colorTheme.dart';
 
 class EventCard extends StatelessWidget {
@@ -20,11 +21,14 @@ class EventCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4), // Reduced margin
+      margin: const EdgeInsets.symmetric(
+          horizontal: 8, vertical: 4), // Reduced margin
       padding: const EdgeInsets.all(8), // Reduced padding
       decoration: BoxDecoration(
-        color: ColorTheme.lightGreen1, // Changed background color to lightGreen1
-        borderRadius: BorderRadius.circular(6), // Slightly smaller border radius
+        color:
+            ColorTheme.lightGreen1, // Changed background color to lightGreen1
+        borderRadius:
+            BorderRadius.circular(6), // Slightly smaller border radius
         boxShadow: [
           BoxShadow(
             color: Colors.grey.withOpacity(0.5), // Shadow color with opacity
@@ -47,10 +51,12 @@ class EventCard extends StatelessWidget {
               fit: BoxFit.cover,
             ),
           ),
-          const SizedBox(width: 10), // Adjusted space between image and text column
+          const SizedBox(
+              width: 10), // Adjusted space between image and text column
 
           // Right side containing title, description, and buttons
-          Expanded( // Ensures content adjusts within available space
+          Expanded(
+            // Ensures content adjusts within available space
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -67,7 +73,8 @@ class EventCard extends StatelessWidget {
                 // Description
                 Text(
                   description,
-                  style: const TextStyle(fontSize: 11), // Reduced description size
+                  style:
+                      const TextStyle(fontSize: 11), // Reduced description size
                   overflow: TextOverflow.ellipsis,
                   maxLines: 2,
                 ),
@@ -107,12 +114,20 @@ class EventCard extends StatelessWidget {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: buttonColor,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16), // Reduced button corner radius
+                            borderRadius: BorderRadius.circular(
+                                16), // Reduced button corner radius
                           ),
-                          padding: const EdgeInsets.symmetric(vertical: 6), // Reduced vertical padding
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 6), // Reduced vertical padding
                         ),
                         onPressed: () {
                           // Clean Up action
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => CreateEventScreen1(),
+                            ),
+                          );
                         },
                         child: const Text(
                           "Let's Clean Up",
@@ -120,7 +135,8 @@ class EventCard extends StatelessWidget {
                             fontSize: 11,
                             color: ColorTheme.black, // Smaller button text
                           ),
-                          overflow: TextOverflow.ellipsis, // Prevent button text overflow
+                          overflow: TextOverflow
+                              .ellipsis, // Prevent button text overflow
                         ),
                       ),
                     ),
