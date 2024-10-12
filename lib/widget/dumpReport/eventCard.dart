@@ -23,8 +23,7 @@ class EventCard extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4), // Reduced margin
       padding: const EdgeInsets.all(8), // Reduced padding
       decoration: BoxDecoration(
-        color: Colors.white, // Set background to white
-        border: Border.all(color: Colors.grey, width: 2), // Gray border
+        color: ColorTheme.lightGreen1, // Changed background color to lightGreen1
         borderRadius: BorderRadius.circular(6), // Slightly smaller border radius
         boxShadow: [
           BoxShadow(
@@ -43,15 +42,15 @@ class EventCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(6.0),
             child: Image.network(
               imageUrl,
-              width: 160, // Adjust width to fit the card
+              width: 120, // Adjust width to prevent overflow
               height: 100, // Adjust height to fit the card
               fit: BoxFit.cover,
             ),
           ),
-          const SizedBox(width: 30), // Space between image and text column
+          const SizedBox(width: 10), // Adjusted space between image and text column
 
           // Right side containing title, description, and buttons
-          Expanded(
+          Expanded( // Ensures content adjusts within available space
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -98,23 +97,30 @@ class EventCard extends StatelessWidget {
 
                     const SizedBox(width: 10), // Space between icons and button
 
-                    // Let's Clean Up button
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: buttonColor,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16), // Reduced button corner radius
+                    // Spacer to push the button to the right
+                    const Spacer(),
+
+                    // Fixed-size button
+                    SizedBox(
+                      width: 120, // Fixed width for the button
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: buttonColor,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16), // Reduced button corner radius
+                          ),
+                          padding: const EdgeInsets.symmetric(vertical: 6), // Reduced vertical padding
                         ),
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6), // Reduced padding
-                      ),
-                      onPressed: () {
-                        // Clean Up action
-                      },
-                      child: const Text(
-                        "Let's Clean Up",
-                        style: TextStyle(
-                          fontSize: 11,
-                          color: ColorTheme.black, // Smaller button text
+                        onPressed: () {
+                          // Clean Up action
+                        },
+                        child: const Text(
+                          "Let's Clean Up",
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: ColorTheme.black, // Smaller button text
+                          ),
+                          overflow: TextOverflow.ellipsis, // Prevent button text overflow
                         ),
                       ),
                     ),
