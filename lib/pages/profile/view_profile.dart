@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:ocean_rescue/main.dart';
 import 'package:ocean_rescue/pages/Achievements/achievements_page.dart';
 import 'package:ocean_rescue/widget/navbar/BottomNavBar.dart';
+import 'package:ocean_rescue/widget/navbar/TopAppBar%20.dart';
 import '../../widget/common/GradientButton.dart';
 import '../chat/chat_list_screen.dart';
 import '../leaderboard/leaderboard.dart';
@@ -106,41 +107,7 @@ class _ViewProfilePageState extends State<ViewProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        leading: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Image.asset(
-            'assets/logo/logo_without_name.png',
-            fit: BoxFit.contain,
-            width: 30,
-            height: 30,
-          ),
-        ),
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.message, color: Color(0xFF1877F2)),
-            tooltip: 'Message',
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const ChatListScreen()),
-              );
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.notifications, color: Color(0xFF1877F2)),
-            tooltip: 'Notifications',
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const NotificationScreen()),
-              );
-            },
-          ),
-        ],
-      ),
+      appBar: TopAppBar(selectedTabIndex: BottomNavBar.selectedTabIndex),
       body: isLoading
           ? const Center(
               child: CircularProgressIndicator()) // Show loading indicator
