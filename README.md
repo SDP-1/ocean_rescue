@@ -1,6 +1,6 @@
 # 🌊 Ocean Rescue - Ocean and Beach Cleanup App
 
-**Ocean Rescue** is a mobile application developed by Innovex to empower communities, NGOs, and local authorities to address the critical issue of marine pollution through organized beach and ocean cleanups. By connecting people through event management, tracking environmental impact, and incentivizing participation with gamification, the app supports the United Nations Sustainable Development Goal 14: "Life Below Water."
+**Ocean Rescue** is a mobile application to empower communities, NGOs, and local authorities to address the critical issue of marine pollution through organized beach and ocean cleanups. By connecting people through event management, tracking environmental impact, and incentivizing participation with gamification, the app supports the United Nations Sustainable Development Goal 14: "Life Below Water."
 
 ---
 
